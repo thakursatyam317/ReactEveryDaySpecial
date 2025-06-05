@@ -1,22 +1,22 @@
 import Img1 from "./fastfoot/img1_enginakyurt.jpg";
 import Img2 from "./fastfoot/img2_tioroshi.jpg";
-import Img3 from "./fastfoot/img3_norma-mortenson.jpg";
+import Img3 from "./fastfoot/img3_PannerPizza.jpg";
 import Img4 from "./fastfoot/img4_horizon-content.jpg";
-import Img5 from "./fastfoot/img5_caleboquendo.jpg";
+import Img5 from "./fastfoot/img5_ RegularFries.jpg";
 import Img6 from "./fastfoot/img6_david-geib.jpg";
-import Img7 from "./fastfoot/img7_robi-pastores.jpg";
+import Img7 from "./fastfoot/img7_VolcanoPizza.jpg";
 import Img8 from "./fastfoot/img8_polina-tankilevitch.jpg";
 import Img9 from "./fastfoot/img9_adrian-dorobantu.jpg";
 import Img10 from "./fastfoot/img10_jonathanborba.jpg";
 import Img11 from "./fastfoot/img11_enginakyurt.jpg"; //1
 import Img12 from "./fastfoot/img12_magda-ehlers.jpg";
 import Img13 from "./fastfoot/img13_chokniti-khongchum.jpg";
-import Img14 from "./fastfoot/img14_jonathanborba.jpg"; //10
-import Img15 from "./fastfoot/img15_enginakyur.jpg"; //1
-import Img16 from "./fastfoot/img16_gustavlundborg.jpg";
-import Img17 from "./fastfoot/img17_marta-dzedyshko.jpg";
-import Img18 from "./fastfoot/img18_caleboquendo.jpg"; //5
-import Img19 from "./fastfoot/img19_enginakyurt.jpg"; //1
+import Img14 from "./fastfoot/img14_Extra-CrispyWaffleFries.jpg"; //10
+import Img15 from "./fastfoot/img15_CottageFries.jpg"; //1
+import Img16 from "./fastfoot/img16_OvenBakedSteakFries.jpg";
+import Img17 from "./fastfoot/img17_WedgeFries.jpg";
+import Img18 from "./fastfoot/img18_ShoestringFries.jpg"; //5
+import Img19 from "./fastfoot/img19_SmileyFries.jpg"; //1
 import Img20 from "./fastfoot/img20_jonathanborba.jpg"; //10
 import Img21 from "./fastfoot/img21_valeriya.jpg";
 import Img22 from "./fastfoot/img22_dana-tentis.jpg";
@@ -49,6 +49,38 @@ import Img48 from "./fastfoot/img48_iina-luoto.jpg";
 import Img49 from "./fastfoot/img49_side-view-multi-colored-meatballs-with-tomato-sauces-green-onions.jpg";
 import Img50 from "./fastfoot/img50_sydney-troxell.jpg";
 
+//Thali
+import Img51 from "./Thali/img51_NormalThali.jpg";
+import Img52 from "./Thali/img52_freshness-heat-savory-taco-bowl-with-guacamole-generated-by-artificial-intelligence.jpg";
+import Img53 from "./Thali/img53_indian-food-tray.jpg";
+import Img54 from "./Thali/img54_pakistan-goodies.jpg";
+import Img55 from "./Thali/img55_beef-rice-vegetables-generated-by-ai.jpg";
+import Img56 from "./Thali/img56_gourmet-bowl-with-healthy-rice-meat-vegetables-generated-by-ai.jpg";
+import Img57 from "./Thali/img57_pancake-with-sweet-topings-ingredients-generated-by-ai.jpg";
+import Img58 from "./Thali/img58_casserole-with-sauces.jpg";
+import Img59 from "./Thali/img59_pakistan-meal-table.jpg";
+import Img60 from "./Thali/img_pakistan-meal-arrangement-basket.jpg";
+
+
+//dal
+import Img61 from "./Dal/img61_MoongDal.jpg";
+import Img62 from "./Dal/img62_MasoorDal.jpg";
+import Img63 from "./Dal/img63_TuarDal.jpg";
+import Img64 from "./Dal/img64_ChanaDal.jpg";
+import Img65 from "./Dal/img65_UradDal.jpg";
+
+
+//Roti
+import Img66 from "./Roti/img71_RagiRoti.jpg";
+import Img67 from "./Roti/img67_Roti.jpg";
+import Img68 from "./Roti/img68_MakkaRotiWithGhee.jpg";
+import Img69 from "./Roti/img69_ParleRoti.jpg";
+import Img70 from "./Roti/img70_Paratha.jpg";
+// import Img71 from "./Roti/img66_RotiWithGhee.jpg";
+// import Img72 from "./Roti/img68_MakkaRotiWithGhee.jpg";
+// import Img73 from "./Roti/img69_ParleRoti.jpg";
+// import Img74 from "./Roti/img70_Paratha.jpg";
+// import Img75 from "./Roti/img71_RagiRoti.jpg";
 // import NutritionalFacts from '../components/NutritionalFacts';
 
 // src/assets/FoodApi.js
@@ -93,11 +125,30 @@ const FoodApi = [
   },
   {
     id: 3,
-    name: "Norma Mortenson",
+    name: "Panner Pizza",
     category: "Italian",
     price: 150,
     rating: 3.5,
     image: [Img3],
+    type : "Fast Food",
+    subtype:"Pizza",
+    nutritionalfacts: {
+      weight: 107,
+      protein: 10,
+      fats: 17,
+      carbohydrate: 36,
+      calories: 285,
+      fiber: 2.5,
+      sugar: 4,
+    },
+  },
+  {
+    id: 4,
+    name: "Horizon Content",
+    category: "Italian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img4],
     type : "Fast Food",
     subtype:"Burger",
     nutritionalfacts: {
@@ -111,39 +162,22 @@ const FoodApi = [
     },
   },
   {
-    id: 4,
-    name: "Horizon Content",
-    category: "Italian",
-    price: 122.5,
-    rating: 3.0,
-    image: [Img4],
-    type : "Fast Food",
-    nutritionalfacts: {
-      weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
-    },
-  },
-  {
     id: 5,
-    name: "Caleboquendo",
-    category: "Italian",
+    name: "Regular Fries",
+    category: "Regular Fries",
     price: 122.5,
     rating: 3.0,
     image: [Img5],
     type : "Fast Food",
+    subtype:"French Fries",
     nutritionalfacts: {
       weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      protein: 4,
+      fats: 17,
+      carbohydrate: 48,
+      calories: 365,
+      fiber: 2,
+      sugar: 10,
     },
   },
   {
@@ -154,7 +188,7 @@ const FoodApi = [
     rating: 3.0,
     image: [Img6],
     type : "Fast Food",
-    subtype:"Pizza",
+    subtype:"Burger",
     nutritionalfacts: {
       weight: 100,
       protein: 10,
@@ -167,20 +201,21 @@ const FoodApi = [
   },
   {
     id: 7,
-    name: "Robi pastores",
+    name: "Volcano Pizza",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img7],
     type : "Fast Food",
-    nutritionalfacts: {
-      weight: 100,
+    subtype:"Pizza",
+     nutritionalfacts: {
+      weight: 107,
       protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      fats: 17,
+      carbohydrate: 36,
+      calories: 285,
+      fiber: 2.5,
+      sugar: 4,
     },
   },
   {
@@ -191,6 +226,7 @@ const FoodApi = [
     rating: 3.0,
     image: [Img8],
     type : "Fast Food",
+    subtype:"Pizza",
     nutritionalfacts: {
       weight: 100,
       protein: 10,
@@ -208,6 +244,7 @@ const FoodApi = [
     price: 122.5,
     rating: 3.0,
     image: [Img9],
+    subtype:"Burger",
     nutritionalfacts: {
       weight: 100,
       protein: 10,
@@ -225,6 +262,7 @@ const FoodApi = [
     price: 122.5,
     rating: 3.0,
     image: [Img10],
+    subtype:"Burger",
     nutritionalfacts: {
       weight: 100,
       protein: 10,
@@ -238,19 +276,20 @@ const FoodApi = [
 
   {
     id: 11,
-    name: "Italian Pasta",
+    name: "Normal Pizza",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img11],
-    nutritionalfacts: {
-      weight: 100,
+    subtype:"Pizza",
+     nutritionalfacts: {
+      weight: 107,
       protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      fats: 17,
+      carbohydrate: 36,
+      calories: 285,
+      fiber: 2.5,
+      sugar: 4,
     },
   },
   {
@@ -277,6 +316,7 @@ const FoodApi = [
     price: 122.5,
     rating: 3.0,
     image: [Img13],
+    subtype:"Burger",
     nutritionalfacts: {
       weight: 100,
       protein: 10,
@@ -289,104 +329,110 @@ const FoodApi = [
   },
   {
     id: 14,
-    name: "Italian Pasta",
+    name: "Extra Crispy Waffle Fries",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img14],
+    subtype:"French Fries",
     nutritionalfacts: {
       weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      protein: 4,
+      fats: 17,
+      carbohydrate: 48,
+      calories: 365,
+      fiber: 2,
+      sugar: 10,
     },
   },
   {
     id: 15,
-    name: "Italian Pasta",
+    name: "Cottage Fries",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img15],
+    subtype:"French Fries",
     nutritionalfacts: {
       weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      protein: 4,
+      fats: 17,
+      carbohydrate: 48,
+      calories: 365,
+      fiber: 2,
+      sugar: 10,
     },
   },
   {
     id: 16,
-    name: "Gustavlundborg",
+    name: "Baked Steak Fries",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img16],
+    subtype:"French Fries",
     nutritionalfacts: {
       weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      protein: 4,
+      fats: 17,
+      carbohydrate: 48,
+      calories: 365,
+      fiber: 2,
+      sugar: 10,
     },
   },
   {
     id: 17,
-    name: "Marta Dzedyshko",
+    name: "Wedge Fries",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img17],
+    subtype:"French Fries",
     nutritionalfacts: {
       weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      protein: 4,
+      fats: 17,
+      carbohydrate: 48,
+      calories: 365,
+      fiber: 2,
+      sugar: 10,
     },
   },
   {
     id: 18,
-    name: "Italian Pasta",
+    name: "Shoestring Fries",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img18],
+    subtype:"French Fries",
     nutritionalfacts: {
       weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      protein: 4,
+      fats: 17,
+      carbohydrate: 48,
+      calories: 365,
+      fiber: 2,
+      sugar: 10,
     },
   },
   {
     id: 19,
-    name: "Italian Pasta",
+    name: "Smiley Fries",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img19],
+    subtype:"French Fries",
     nutritionalfacts: {
       weight: 100,
-      protein: 10,
-      fats: 20,
-      carbohydrate: 45,
-      calories: 450,
-      fiber: 10,
-      sugar: 25,
+      protein: 4,
+      fats: 17,
+      carbohydrate: 48,
+      calories: 365,
+      fiber: 2,
+      sugar: 10,
     },
   },
   {
@@ -690,19 +736,20 @@ const FoodApi = [
   },
   {
     id: 38,
-    name: "Polina Tankilevitch",
+    name: "Pablo Pizza",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
     image: [Img38],
-    nutritionalfacts: {
-      weight: 210,
-      protein: 5,
-      fats: 80,
-      carbohydrate: 100,
-      calories: 550,
-      fiber: 10,
-      sugar: 35,
+    subtype:"Pizza",
+     nutritionalfacts: {
+      weight: 107,
+      protein: 10,
+      fats: 17,
+      carbohydrate: 36,
+      calories: 285,
+      fiber: 2.5,
+      sugar: 4,
     },
   },
   {
@@ -712,6 +759,7 @@ const FoodApi = [
     price: 122.5,
     rating: 3.0,
     image: [Img39],
+
     nutritionalfacts: {
       weight: 210,
       protein: 5,
@@ -909,6 +957,499 @@ const FoodApi = [
       sugar: 35,
     },
   },
+
+
+   {
+    id: 51,
+    name: "Enginakyurt",
+    category: "Indian",
+    price: 75,
+    rating: 3.5,
+    image: [Img51],
+    type : "Indian Thali",
+    subtype:"Normal Thali",
+    nutritionalfacts: {
+      weight: 210,
+      protein: 5,
+      fats: 80,
+      carbohydrate: 100,
+      calories: 550,
+      fiber: 10,
+      sugar: 35,
+    },
+  },
+  {
+    id: 52,
+    name: "Tioroshi",
+    category: "Indian",
+    price: 125,
+    rating: 4.0,
+    image: [Img52],
+    type : "Indian Thali",
+    subtype:"Special Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 53,
+    name: "Norma Mortenson",
+    category: "Indian",
+    price: 150,
+    rating: 3.5,
+    image: [Img53],
+    type : "Indian Thali",
+    subtype:"Special Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 54,
+    name: "Horizon Content",
+    category: "Indian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img54],
+    subtype:"Normal Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 55,
+    name: "Caleboquendo",
+    category: "Indian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img55],
+   type : "Indian Thali",
+   subtype:"Special Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 56,
+    name: "David Geib",
+    category: "Indian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img56],
+    type : "Indian Thali",
+    subtype:"Special Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 57,
+    name: "Robi pastores",
+    category: "Indian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img57],
+    type : "Indian Thali",
+    subtype:"Special Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 58,
+    name: "Polina Tankilevitch",
+    category: "Indian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img58],
+    type : "Indian Thali",
+     subtype:"Normal Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 59,
+    name: "Adrian Dorobantu",
+    category: "Indian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img59],
+    type : "Indian Thali",
+     subtype:"Normal Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+  {
+    id: 60,
+    name: "Jonathanborba",
+    category: "Indian",
+    price: 122.5,
+    rating: 3.0,
+    image: [Img60],
+    type : "Indian Thali",
+    nutritionalfacts: {
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 45,
+      calories: 450,
+      fiber: 10,
+      sugar: 25,
+    },
+  },
+
+
+
+  {
+    id: 61,
+    name: "Moong Dal",
+    category: "Indian",
+    price: 75,
+    rating: 4.7,
+    image: [Img61],
+    type : "Fast Food",
+    subtype:"Dal",
+    nutritionalfacts: {
+       weight: 250,
+      protein: 15,
+      fats: 12,
+      carbohydrate: 35,
+      calories: 305,
+      fiber: 8,
+      sugar: 15,
+    },
+  },
+  {
+    id: 62,
+    name: "Masoor Dal",
+    category: "Indian",
+    price: 125,
+    rating: 4.2,
+    image: [Img62],
+    type : "Fast Food",
+    subtype:"Dal",
+    nutritionalfacts: {
+       weight: 250,
+      protein: 15,
+      fats: 12,
+      carbohydrate: 35,
+      calories: 305,
+      fiber: 8,
+      sugar: 15,
+    },
+  },
+  {
+    id: 63,
+    name: "Tuar Dal",
+    category: "Indian",
+    price: 150,
+    rating: 4.3,
+    image: [Img63],
+    type : "Fast Food",
+    subtype:"Dal",
+    nutritionalfacts: {
+       weight: 250,
+      protein: 15,
+      fats: 12,
+      carbohydrate: 35,
+      calories: 305,
+      fiber: 8,
+      sugar: 15,
+    },
+  },
+  {
+    id: 64,
+    name: "Chana Dal",
+    category: "Indian",
+    price: 122.5,
+    rating: 4.8,
+    image: [Img64],
+    type : "Fast Food",
+    subtype:"Dal",
+    nutritionalfacts: {
+       weight: 250,
+      protein: 15,
+      fats: 12,
+      carbohydrate: 35,
+      calories: 305,
+      fiber: 8,
+      sugar: 15,
+    },
+  },
+  {
+    id: 65,
+    name: "Urad Dal",
+    category: "Indian",
+    price: 122.5,
+    rating: 4.5,
+    image: [Img65],
+    type : "Fast Food",
+    subtype:"Dal",
+
+    nutritionalfacts: {
+      weight: 250,
+      protein: 15,
+      fats: 12,
+      carbohydrate: 35,
+      calories: 305,
+      fiber: 8,
+      sugar: 15,
+    },
+  },
+
+  //roti
+  {
+    id: 66,
+    name: "Raggi Roti", 
+    category: "Indian",
+    price: 30,
+    rating: 4.8,
+    image: [Img66],
+    type : "Indian Thali",
+    subtype:"Roti",
+    nutritionalfacts: {
+      weight: 50,
+      protein: 7,
+      fats: 2,
+      carbohydrate: 20,
+      calories: 130,
+      fiber: 3,
+      sugar: 1,
+    },
+  },
+
+
+
+  {
+    id: 67,
+    name: "Roti",
+    category: "Indian",
+    price: 75,
+    rating: 4.7,
+    image: [Img67],
+    type : "Fast Food",
+    subtype:"Roti",
+    nutritionalfacts: {
+      weight: 50,
+      protein: 5,
+      fats: 2,
+      carbohydrate: 24,
+      calories: 130,
+      fiber: 3,
+      sugar: 1,
+    },
+  },
+  {
+    id: 68,
+    name: "Makka Roti",
+    category: "Indian",
+    price: 125,
+    rating: 4.2,
+    image: [Img68],
+    type : "Fast Food",
+    subtype:"Roti",
+    nutritionalfacts: {
+      weight: 50,
+      protein: 4,
+      fats: 2,
+      carbohydrate: 24,
+      calories: 130,
+      fiber: 4,
+      sugar: 2,
+    },
+  },
+  {
+    id: 69,
+    name: "Parle Roti",
+    category: "Indian",
+    price: 150,
+    rating: 4.3,
+    image: [Img69],
+    type : "Indian Thali",
+    subtype:"Roti",
+    nutritionalfacts: {
+       weight: 250,
+      protein: 15,
+      fats: 12,
+      carbohydrate: 35,
+      calories: 305,
+      fiber: 8,
+      sugar: 15,
+    },
+  },
+  {
+    id: 70,
+    name: "Paratha",
+    category: "Indian",
+    price: 122.5,
+    rating: 4.8,
+    image: [Img70],
+    type : "Fast Food",
+    subtype:"Roti",
+    nutritionalfacts: {
+       weight: 50,
+      protein: 4,
+      fats: 8,
+      carbohydrate: 24,
+      calories: 200,
+      fiber: 2,
+      sugar: 1,
+    },
+  },
+
+
+    {
+    id: 66,
+    name: "Raggi Roti with Ghee", 
+    category: "Indian",
+    price: 30,
+    rating: 4.8,
+    image: [Img66],
+    type : "Indian Thali",
+    subtype:"Roti",
+    nutritionalfacts: {
+      weight: 50,
+      protein: 7,
+      fats: 2,
+      carbohydrate: 20,
+      calories: 200,
+      fiber: 3,
+      sugar: 1,
+    },
+  },
+
+
+
+  {
+    id: 67,
+    name: "Roti with Ghee",
+    category: "Indian",
+    price: 75,
+    rating: 4.7,
+    image: [Img67],
+    type : "Fast Food",
+    subtype:"Roti",
+    nutritionalfacts: {
+      weight: 50,
+      protein: 5,
+      fats: 2,
+      carbohydrate: 24,
+      calories: 200,
+      fiber: 3,
+      sugar: 1,
+    },
+  },
+  {
+    id: 68,
+    name: "Makka Roti with Ghee",
+    category: "Indian",
+    price: 125,
+    rating: 4.2,
+    image: [Img68],
+    type : "Fast Food",
+    subtype:"Roti",
+     nutritionalfacts: {
+       weight: 50,
+      protein: 4,
+      fats: 8,
+      carbohydrate: 24,
+      calories: 200,
+      fiber: 2,
+      sugar: 1,
+    },
+  },
+  {
+    id: 69,
+    name: "Parle Roti with Ghee ",
+    category: "Indian",
+    price: 150,
+    rating: 4.3,
+    image: [Img69],
+    type : "Indian Thali",
+    subtype:"Roti",
+    nutritionalfacts: {
+       weight: 50,
+      protein: 4,
+      fats: 8,
+      carbohydrate: 24,
+      calories: 200,
+      fiber: 2,
+      sugar: 1,
+    },
+  },
+  {
+    id: 70,
+    name: "Ghee Paratha",
+    category: "Indian",
+    price: 122.5,
+    rating: 4.8,
+    image: [Img70],
+    type : "Fast Food",
+    subtype:"Roti",
+    nutritionalfacts: {
+       weight: 50,
+      protein: 4,
+      fats: 8,
+      carbohydrate: 24,
+      calories: 200,
+      fiber: 2,
+      sugar: 1,
+    },
+  },
+
+  
+  
+  
 
   // rest of the data...
 ];
