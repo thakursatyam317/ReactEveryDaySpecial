@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
@@ -10,14 +11,16 @@ import About from "./pages/About";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart"
 import Category from './pages/Category'
-
+import AccountSection from "./pages/AccountSection";
+import OrderPage from "./pages/OrderPage";
 
 
 function App() {
+  const [cartItems, setCartItems] = useState([]);
   return (
     <>
       <Router>
-        <Navbar />
+        <Navbar cartItems={cartItems} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/contactus" element={<Contactus />} />
@@ -25,8 +28,10 @@ function App() {
           <Route path="/Register" element={<Register />} />
           <Route path='/about' element={<About/>}/>
           <Route path='/menu' element={<Menu/>}/>
-          <Route path='/cart' element={<Cart/>}/>
-          <Route path='/category' element={<Category/>}/>
+          <Route path='/cart' element={<Cart cartItems={cartItems}/>}/>
+          <Route path='/category' element={<Category cartItems={cartItems} setCartItems={setCartItems}/>}/>
+          <Route path='/accountSection' element={<AccountSection/>}/>
+          <Route path="/order" element={<OrderPage />} />
 
     
         </Routes>

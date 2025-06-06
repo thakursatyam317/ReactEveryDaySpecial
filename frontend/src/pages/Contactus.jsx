@@ -4,7 +4,7 @@ import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 
 const Contactus = () => {
     return (
-   <section className="min-h-screen bg-gray-50 py-12 px-4 flex justify-center items-start">
+   <section className="min-h-screen bg-gray-50 py-12 px-4 flex justify-center items-start mt-20">
       <div className="bg-white shadow-md rounded-lg max-w-4xl w-full p-8">
         <h1 className="text-4xl font-bold text-center text-yellow-400 mb-8">
           Contact Our Support
@@ -16,21 +16,21 @@ const Contactus = () => {
             <FaMapMarkerAlt className="text-yellow-400 text-2xl mt-1" />
             <div>
               <h2 className="font-semibold text-lg">Visit Us</h2>
-              <p>ShopHub HQ, 456 Market St, Mumbai, India</p>
+              <p>Anand nagar, Bhopal, India</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <FaPhoneAlt className="text-yellow-400 text-2xl mt-1" />
             <div>
               <h2 className="font-semibold text-lg">Call Us</h2>
-              <p>+91 98765 43210</p>
+              <p>+91 9754584581</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <FaEnvelope className="text-yellow-400 text-2xl mt-1" />
             <div>
               <h2 className="font-semibold text-lg">Email Us</h2>
-              <p>support@shophub.com</p>
+              <p>everydayspecial2005@gmail.com.com</p>
             </div>
           </div>
         </div>

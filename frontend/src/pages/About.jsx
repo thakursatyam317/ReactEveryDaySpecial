@@ -5,13 +5,13 @@ import { FaStore, FaShippingFast, FaSmile } from "react-icons/fa";
 const About = () => {
   return (
     <>
-    <section className="min-h-screen bg-white py-12 px-6 md:px-12">
+    <section className="min-h-screen bg-white py-12 px-6 md:px-12 mt-20">
       <div className="max-w-5xl mx-auto text-center">
         <h1 className="text-4xl font-bold text-yellow-400 mb-6">
-          About ShopHub
+          About Every Day Special
         </h1>
         <p className="text-gray-600 text-lg mb-12">
-          Welcome to <span className="font-semibold">ShopHub</span>, your one-stop destination for quality products at the best prices.
+          Welcome to <span className="font-semibold">Every Day Special</span>, your one-stop destination for quality products at the best prices.
           We aim to deliver an exceptional shopping experience to every customer.
         </p>
 

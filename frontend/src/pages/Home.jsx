@@ -6,7 +6,7 @@ import { CiSearch } from "react-icons/ci";
 const home = () => {
   return (
     <>
-        <div className="p-6 space-y-10">
+        <div className="p-6 space-y-10 mt-20">
 
            <div className='h-[60px] w-[400px] border-2 rounded mx-auto flex '>
           <Link to="/menu" className="  my-auto flex border-none "><CiSearch className='my-auto mx-0.5 text-2xl' /><input type="text" placeholder='Search our Foods'  className="h-[60px] w-[400px] border-none outline-none text-2xl"/></Link>
@@ -25,16 +25,16 @@ const home = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           
             <div  className="bg-white flex flex-col-3 rounded-xl shadow p-4 text-center hover:bg-gray-50 cursor-pointer">
-              <Link to='/menu' className="font-medium">ASDFGH</Link>
+              <Link to='/menu' className="font-medium">Offer</Link>
             </div>
             <div  className="bg-white flex flex-col-3 rounded-xl shadow p-4 text-center hover:bg-gray-50 cursor-pointer">
-             <Link to='/category' className="font-medium">Cetegory</Link>
+             <Link to='/category' className="font-medium">Category</Link>
            </div>
             <div  className="bg-white flex flex-col-3 rounded-xl shadow p-4 text-center hover:bg-gray-50 cursor-pointer">
-              <Link to='/menu' className="font-medium">Account</Link>
+              <Link to='/accountSection' className="font-medium">Account</Link>
             </div>
             <div  className="bg-white flex flex-col-3 rounded-xl shadow p-4 text-center hover:bg-gray-50 cursor-pointer">
-              <Link to='/menu' className="font-medium">ASDFGH</Link>
+              <Link to='/menu' className="font-medium">Drink</Link>
             </div>
           
         </div>

@@ -31,7 +31,7 @@ const Register = () => {
 
   return (
     <>
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-screen mt-20 flex items-center justify-center bg-gray-100">
         <form
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-lg shadow-md w-full max-w-xl"
@@ -49,7 +49,7 @@ const Register = () => {
               onChange={handleChange}
               value={formData.fullName}
               className="w-full border px-4 py-2 rounded"
-              placeholder="John Doe"
+              placeholder="Enter your Name"
             />
           </div>
 
@@ -62,7 +62,7 @@ const Register = () => {
               onChange={handleChange}
               value={formData.email}
               className="w-full border px-4 py-2 rounded"
-              placeholder="example@email.com"
+              placeholder="Enter your Email"
             />
           </div>
 
@@ -75,7 +75,7 @@ const Register = () => {
               onChange={handleChange}
               value={formData.phone}
               className="w-full border px-4 py-2 rounded"
-              placeholder="123-456-7890"
+              placeholder="Enter your Phone Number"
             />
           </div>
 
