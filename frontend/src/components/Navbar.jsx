@@ -4,8 +4,11 @@ import { FaShoppingCart } from "react-icons/fa";
 import Logo from "../assets/logo.png"; // Assuming you have a logo image
 import { useNavigate } from "react-router-dom";
 
+
 const Navbar  = ({ cartItems }) => {
   const navigate = useNavigate();
+   
+  
     return (
       <nav className="bg-yellow-400 text-white shadow fixed top-0 left-0 w-full z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
@@ -25,9 +28,12 @@ const Navbar  = ({ cartItems }) => {
             <Link to="/login" className="hover:text-gray-300">
               Login
             </Link>
-            <Link to="/Register" className="hover:text-gray-300">
+            <Link to="/register" className="hover:text-gray-300">
               Register
             </Link>
+            <div>
+              
+            </div>
             <div
               className="relative cursor-pointer"
               onClick={() => navigate("/cart")}

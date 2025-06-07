@@ -66,6 +66,21 @@ const Category = () => {
     }
   };
 
+
+  //Whishlist
+ const handleAddToWishlist = (food) => {
+  const existingWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+  const isAlreadyAdded = existingWishlist.find((item) => item.id === food.id);
+
+  if (!isAlreadyAdded) {
+    const updatedWishlist = [...existingWishlist, food];
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    alert(`${food.name} added to wishlist`);
+  } else {
+    alert(`${food.name} is already in wishlist`);
+  }
+};
+
   return (
     <div className="flex p-6 mt-20">
       {/* Sidebar Filters */}
@@ -200,12 +215,13 @@ const Category = () => {
               <button
                 onClick={() => handleAddToCart(food)}
                 className="flex items-center space-x-1 bg-yellow-400 text-white px-3 py-1 rounded hover:bg-green-600"
-              >
+                >
                 <FaShoppingCart />
                 <span>Add to Cart</span>
               </button>
 
-              <button className="text-yellow-400 hover:text-red-600">
+              <button className="text-yellow-400 hover:text-red-600"
+              onClick={() => handleAddToWishlist(food)}>
                 <PiHeartFill size={24} />
               </button>
             </div>

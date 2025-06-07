@@ -1,7 +1,8 @@
+// AccountSection.js
 import React from "react";
-import { FaMapMarkerAlt } from "react-icons/fa";
-
+import { useNavigate } from "react-router-dom";
 import {
+  FaMapMarkerAlt,
   FaBoxOpen,
   FaUser,
   FaHeart,
@@ -11,43 +12,36 @@ import {
 } from "react-icons/fa";
 
 const AccountSection = () => {
+  const navigate = useNavigate();
+
   const handleLogout = () => {
-    // Add your logout logic here
     console.log("Logged out");
   };
 
+  const goToWishlist = () => {
+    navigate("/whishlist");
+  };
+
+  const goToOrders = () => {
+    navigate("/orders");
+  };
+
   return (
-    <div className="w-[50%] mx-auto mt-30 p-6 bg-white shadow-lg rounded-2xl">
+    <div className="w-[50%] mx-auto mt-40 p-6 bg-white shadow-lg rounded-2xl">
       <h2 className="text-xl font-bold mb-6 text-center">My Account</h2>
 
       <div className="space-y-4 grid">
-        <div className="grid grid-cols-2 ">
-          <AccountButton icon={<FaBoxOpen />} text="Order" />
-          <AccountButton icon={<FaHeart />} text="Wishlist" />
+        <div className="grid grid-cols-2">
+          <AccountButton icon={<FaBoxOpen />} text="Order" onClick={goToOrders} />
+          <AccountButton icon={<FaHeart />} text="Wishlist" onClick={goToWishlist} />
           <AccountButton icon={<FaTags />} text="Coupons" />
           <AccountButton icon={<FaQuestionCircle />} text="Help Center" />
         </div>
 
         <AccountButton icon={<FaUser />} text="Profile" />
-        <button className="w-[90%] flex items-center gap-2 p-3 border rounded-lg hover:bg-gray-100 transition text-left">
-          <FaMapMarkerAlt className="text-lg text-gray-700" />
-          <span className="text-base font-medium">Saved Addresses</span>
-        </button>
-
-        <button
-
-          className="w-[90%] flex items-center gap-2 p-3 border rounded-lg hover:bg-gray-100 transition text-left"
-        >
-          🌐 Select Language
-        </button>
-
-        <div>
-          <AccountButton
-            icon={<FaSignOutAlt />}
-            text="Logout"
-            onClick={handleLogout}
-          />
-        </div>
+        <AccountButton icon={<FaMapMarkerAlt />} text="Saved Addresses" />
+        <AccountButton text="🌐 Select Language" />
+        <AccountButton icon={<FaSignOutAlt />} text="Logout" onClick={handleLogout} />
       </div>
     </div>
   );
