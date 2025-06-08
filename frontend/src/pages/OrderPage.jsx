@@ -1,7 +1,6 @@
-// OrdersPage.js
 import React, { useEffect, useState } from "react";
 
-const OrdersPage = () => {
+const OrderPage = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
@@ -28,11 +27,21 @@ const OrdersPage = () => {
               <p>Total Amount: ₹{order.total}</p>
               <p>Status: {order.status}</p>
               <p className="mt-2 font-semibold">Items:</p>
-              <ul className="list-disc list-inside">
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                 {order.items.map((item, idx) => (
-                  <li key={idx}>{item}</li>
+                  <div key={idx} className="border rounded p-2 bg-white shadow-sm">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-full h-32 object-cover rounded mb-2"
+                    />
+                    <h4 className="font-semibold">{item.name}</h4>
+                    <p>₹{item.price}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
+
               <p className="mt-2">Address: {order.address}</p>
             </div>
           ))}
@@ -42,4 +51,4 @@ const OrdersPage = () => {
   );
 };
 
-export default OrdersPage;
+export default OrderPage;

@@ -23,7 +23,7 @@ const AccountSection = () => {
   };
 
   const goToOrders = () => {
-    navigate("/orders");
+    navigate("/order");
   };
 
   return (
@@ -38,7 +38,7 @@ const AccountSection = () => {
           <AccountButton icon={<FaQuestionCircle />} text="Help Center" />
         </div>
 
-        <AccountButton icon={<FaUser />} text="Profile" />
+        <AccountButton icon={<FaUser />} text="Profile"  onClick={() => navigate("/profile")}/>
         <AccountButton icon={<FaMapMarkerAlt />} text="Saved Addresses" />
         <AccountButton text="🌐 Select Language" />
         <AccountButton icon={<FaSignOutAlt />} text="Logout" onClick={handleLogout} />

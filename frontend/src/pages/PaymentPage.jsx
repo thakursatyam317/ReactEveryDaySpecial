@@ -1,4 +1,3 @@
-// PaymentPage.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import QRImage from "../assets/QR_Code.jpg"; // Replace with your actual QR image
@@ -40,7 +39,8 @@ const PaymentPage = () => {
     localStorage.removeItem("cart");
     localStorage.removeItem("deliveryAddress");
 
-    navigate("/orders");
+    // ✅ Updated route
+    navigate("/order");
   };
 
   const totalAmount = cartItems.reduce((acc, item) => acc + item.price, 0);

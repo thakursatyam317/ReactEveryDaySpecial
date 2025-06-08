@@ -16,6 +16,8 @@ import OrderPage from "./pages/OrderPage";
 import Wishlist from "./pages/Wishlist";
 import ConfirmAddress from "./pages/ConfirmAddress";
 import PaymentPage from "./pages/PaymentPage";
+import Profile from "./pages/Profile";
+
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -45,7 +47,9 @@ function App() {
           />
           <Route path="/confirm-address" element={<ConfirmAddress />} />
           <Route path="/payment" element={<PaymentPage />} />
-         
+
+           <Route path="/profile" element={<Profile />} />
+
         </Routes>
         <Footer />
       </Router>
