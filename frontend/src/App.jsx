@@ -48,7 +48,7 @@ function App() {
           <Route path="/confirm-address" element={<ConfirmAddress />} />
           <Route path="/payment" element={<PaymentPage />} />
 
-           <Route path="/profile" element={<Profile />} />
+          <Route path="/authProfile/profile" element={<Profile />} />
 
         </Routes>
         <Footer />

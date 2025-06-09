@@ -16,7 +16,7 @@ const OrderPage = () => {
         <p>No orders yet.</p>
       ) : (
         <div className="space-y-6">
-          {orders.map((order) => (
+          {[...orders].reverse().map((order) => (
             <div
               key={order.id}
               className="border p-4 rounded-md shadow-sm bg-gray-50"
@@ -30,7 +30,10 @@ const OrderPage = () => {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                 {order.items.map((item, idx) => (
-                  <div key={idx} className="border rounded p-2 bg-white shadow-sm">
+                  <div
+                    key={idx}
+                    className="border rounded p-2 bg-white shadow-sm flex flex-col items-center"
+                  >
                     <img
                       src={item.image}
                       alt={item.name}

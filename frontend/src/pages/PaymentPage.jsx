@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import QRImage from "../assets/QR_Code.jpg"; // Replace with your actual QR image
+import QRImage from "../assets/QR_Code.jpg"; // Your QR code image
 
 const PaymentPage = () => {
   const navigate = useNavigate();
@@ -23,10 +23,11 @@ const PaymentPage = () => {
 
     const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
 
+    // Save full cartItems here, not just names
     const newOrder = {
       id: "ORD" + Date.now(),
       date: new Date().toISOString().split("T")[0],
-      items: cartItems.map((item) => item.name),
+      items: cartItems, // Save entire item objects (with image, price, etc)
       total: cartItems.reduce((acc, item) => acc + item.price, 0),
       address,
       payment: paymentMethod,
@@ -39,7 +40,6 @@ const PaymentPage = () => {
     localStorage.removeItem("cart");
     localStorage.removeItem("deliveryAddress");
 
-    // ✅ Updated route
     navigate("/order");
   };
 
