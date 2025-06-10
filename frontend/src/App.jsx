@@ -16,6 +16,7 @@ import OrderPage from "./pages/OrderPage";
 import Wishlist from "./pages/Wishlist";
 import ConfirmAddress from "./pages/ConfirmAddress";
 import PaymentPage from "./pages/PaymentPage";
+//import Profile from "./pages/Profile";
 import Profile from "./pages/Profile";
 
 
@@ -48,8 +49,8 @@ function App() {
           <Route path="/confirm-address" element={<ConfirmAddress />} />
           <Route path="/payment" element={<PaymentPage />} />
 
-          <Route path="/authProfile/profile" element={<Profile />} />
-
+          {/* <Route path="/authProfile/profile" element={<Profile />} /> */}
+          <Route path="/user/profile" element={<Profile />} />
         </Routes>
         {/* <Footer /> */}
       </Router>
