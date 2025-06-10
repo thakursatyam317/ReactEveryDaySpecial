@@ -13,6 +13,7 @@ const Register = () => {
   });
 
   const [successMessage, setSuccessMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false); // ✅ to track if registration was successful
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,9 +23,9 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // password match guard
     if (data.crPassword !== data.password) {
-      alert("Passwords do not match");
+      setSuccessMessage("❌ Passwords do not match");
+      setIsSuccess(false);
       return;
     }
 
@@ -33,10 +34,9 @@ const Register = () => {
       console.log("API Response:", res.status, res.data);
 
       if (res.status === 200 || res.status === 201) {
-        // show banner
-        setSuccessMessage("User Registered Successfully ✅");
+        setSuccessMessage("✅ User Registered Successfully");
+        setIsSuccess(true);
 
-        // clear form
         setData({
           fullName: "",
           email: "",
@@ -46,38 +46,34 @@ const Register = () => {
           crPassword: "",
           password: "",
         });
-
-        // hide banner after 3s
-        setTimeout(() => setSuccessMessage(""), 3000);
       } else {
-        alert("Registration failed. Please try again.");
+        setSuccessMessage("❌ Registration failed. Please try again.");
+        setIsSuccess(false);
       }
     } catch (err) {
       console.error(err);
-      alert("Something went wrong on our end.");
+      setSuccessMessage("❌ Something went wrong.");
+      setIsSuccess(false);
     }
+
+    setTimeout(() => setSuccessMessage(""), 3000);
   };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      {/* ← make sure this wrapper is `relative` */}
+      {/* Success or Error Message */}
       {successMessage && (
-        <div
-          className="
-            absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white text-yellow-500 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit
-          "
-        >
+        <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit ${isSuccess ? "text-green-600" : "text-red-500"}`}>
           {successMessage}
         </div>
       )}
 
+      {/*  Registration Form */}
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg shadow-md w-full max-w-lg"
+        className="bg-white p-8 rounded-lg mt-30 shadow-md w-full max-w-lg"
       >
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Register Form
-        </h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Register Form</h2>
 
         {/* Full Name */}
         <div className="mb-4">

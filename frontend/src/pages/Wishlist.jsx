@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 const Wishlist = () => {
   const [wishlistItems, setWishlistItems] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -21,19 +22,31 @@ const Wishlist = () => {
     if (!isAlreadyInCart) {
       const updatedCart = [...existingCart, item];
       localStorage.setItem("cart", JSON.stringify(updatedCart));
-      alert(`${item.name} added to cart`);
+      setSuccessMessage(`${item.name}  Item added to cart successfully!`);
 
       // Remove from wishlist after adding to cart
       const updatedWishlist = wishlistItems.filter((wishItem) => wishItem.id !== item.id);
       setWishlistItems(updatedWishlist);
       localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
     } else {
-      alert(`${item.name} is already in cart`);
+      setSuccessMessage(`${item.name} is already in cart`);
     }
   };
 
   return (
-    <div className="p-6 mt-6 w-full max-w-5xl mx-auto">
+    
+    <>
+      {/* ← make sure this wrapper is `relative` */}
+      {successMessage && (
+        <div
+          className="
+            absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white text-yellow-500 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit
+          "
+        >
+          <div>{successMessage} <span className="text-white">✅</span> </div>
+        </div>
+      )}
+      <div className="p-6 mt-6 w-full max-w-5xl mx-auto">
       <h2 className="text-3xl font-bold mb-6">Your Wishlist</h2>
 
       {wishlistItems.length === 0 ? (
@@ -76,6 +89,8 @@ const Wishlist = () => {
         </div>
       )}
     </div>
+    
+    </>
   );
 };
 

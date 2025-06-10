@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CiSearch } from "react-icons/ci";
-
+import Footer from '../components/Footer';
 
 const home = () => {
   return (
@@ -57,6 +57,7 @@ const home = () => {
         </div>
       </div> */}
     </div>
+    <Footer />
     </>
   )
 }

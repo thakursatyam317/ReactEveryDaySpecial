@@ -14,6 +14,7 @@ const Cart = () => {
     const updatedCart = cartItems.filter((item) => item.id !== id);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("cartUpdated")); // 🔔 Notify Navbar
   };
 
   const handleOrderNow = () => {
@@ -24,7 +25,6 @@ const Cart = () => {
     navigate("/confirm-address");
   };
 
-  // Calculate total price
   const totalAmount = cartItems.reduce((acc, item) => acc + item.price, 0);
 
   return (
@@ -65,7 +65,6 @@ const Cart = () => {
             ))}
           </div>
 
-          {/* Total amount and single Order button */}
           <div className="mt-8 flex justify-between items-center">
             <h3 className="text-2xl font-semibold">
               Total Amount: ₹{totalAmount.toFixed(2)}
