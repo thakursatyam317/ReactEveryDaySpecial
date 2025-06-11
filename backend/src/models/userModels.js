@@ -4,37 +4,42 @@ const userSchema = mongoose.Schema(
   {
     fullName: {
       type: String,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
-      require: true,
+      required: true,
     },
-    mobileNumber: {
+    phone: {
       type: String,
-      require: true,
+      required: true,
     },
     gender: {
       type: String,
-      require: true,
+      required: true,
     },
     dob: {
       type: String,
-      require: true,
+      required: true,
     },
-
     password: {
       type: String,
-      require: true,
+      required: true,
     },
-
-    pic: {
+    // status: {
+    //   type: String,
+    //   enum: ["Active", "Suspended", "Terminated", "Retired", "Resigned"],
+    //   required: true,
+    //   default: "Active",
+    // },
+    profilePic: {
       type: String,
+      default: "", // Placeholder URL
     },
   },
   { timestamps: true }
 );
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model("user", userSchema);
 
 export default User;

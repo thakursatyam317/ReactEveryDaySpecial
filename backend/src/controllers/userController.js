@@ -16,11 +16,10 @@ export const userProfile = async (req, res, next) => {
         id: user._id,
         fullName: user.fullName,
         email: user.email,
-        mobileNumber: user.mobileNumber,
+        phone: user.phone,
         dob: user.dob,
         gender: user.gender,
-        // profilePic: user.profilePic,
-     
+        profilePic: user.profilePic,
       },
     });
   } catch (error) {

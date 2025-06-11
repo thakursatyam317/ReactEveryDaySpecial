@@ -1,156 +1,91 @@
-import { token } from 'morgan';
-import { genAuthToken } from '../config/jwtAuth.js';
-import User from '../models/userModels.js';
-import bcrypt from 'bcrypt';
+import User from "../models/userModels.js";
+import bcrypt from "bcrypt";
+import generateToken from "../config/jwtAuth.js";
 
-
-export const userLogin = async (req,res)=>{
+export const userRegister = async (req, res) => {
+  try {
+    const {
+      fullName,
+      email,
+      phone,
+      dob,
+      gender,
     
-    try{
-        const {email, password} = req.body;
+      password,
+    } = req.body;
 
-        if(!email || !password){
-            console.log("fill the fields");
-            res.send(json({"message" : "error"}));
-            return next();
-        }
-
-        // console.log(email);
-        // console.log(password);
-
-
-        const user = await User.findOne({email});//find user 
-        if(!user){
-            console.log("User not Found");
-            error.statusCode = 404;
-            return next(error);
-        }
-        console.log(user);
-        console.log(email);
-        console.log(password)//1234567890
-
-        const isVaildPassword = await bcrypt.compare(password, user.password);//compare password
-        //console.log(isVaildPassword);//false why
-        console.log(isVaildPassword);//false
-        console.log(user.password);//1234567890
-        
-        if(!isVaildPassword){
-             return res.status(400).json({ message: "Please fill all fields" }); 
-        }
-        
-
-
-
-        genAuthToken(user._id, res);
-
-        res.status(200).json(
-            { message: "Login sucessfullay",
-              user:{
-                fullName: user.fullName,
-                email: user.email,
-                department: user.department,
-                position: user.position,
-                gender: user.gender,
-                pic: user.pic,
-                },
-                token: genAuthToken(user._id, res),
-            },
-        )
-
-      //  localStorage.setItem("isLoggedIn", true);
-    }
-    catch (error) {
-     res.status(500).json({ message: "Server error", error: error.message });
-    } 
-
-    
-}
-
-
-export const userRegister = async (req,res)=>{
-
-    try{
-        const {
-            fullName,
-            email,
-            mobileNumber,
-            gender,
-            dob,
-            password,
-        } = req.body;
-
-
-        if(
-            !fullName||
-            !email||
-            !mobileNumber||
-            !gender||
-            !dob||
-            !password
-
-        ){
-            // console.log("Fill the Fields");
-            return res.status(400).json({ message: "All fields are required" });
-            
-        }
-
-
-        // const newUser = await User.create({
-        //     fullName,
-        //     email,
-        //     mobileNumber,
-        //     gender,
-        //     dob,
-        //     qualification,
-        //     department,
-        //     position,
-        //     hiringDate,
-        //     salary,
-        //     password,
-        //     status : "Active",
-        //     pic : "",
-
-
-        // });
-
-        // res.status(200).json({"message": "User created", newUser});
-
-
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "User already exists" });
+    if (
+      !fullName ||
+      !email ||
+      !phone ||
+      !dob ||
+      !gender ||
+      !password
+    ) {
+      console.log("all fields required");
+      return;
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // const pic = `https://placehold.co/400X400?text=${fullName.charAt(
-    //   0
-    // )}`;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const ProfilePic =
+      `https://placehold.co/600x400?text=` + fullName.charAt(0).toUpperCase();
 
     const newUser = await User.create({
-            fullName,
-            email,
-            mobileNumber,
-            gender,
-            dob,
-            password:hashedPassword,
-            status : "Active",
-            pic : "",
+      fullName,
+      email,
+      phone,
+      dob,
+      gender,
+      profilePic: ProfilePic,
+      password: hashedPassword,
+      
     });
 
-    res.status(201).json({
-      message: "User Created Successfully",
-      user: {
-        id: newUser._id,
-        fullName: newUser.fullName,
-        email: newUser.email,
-      },
-    });
-    }catch(e){
-        console.log(e);
+    res.status(200).json({ messsage: "User Created ", newUser });
+  } catch (e) {
+    console.log(e.message);
+  }
+};
+
+export const userLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      return next(error);
     }
 
+    const user = await User.findOne({ email });
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      const error = new Error("Invalid password");
+      error.statusCode = 401;
+      return next(error);
+    }
+
+    //generate token
+    generateToken(user._id, res);
+
+    res.status(200).json({
+      message: "User logged in successfully",
+      user: {
+        fullName: user.fullName,
+        email: user.email,
+        phone: user.phone,
+        dob: user.dob,
+        gender: user.gender,
+        password: user.password,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
 };

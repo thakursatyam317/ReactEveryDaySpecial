@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "../components/api"; // Adjust the import path as necessary
-import { Camera, Pencil } from "lucide-react";
+import { Camera, Pencil, Save } from "lucide-react";
 
 const Profile = () => {
   const [user, setUser] = useState(null);
@@ -47,8 +47,19 @@ const Profile = () => {
     setIsEditing(true);
   };
 
+  const handleSave = async () => {
+    try {
+      const updatedData = { fullName, email, dob, phone };
+      const res = await axios.put("/user/profile", updatedData);
+      setUser(res.data);
+      setIsEditing(false);
+    } catch (err) {
+      console.error("Failed to save profile", err);
+    }
+  };
+
   return (
-    <div className="max-w-3xl mx-auto p-6 mt-30 bg-white shadow-xl rounded-xl">
+    <div className="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-xl rounded-xl">
       <div className="flex justify-between items-start">
         <div className="flex flex-col items-center gap-4">
           <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-300">
@@ -66,12 +77,21 @@ const Profile = () => {
           <p className="text-gray-600">{user?.email}</p>
         </div>
 
-        <button
-          onClick={handleEdit}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-        >
-          <Pencil size={16} /> Edit Profile
-        </button>
+        {!isEditing ? (
+          <button
+            onClick={handleEdit}
+            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+          >
+            <Pencil size={16} /> Edit Profile
+          </button>
+        ) : (
+          <button
+            onClick={handleSave}
+            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+          >
+            <Save size={16} /> Save Changes
+          </button>
+        )}
       </div>
 
       <div className="mt-6 space-y-4">
