@@ -1,3 +1,4 @@
+import { token } from 'morgan';
 import { genAuthToken } from '../config/jwtAuth.js';
 import User from '../models/userModels.js';
 import bcrypt from 'bcrypt';
@@ -52,6 +53,7 @@ export const userLogin = async (req,res)=>{
                 gender: user.gender,
                 pic: user.pic,
                 },
+                token: genAuthToken(user._id, res),
             },
         )
 

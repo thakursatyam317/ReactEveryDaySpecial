@@ -1,7 +1,7 @@
+// src/App.js
 import React, { useState } from "react";
-
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-// import Footer from "./components/Footer";
+
 import Navbar from "./components/Navbar";
 import Home from "./pages/home";
 import Login from "./pages/Login";
@@ -16,45 +16,34 @@ import OrderPage from "./pages/OrderPage";
 import Wishlist from "./pages/Wishlist";
 import ConfirmAddress from "./pages/ConfirmAddress";
 import PaymentPage from "./pages/PaymentPage";
-//import Profile from "./pages/Profile";
 import Profile from "./pages/Profile";
-
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
-  return (
-    <>
-      <Router>
-        <Navbar cartItems={cartItems} />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/contactus" element={<Contactus />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/menu" element={<Menu />} />
-          <Route path="/cart" element={<Cart cartItems={cartItems} />} />
-          <Route
-            path="/category"
-            element={
-              <Category cartItems={cartItems} setCartItems={setCartItems} />
-            }
-          />
-          <Route path="/accountSection" element={<AccountSection />} />
-          <Route path="/order" element={<OrderPage />} />
-          <Route
-            path="/whishlist"
-            element={<Wishlist cartItems={cartItems} />}
-          />
-          <Route path="/confirm-address" element={<ConfirmAddress />} />
-          <Route path="/payment" element={<PaymentPage />} />
 
-          {/* <Route path="/authProfile/profile" element={<Profile />} /> */}
-          <Route path="/user/profile" element={<Profile />} />
-        </Routes>
-        {/* <Footer /> */}
-      </Router>
-    </>
+  return (
+    <Router>
+      <Navbar cartItems={cartItems} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/contactus" element={<Contactus />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/menu" element={<Menu />} />
+        <Route path="/cart" element={<Cart cartItems={cartItems} />} />
+        <Route
+          path="/category"
+          element={<Category cartItems={cartItems} setCartItems={setCartItems} />}
+        />
+        <Route path="/accountSection" element={<AccountSection />} />
+        <Route path="/order" element={<OrderPage />} />
+        <Route path="/wishlist" element={<Wishlist cartItems={cartItems} />} />
+        <Route path="/confirm-address" element={<ConfirmAddress />} />
+        <Route path="/payment" element={<PaymentPage />} />
+        <Route path="/profile" element={<Profile />} />
+      </Routes>
+    </Router>
   );
 }
 

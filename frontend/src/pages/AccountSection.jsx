@@ -1,4 +1,4 @@
-// AccountSection.js
+// src/pages/AccountSection.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -15,30 +15,24 @@ const AccountSection = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    console.log("Logged out");
-  };
-
-  const goToWishlist = () => {
-    navigate("/whishlist");
-  };
-
-  const goToOrders = () => {
-    navigate("/order");
+    localStorage.removeItem("token");
+    alert("Logged out successfully");
+    navigate("/login");
   };
 
   return (
-    <div className="w-[50%] mx-auto mt-40 p-6 bg-white shadow-lg rounded-2xl">
+    <div className="w-[90%] md:w-[50%] mx-auto mt-40 p-6 bg-white shadow-lg rounded-2xl">
       <h2 className="text-xl font-bold mb-6 text-center">My Account</h2>
 
       <div className="space-y-4 grid">
-        <div className="grid grid-cols-2">
-          <AccountButton icon={<FaBoxOpen />} text="Order" onClick={goToOrders} />
-          <AccountButton icon={<FaHeart />} text="Wishlist" onClick={goToWishlist} />
+        <div className="grid grid-cols-2 gap-2">
+          <AccountButton icon={<FaBoxOpen />} text="Order" onClick={() => navigate("/order")} />
+          <AccountButton icon={<FaHeart />} text="Wishlist" onClick={() => navigate("/wishlist")} />
           <AccountButton icon={<FaTags />} text="Coupons" />
           <AccountButton icon={<FaQuestionCircle />} text="Help Center" />
         </div>
 
-        <AccountButton icon={<FaUser />} text="Profile"  onClick={() => navigate("/user/profile")}/>
+        <AccountButton icon={<FaUser />} text="Profile" onClick={() => navigate("/profile")} />
         <AccountButton icon={<FaMapMarkerAlt />} text="Saved Addresses" />
         <AccountButton text="🌐 Select Language" />
         <AccountButton icon={<FaSignOutAlt />} text="Logout" onClick={handleLogout} />

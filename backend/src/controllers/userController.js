@@ -1,20 +1,37 @@
-import bcrypt from "bcrypt";
 import User from "../models/userModels.js";
 
-export const getProfile = async (req, res) => {
-  res.json(req.user);
+export const userProfile = async (req, res, next) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      const error = new Error("User not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.status(200).json({
+      message: "User profile fetched successfully",
+      user: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        mobileNumber: user.mobileNumber,
+        dob: user.dob,
+        gender: user.gender,
+        // profilePic: user.profilePic,
+     
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
-
-export const updateProfile = async (req, res) => {
-  const { name, email, password } = req.body;
-  const user = await User.findById(req.user._id);
-
-  user.name = name || user.name;
-  user.email = email || user.email;
-  if (password) {
-    user.password = await bcrypt.hash(password, 10);
+export const updateUserProfile = async (req, res, next) => {
+  try {
+    console.log(req.body);
+  } catch (error) {
+    next(error);
   }
-    await user.save();
-  res.json(user);
 };
