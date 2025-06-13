@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Coupons from "../assets/Coupon";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [selectedCoupon, setSelectedCoupon] = useState(null);
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,7 +17,7 @@ const Cart = () => {
     const updatedCart = cartItems.filter((item) => item.id !== id);
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("cartUpdated")); // 🔔 Notify Navbar
+    window.dispatchEvent(new Event("cartUpdated"));
   };
 
   const handleOrderNow = () => {
@@ -25,7 +28,38 @@ const Cart = () => {
     navigate("/confirm-address");
   };
 
-  const totalAmount = cartItems.reduce((acc, item) => acc + item.price, 0);
+  const getTotalAmount = () => {
+    return cartItems.reduce((acc, item) => {
+      const price = parseFloat(item.price);
+      return acc + (isNaN(price) ?  price: price);
+    }, 0);
+  };
+
+  const calculateDiscountedAmount = () => {
+    const total = getTotalAmount();
+    if (!appliedCoupon) return total;
+
+    if (appliedCoupon.discountType === "percentage") {
+      return total - (total * appliedCoupon.value) / 100;
+    } else if (appliedCoupon.discountType === "flat") {
+      return total - appliedCoupon.value;
+    }
+    return total;
+  };
+
+  const handleApplyCoupon = () => {
+    if (!selectedCoupon) return;
+    const total = getTotalAmount();
+    if (selectedCoupon.minAmount && total < selectedCoupon.minAmount) {
+      alert(`Minimum ₹${selectedCoupon.minAmount} required to use this coupon`);
+      return;
+    }
+    setAppliedCoupon(selectedCoupon);
+  };
+
+  const totalAmount = getTotalAmount();
+  const finalAmount = calculateDiscountedAmount();
+  const discountAmount = totalAmount - finalAmount;
 
   return (
     <div className="p-6 mt-6 w-full max-w-5xl mx-auto">
@@ -65,9 +99,48 @@ const Cart = () => {
             ))}
           </div>
 
+          {/* Coupon Section */}
+          <div className="mt-6">
+            <h3 className="text-xl font-semibold mb-2">Apply Coupon</h3>
+            <div className="flex gap-4 flex-wrap">
+              {Coupons.map((coupon) => (
+                <div
+                  key={coupon.id}
+                  onClick={() => setSelectedCoupon(coupon)}
+                  className={`p-4 rounded-lg border cursor-pointer shadow w-[200px] ${
+                    selectedCoupon?.code === coupon.code
+                      ? "border-green-500 bg-green-50"
+                      : "hover:border-gray-300"
+                  }`}
+                >
+                  <p className="font-bold">{coupon.code}</p>
+                  <p className="text-sm">{coupon.description}</p>
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={handleApplyCoupon}
+              className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+            >
+              Apply Coupon
+            </button>
+
+            {appliedCoupon && (
+              <p className="mt-2 text-green-600">
+                Coupon <b>{appliedCoupon.code}</b> applied! You saved ₹
+                {discountAmount.toFixed(2)}
+              </p>
+            )}
+          </div>
+
           <div className="mt-8 flex justify-between items-center">
             <h3 className="text-2xl font-semibold">
-              Total Amount: ₹{totalAmount.toFixed(2)}
+              Total: ₹{finalAmount.toFixed(2)}{" "}
+              {appliedCoupon && (
+                <span className="line-through text-gray-500 ml-2 text-lg">
+                  ₹{totalAmount.toFixed(2)}
+                </span>
+              )}
             </h3>
             <button
               onClick={handleOrderNow}

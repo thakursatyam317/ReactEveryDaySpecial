@@ -1,139 +1,137 @@
-// File: pages/UserProfile.jsx
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
-import React, { useState, useEffect } from "react";
-import axios from "../components/api"; // Adjust the import path as necessary
-import { Camera, Pencil, Save } from "lucide-react";
+axios.defaults.withCredentials = true; // send cookies with every request
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
-  const [avatarFile, setAvatarFile] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [formData, setFormData] = useState({});
   const [isEditing, setIsEditing] = useState(false);
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [dob, setDob] = useState("");
-  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
+  const fetchProfile = async () => {
+    try {
+      const res = await axios.get("http://localhost:4500/user/profile");
+      res.data.user;
+      console.log(res.data);
+      setProfile(res.data.user);
+      setFormData(res.data.user);
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Server error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  console.log(formData);
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get("/user/profile");
-        setUser(res.data);
-        setFullName(res.data.fullName);
-        setEmail(res.data.email);
-        setDob(res.data.dob);
-        setPhone(res.data.phone);
-      } catch (err) {
-        console.error("Failed to load profile", err);
-      }
-    };
     fetchProfile();
   }, []);
 
-  const handleAvatarChange = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const formData = new FormData();
-    formData.append("avatar", file);
-
-    try {
-      const res = await axios.post("/user/upload-avatar", formData);
-      setUser({ ...user, avatar: res.data.avatar });
-    } catch (err) {
-      console.error("Avatar upload failed", err);
-    }
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleEdit = () => {
-    setIsEditing(true);
-  };
-
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     try {
-      const updatedData = { fullName, email, dob, phone };
-      const res = await axios.put("/user/profile", updatedData);
-      setUser(res.data);
+      const res = await axios.put(
+        "http://localhost:4500/user/profile",
+        formData
+      );
+      setProfile(res.data.updatedUser);
       setIsEditing(false);
+      alert("Profile updated successfully!");
     } catch (err) {
-      console.error("Failed to save profile", err);
+      console.error("Update failed:", err);
+      alert(err.response?.data?.message || "Update failed");
     }
   };
+
+  if (loading)
+    return <div className="text-center mt-10 text-xl">Loading...</div>;
+  if (error)
+    return <div className="text-center mt-10 text-red-500">{error}</div>;
+  if (!profile)
+    return (
+      <div className="text-center mt-10 text-gray-500">
+        No profile data found
+      </div>
+    );
 
   return (
-    <div className="max-w-3xl mx-auto p-6 mt-10 bg-white shadow-xl rounded-xl">
-      <div className="flex justify-between items-start">
-        <div className="flex flex-col items-center gap-4">
-          <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-300">
-            <img
-              src={user?.avatar || "/default-avatar.png"}
-              alt="User Avatar"
-              className="object-cover w-full h-full"
+    <div className="flex justify-center mt-10">
+      <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold mb-6 text-center">👤 Your Profile</h2>
+        {formData && console.log(formData)}
+        <div className="space-y-4 text-gray-800">
+          <div>
+            <label className="block text-sm font-medium">Full Name:</label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName || ""}
+              onChange={handleChange}
+              disabled={!isEditing}
+              className="w-full mt-1 p-2 border rounded"
             />
-            <label className="absolute bottom-0 right-0 bg-white p-1 rounded-full shadow cursor-pointer">
-              <Camera size={20} />
-              <input type="file" className="hidden" onChange={handleAvatarChange} />
-            </label>
           </div>
-          <h1 className="text-2xl font-bold text-indigo-700">{user?.fullName}</h1>
-          <p className="text-gray-600">{user?.email}</p>
-        </div>
 
-        {!isEditing ? (
-          <button
-            onClick={handleEdit}
-            className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
-          >
-            <Pencil size={16} /> Edit Profile
-          </button>
-        ) : (
-          <button
-            onClick={handleSave}
-            className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-          >
-            <Save size={16} /> Save Changes
-          </button>
-        )}
-      </div>
+          <div>
+            <label className="block text-sm font-medium">Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email || ""}
+              onChange={handleChange}
+              disabled={!isEditing}
+              className="w-full mt-1 p-2 border rounded"
+            />
+          </div>
 
-      <div className="mt-6 space-y-4">
-        <div>
-          <label className="block text-sm font-medium">Full Name</label>
-          <input
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            className="w-full mt-1 border px-3 py-2 rounded-lg"
-            type="text"
-            disabled={!isEditing}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full mt-1 border px-3 py-2 rounded-lg"
-            type="email"
-            disabled={!isEditing}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Date of Birth</label>
-          <input
-            value={dob}
-            onChange={(e) => setDob(e.target.value)}
-            className="w-full mt-1 border px-3 py-2 rounded-lg"
-            type="date"
-            disabled={!isEditing}
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium">Mobile Number</label>
-          <input
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            className="w-full mt-1 border px-3 py-2 rounded-lg"
-            type="tel"
-            disabled={!isEditing}
-          />
+          <div>
+            <label className="block text-sm font-medium">Phone:</label>
+            <input
+              type="text"
+              name="phone"
+              value={formData.phone || ""}
+              onChange={handleChange}
+              disabled={!isEditing}
+              className="w-full mt-1 p-2 border rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium">Date of Birth:</label>
+            <input
+              type="date"
+              name="dob"
+              value={formData.dob?.slice(0, 10) || ""}
+              onChange={handleChange}
+              disabled={!isEditing}
+              className="w-full mt-1 p-2 border rounded"
+            />
+          </div>
+
+          <div className="text-center mt-6">
+            {isEditing ? (
+              <button
+                onClick={handleUpdate}
+                className="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600"
+              >
+                Save
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditing(true)}
+                className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+              >
+                Edit Profile
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

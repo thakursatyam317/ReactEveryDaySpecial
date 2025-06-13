@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 export const genAuthToken = (userId, res) => {
   try {
-    const token = jwt.sign({ key: userId }, process.env.JWT_SECRET_KEY, {
+    const token = jwt.sign({ key: userId }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
     
@@ -10,7 +10,7 @@ export const genAuthToken = (userId, res) => {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
       sameSite: "strict",
-      secure: false
+      secure: process.env.NODE_ENV === "production",
     });
   } catch (error) {
     console.log(error);

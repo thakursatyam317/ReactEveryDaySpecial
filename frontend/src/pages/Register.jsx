@@ -5,7 +5,7 @@ const Register = () => {
   const [data, setData] = useState({
     fullName: "",
     email: "",
-    mobileNumber: "",
+    phone: "", // updated here
     dob: "",
     gender: "",
     crPassword: "",
@@ -13,7 +13,12 @@ const Register = () => {
   });
 
   const [successMessage, setSuccessMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false); // ✅ to track if registration was successful
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  // Max allowed date = today - 12 years
+  const maxAllowedDate = new Date();
+  maxAllowedDate.setFullYear(maxAllowedDate.getFullYear() - 12);
+  const maxDateStr = maxAllowedDate.toISOString().split("T")[0];
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,18 +34,25 @@ const Register = () => {
       return;
     }
 
+    const birthDate = new Date(data.dob);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+   
+
     try {
       const res = await axios.post("http://127.0.0.1:4500/auth/register", data);
-      console.log("API Response:", res.status, res.data);
-
       if (res.status === 200 || res.status === 201) {
         setSuccessMessage("✅ User Registered Successfully");
         setIsSuccess(true);
-
         setData({
           fullName: "",
           email: "",
-          mobileNumber: "",
+          phone: "",
           dob: "",
           gender: "",
           crPassword: "",
@@ -61,14 +73,16 @@ const Register = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gray-100 p-4">
-      {/* Success or Error Message */}
       {successMessage && (
-        <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit ${isSuccess ? "text-green-600" : "text-red-500"}`}>
+        <div
+          className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit ${
+            isSuccess ? "text-green-600" : "text-red-500"
+          }`}
+        >
           {successMessage}
         </div>
       )}
 
-      {/*  Registration Form */}
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded-lg mt-30 shadow-md w-full max-w-lg"
@@ -103,13 +117,13 @@ const Register = () => {
           />
         </div>
 
-        {/* Mobile Number */}
+        {/* Phone Number */}
         <div className="mb-4">
-          <label className="block mb-1">Mobile Number</label>
+          <label className="block mb-1">Phone Number</label>
           <input
             type="text"
-            name="mobileNumber"
-            value={data.mobileNumber}
+            name="phone"
+            value={data.phone}
             onChange={handleChange}
             required
             placeholder="Enter your Phone Number"
@@ -126,7 +140,9 @@ const Register = () => {
             value={data.dob}
             onChange={handleChange}
             required
-            className="w-full border px-4 py-2 rounded"
+            max={maxDateStr}
+            onKeyDown={(e) => e.preventDefault()}
+            className="w-full border px-4 py-2 rounded bg-white cursor-pointer"
           />
         </div>
 
@@ -147,7 +163,7 @@ const Register = () => {
           </select>
         </div>
 
-        {/* Create Password */}
+        {/* Password */}
         <div className="mb-4">
           <label className="block mb-1">Create Password</label>
           <input
@@ -161,7 +177,6 @@ const Register = () => {
           />
         </div>
 
-        {/* Confirm Password */}
         <div className="mb-6">
           <label className="block mb-1">Confirm Password</label>
           <input

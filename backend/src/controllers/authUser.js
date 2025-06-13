@@ -82,6 +82,8 @@ export const userLogin = async (req, res, next) => {
         dob: user.dob,
         gender: user.gender,
         password: user.password,
+        profilePic: user.profilePic,
+        token : user.token,
       },
     });
   } catch (error) {

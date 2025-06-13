@@ -11,12 +11,16 @@ import About from "./pages/About";
 import Menu from "./pages/Menu";
 import Cart from "./pages/Cart";
 import Category from "./pages/Category";
-import AccountSection from "./pages/AccountSection";
+import Account from "./pages/Account";
 import OrderPage from "./pages/OrderPage";
 import Wishlist from "./pages/Wishlist";
 import ConfirmAddress from "./pages/ConfirmAddress";
 import PaymentPage from "./pages/PaymentPage";
 import Profile from "./pages/Profile";
+import Drinks from "./pages/Drinks";
+import BestSeller from "./pages/BestSeller";
+import ScrollNavbar from "./components/ScrollNavbar";
+import Coupon from "./pages/Coupon";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -36,12 +40,20 @@ function App() {
           path="/category"
           element={<Category cartItems={cartItems} setCartItems={setCartItems} />}
         />
-        <Route path="/accountSection" element={<AccountSection />} />
+        <Route path="/account" element={<Account />} />
         <Route path="/order" element={<OrderPage />} />
         <Route path="/wishlist" element={<Wishlist cartItems={cartItems} />} />
         <Route path="/confirm-address" element={<ConfirmAddress />} />
         <Route path="/payment" element={<PaymentPage />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/drink" element={<Drinks />} />
+        <Route path="/scrollnavbar" element={<ScrollNavbar />} />
+        <Route path="/bestseller" element={<BestSeller />} />
+        <Route
+          path="/coupon"
+          element={<Coupon  />}
+        />
+
       </Routes>
     </Router>
   );

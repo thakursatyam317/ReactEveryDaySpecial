@@ -9,6 +9,7 @@ export const userProfile = async (req, res, next) => {
       error.statusCode = 404;
       return next(error);
     }
+  
 
     res.status(200).json({
       message: "User profile fetched successfully",
@@ -26,6 +27,8 @@ export const userProfile = async (req, res, next) => {
     next(error);
   }
 };
+
+
 
 export const updateUserProfile = async (req, res, next) => {
   try {
