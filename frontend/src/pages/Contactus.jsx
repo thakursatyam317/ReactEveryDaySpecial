@@ -4,8 +4,8 @@ import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
 
 const Contactus = () => {
     return (
-   <section className="min-h-screen bg-gray-50 py-12 px-4 flex justify-center items-start mt-20">
-      <div className="bg-white shadow-md rounded-lg max-w-4xl w-full p-8">
+   <section className="h-[65%] bg-gray-50 py-12 px-4 flex justify-center items-start mt-20">
+      <div className="bg-white shadow-md rounded-lg max-w-4xl w-[85%]  p-8">
         <h1 className="text-4xl font-bold text-center text-yellow-400 mb-8">
           Contact Our Support
         </h1>

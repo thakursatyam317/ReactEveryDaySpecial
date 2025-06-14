@@ -1,11 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // 🔄 Import useNavigate
 
 const Register = () => {
+  const navigate = useNavigate(); // ✅ useNavigate for redirect
+
   const [data, setData] = useState({
     fullName: "",
     email: "",
-    phone: "", // updated here
+    phone: "",
     dob: "",
     gender: "",
     crPassword: "",
@@ -15,7 +18,7 @@ const Register = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Max allowed date = today - 12 years
+  // Set max DOB date to allow only users 12+ years old
   const maxAllowedDate = new Date();
   maxAllowedDate.setFullYear(maxAllowedDate.getFullYear() - 12);
   const maxDateStr = maxAllowedDate.toISOString().split("T")[0];
@@ -34,16 +37,6 @@ const Register = () => {
       return;
     }
 
-    const birthDate = new Date(data.dob);
-    const today = new Date();
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const m = today.getMonth() - birthDate.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-   
-
     try {
       const res = await axios.post("http://127.0.0.1:4500/auth/register", data);
       if (res.status === 200 || res.status === 201) {
@@ -58,6 +51,11 @@ const Register = () => {
           crPassword: "",
           password: "",
         });
+
+        // 🔁 Redirect to Login after 2.5s
+        setTimeout(() => {
+          navigate("/login");
+        }, 2500);
       } else {
         setSuccessMessage("❌ Registration failed. Please try again.");
         setIsSuccess(false);
@@ -72,10 +70,10 @@ const Register = () => {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-100 p-4">
+    <div className="relative h-[80%] mt-0 flex items-center justify-center bg-gray-100 p-3">
       {successMessage && (
         <div
-          className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit ${
+          className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white px-6 py-2 rounded shadow-lg text-lg font-semibold text-center w-fit ${
             isSuccess ? "text-green-600" : "text-red-500"
           }`}
         >
@@ -85,12 +83,12 @@ const Register = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white p-8 rounded-lg mt-30 shadow-md w-full max-w-lg"
+        className="bg-white p-7 rounded-lg mt-20 shadow-md w-full max-w-lg"
       >
         <h2 className="text-2xl font-bold text-center mb-6">Register Form</h2>
 
         {/* Full Name */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block mb-1">Full Name</label>
           <input
             type="text"
@@ -104,7 +102,7 @@ const Register = () => {
         </div>
 
         {/* Email */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block mb-1">Email</label>
           <input
             type="email"
@@ -118,7 +116,7 @@ const Register = () => {
         </div>
 
         {/* Phone Number */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block mb-1">Phone Number</label>
           <input
             type="text"
@@ -132,7 +130,7 @@ const Register = () => {
         </div>
 
         {/* DOB */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block mb-1">Date of Birth</label>
           <input
             type="date"
@@ -147,7 +145,7 @@ const Register = () => {
         </div>
 
         {/* Gender */}
-        <div className="mb-4">
+        <div className="mb-3">
           <label className="block mb-1">Gender</label>
           <select
             name="gender"
@@ -163,8 +161,8 @@ const Register = () => {
           </select>
         </div>
 
-        {/* Password */}
-        <div className="mb-4">
+        {/* Passwords */}
+        <div className="mb-3">
           <label className="block mb-1">Create Password</label>
           <input
             type="password"
@@ -177,7 +175,7 @@ const Register = () => {
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-5">
           <label className="block mb-1">Confirm Password</label>
           <input
             type="password"

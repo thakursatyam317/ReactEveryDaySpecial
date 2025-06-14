@@ -5,7 +5,9 @@ import Coupons from "../assets/Coupon";
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [appliedCoupon, setAppliedCoupon] = useState(
+    JSON.parse(localStorage.getItem("appliedCoupon")) || null
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,19 +30,15 @@ const Cart = () => {
     navigate("/confirm-address");
   };
 
-  const getTotalAmount = () => {
-    return cartItems.reduce((acc, item) => {
-      const price = parseFloat(item.price);
-      return acc + (isNaN(price) ?  price: price);
-    }, 0);
-  };
+  const getTotalAmount = () =>
+    cartItems.reduce((acc, item) => acc + parseFloat(item.price), 0);
 
   const calculateDiscountedAmount = () => {
     const total = getTotalAmount();
     if (!appliedCoupon) return total;
 
     if (appliedCoupon.discountType === "percentage") {
-      return total - (total * appliedCoupon.value) / 100;
+      return total - (total * appliedCoupon.discountValue) / 100;
     } else if (appliedCoupon.discountType === "flat") {
       return total - appliedCoupon.value;
     }
@@ -55,6 +53,7 @@ const Cart = () => {
       return;
     }
     setAppliedCoupon(selectedCoupon);
+    localStorage.setItem("appliedCoupon", JSON.stringify(selectedCoupon)); // ⬅️ Save to localStorage
   };
 
   const totalAmount = getTotalAmount();
@@ -69,7 +68,7 @@ const Cart = () => {
         <p>No items in cart.</p>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 gap-6">
             {cartItems.map((item) => (
               <div
                 key={item.id}
@@ -99,7 +98,6 @@ const Cart = () => {
             ))}
           </div>
 
-          {/* Coupon Section */}
           <div className="mt-6">
             <h3 className="text-xl font-semibold mb-2">Apply Coupon</h3>
             <div className="flex gap-4 flex-wrap">

@@ -3,7 +3,7 @@ import React from "react";
 const Footer = () => {
   return (
     <>
-      <footer className="bg-[#1e1e1e] text-white pt-12 px-6 mt-[0px]">
+      <footer className="bg-[#1e1e1e] text-white pt-12 px-6 mt-[0px] mb-[-25Px]">
         <div className="max-w-screen-xl mx-auto">
           {/* Top Cities */}
           <h1 className="text-lg font-bold ml-28 mb-6">Our Top Cities</h1>

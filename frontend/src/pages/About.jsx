@@ -5,7 +5,7 @@ import { FaStore, FaShippingFast, FaSmile } from "react-icons/fa";
 const About = () => {
   return (
     <>
-    <section className="min-h-screen bg-white py-12 px-6 md:px-12 mt-20">
+    <section className="h-[75%] bg-white py-12 px-6 md:px-12 mt-20">
       <div className="max-w-5xl mx-auto text-center">
         <h1 className="text-4xl font-bold text-yellow-400 mb-6">
           About Every Day Special

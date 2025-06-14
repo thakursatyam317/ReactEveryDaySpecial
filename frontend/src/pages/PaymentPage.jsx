@@ -1,10 +1,23 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import QRImage from "../assets/QR_Code.jpg"; // Your QR code image
+import QRImage from "../assets/QR_Code.jpg";
 
 const PaymentPage = () => {
   const navigate = useNavigate();
   const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
+  const appliedCoupon = JSON.parse(localStorage.getItem("appliedCoupon"));
+
+  const totalAmount = cartItems.reduce((acc, item) => acc + parseFloat(item.price), 0);
+
+  const finalAmount = (() => {
+    if (!appliedCoupon) return totalAmount;
+    if (appliedCoupon.discountType === "percentage") {
+      return totalAmount - (totalAmount * appliedCoupon.discountValue) / 100;
+    } else if (appliedCoupon.discountType === "flat") {
+      return totalAmount - appliedCoupon.value;
+    }
+    return totalAmount;
+  })();
 
   const handlePlaceOrder = (paymentMethod) => {
     const address = localStorage.getItem("deliveryAddress");
@@ -23,12 +36,11 @@ const PaymentPage = () => {
 
     const existingOrders = JSON.parse(localStorage.getItem("orders")) || [];
 
-    // Save full cartItems here, not just names
     const newOrder = {
       id: "ORD" + Date.now(),
       date: new Date().toISOString().split("T")[0],
-      items: cartItems, // Save entire item objects (with image, price, etc)
-      total: cartItems.reduce((acc, item) => acc + item.price, 0),
+      items: cartItems,
+      total: finalAmount,
       address,
       payment: paymentMethod,
       status: "Confirmed",
@@ -39,11 +51,10 @@ const PaymentPage = () => {
 
     localStorage.removeItem("cart");
     localStorage.removeItem("deliveryAddress");
+    localStorage.removeItem("appliedCoupon");
 
     navigate("/order");
   };
-
-  const totalAmount = cartItems.reduce((acc, item) => acc + item.price, 0);
 
   return (
     <div className="max-w-xl mx-auto p-6 mt-30 bg-white rounded shadow">
@@ -57,7 +68,7 @@ const PaymentPage = () => {
             onClick={() => handlePlaceOrder("QR Code")}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
           >
-            Done & Place Order (₹{totalAmount})
+            Done & Place Order (₹{finalAmount.toFixed(2)})
           </button>
         </div>
 
@@ -67,7 +78,7 @@ const PaymentPage = () => {
             onClick={() => handlePlaceOrder("Cash on Delivery")}
             className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
           >
-            Place Order (₹{totalAmount})
+            Place Order (₹{finalAmount.toFixed(2)})
           </button>
         </div>
       </div>
