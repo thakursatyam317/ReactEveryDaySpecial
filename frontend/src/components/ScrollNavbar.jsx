@@ -1,51 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 
-const ScrollAwareGrid = () => {
+const StickyScroll = () => {
+  const headerRef = useRef(null);
   const [isSticky, setIsSticky] = useState(false);
-  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
+    const header = headerRef.current;
+    const stickyOffset = header.offsetTop;
+
     const handleScroll = () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY < lastScrollY && currentScrollY > 100) {
-        setIsSticky(true); // scroll up → fix
+      if (window.pageYOffset > stickyOffset) {
+        setIsSticky(true);
       } else {
-        setIsSticky(false); // scroll down → release
+        setIsSticky(false);
       }
-
-      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   return (
-    <>
+    <div className="font-sans">
       <div
-        className={`transition-all duration-300 ease-in-out ${
-          isSticky ? "fixed top-16 left-0 right-0 z-40 bg-white shadow-md" : "relative"
+        ref={headerRef}
+        className={` text-yellow-500 text-sm  ${
+          isSticky ? "fixed top-0 w-[1570px] z-50 mt-22 -ml-7" : ""
         }`}
       >
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-6xl mx-auto px-4 py-3">
-          {["Offer", "Category", "Account", "Drink"].map((name) => (
-            <Link
-              key={name}
-              to={`/${name.toLowerCase()}`}
-              className="p-4 bg-gray-100 rounded-xl text-center shadow hover:bg-gray-200"
-            >
-              {name}
-            </Link>
-          ))}
+        <div className="flex justify-center h-20  bg-white shadow-md">
+          <div className="flex gap-30">
+            <div className="h-[50px] w-[220px] bg-white shadow rounded-xl flex items-center justify-center hover:bg-gray-100 transition">
+              <Link
+                to={"/category"}
+                className="text-lg font-medium text-center"
+              >
+                Category
+              </Link>
+            </div>
+            <div className="h-[50px] w-[220px] bg-white shadow rounded-xl flex items-center justify-center hover:bg-gray-100 transition">
+              <Link to={"/drink"} className="text-lg font-medium text-center">
+                Drink
+              </Link>
+            </div>
+            <div className="h-[50px] w-[220px] bg-white shadow rounded-xl flex items-center justify-center hover:bg-gray-100 transition">
+              <Link className="text-lg font-medium text-center">Offer</Link>
+            </div>
+            <div className="h-[50px] w-[220px] bg-white shadow rounded-xl flex items-center justify-center hover:bg-gray-100 transition">
+              <Link to={"/account"} className="text-lg font-medium text-center">
+                Account
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Add space below so content doesn't jump */}
-      <div className="h-24" />
-    </>
+      <div className={`p-4 ${isSticky ? "pt-24" : ""}`}></div>
+    </div>
   );
 };
 
-export default ScrollAwareGrid;
+export default StickyScroll;

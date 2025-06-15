@@ -20,7 +20,7 @@ const Login = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
-        credentials: "include", // ✅ important to include cookies
+        credentials: "include",
       });
 
       const data = await response.json();
@@ -29,6 +29,9 @@ const Login = () => {
       if (response.ok) {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(data.user));
+
+        // ✅ Trigger update in Navbar
+        window.dispatchEvent(new Event("authChange"));
 
         setIsSuccess(true);
         setSuccessMessage("✅ Login Successfully");
@@ -97,7 +100,7 @@ const Login = () => {
 
         <button
           type="submit"
-          className="w-full bg-yellow-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
+          className="w-full bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg transition duration-200"
         >
           Login
         </button>

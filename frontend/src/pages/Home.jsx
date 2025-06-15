@@ -27,32 +27,17 @@ const home = () => {
           <p className="text-gray-600 mb-6">
             Find the best deals on your favorite Foods
           </p>
-          {/* <button className='bg-yellow-400  h-[50px] w-[100px] rounded-2xl hover:text-white'>Shop Now</button> */}
+          
         </div>
 
-        {/* Categories */}
+      
         <div>
           <h2 className="text-2xl font-semibold mb-4">Shop by Category</h2>
           {/* 🔒 Fixed Grid Under Navbar */}
          <ScrollNavbar />
         </div>
 
-        {/* Featured Products */}
-        {/* <div>
-        <h2 className="text-2xl font-semibold mb-4">Featured Products</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          {featuredProducts.map((product) => (
-            <Card key={product.id}>
-              <div className="text-center">
-                <img src={product.image} alt={product.name} className="w-full h-40 object-cover rounded-xl mb-4" />
-                <h3 className="text-lg font-medium">{product.name}</h3>
-                <p className="text-gray-500">{product.price}</p>
-                <Button className="mt-3">Add to Cart</Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div> */}
+       
       </div>
       <BestSeller />
 
