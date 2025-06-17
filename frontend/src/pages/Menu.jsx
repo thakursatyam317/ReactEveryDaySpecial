@@ -7,108 +7,91 @@ import { CiSearch } from "react-icons/ci";
 
 const Manu = () => {
   const [foods, setFoods] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
-    // Simulate API call
     setFoods(FoodApi);
   }, []);
+
+  const uniqueFoods = [];
+  const seen = new Set();
+  for (const item of foods) {
+    const name = (item.name || "").trim().toLowerCase();
+    const image = (item.image || "");
+    const key = `${name}||${image}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      uniqueFoods.push(item);
+    }
+  }
+
+  const filteredFoods = uniqueFoods.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <>
-      <div className="container h-[60px] w-[400px] border-2 rounded mx-auto flex mt-2 my-[20px] ">
-        <span className="  my-auto flex border-none ">
-          <CiSearch className="my-auto  text-2xl mx-1" />
-          <input
-            type="text"
-            placeholder="Search our Foods"
-            className="h-[60px] w-[400px] border-none outline-none text-2xl"
-          />
-          
-        </span>
+    <div className="px-4 md:px-10 mt-26">
+      {/* Search Box */}
+      <div className="max-w-xl h-14 border-2 rounded-full mx-auto flex items-center px-4 my-8 shadow-md">
+        <CiSearch className="text-2xl text-gray-500" />
+        <input
+          type="text"
+          placeholder="Search our Foods"
+          className="w-full h-full border-none outline-none text-lg pl-3"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
 
-      
-
-
-      <div className=" grid grid-cols-4 gap-6">
-        {foods.map((item) => (
-          <div key={item.id} className=" grid rounded-xl shadow p-4 hover:scale-110">
+      {/* Grid Items */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        {filteredFoods.map((item, index) => (
+          <div
+            key={index}
+            className="rounded-xl shadow-lg p-4 hover:scale-105 transform transition duration-300 bg-white"
+          >
             <img
               src={item.image}
               alt={item.name}
-              className="rounded w-full h-60 object-cover mb-4 "
+              className="rounded-xl w-full h-60 object-cover mb-4"
             />
-            <h2 className="text-xl font-bold">{item.name}</h2>
-            <div className="grid grid-cols-2 place-content-between gap-4 ">
-              <p className="text-sm text-gray-500">{item.category}</p>
-              {/* <p className="text-sm text-gray-500"><FaStar />{item.rating}</p> */}
-
-              {/* <p className="text-yellow-500 ml-9 hover:">Nutritional</p> */}
-            </div>
-            <p className="text-orange-500 font-semibold">
-              ₹{item.price.toFixed(2)}
+            <h2 className="text-xl font-semibold mb-1">{item.name}</h2>
+            <p className="text-sm text-gray-500 mb-1">{item.category}</p>
+            <p className="text-orange-500 font-semibold mb-1">₹{item.price.toFixed(2)}</p>
+            <p className="text-yellow-500 flex items-center mb-2">
+              <FaStar className="text-yellow-500 mr-2" /> {item.rating}
             </p>
-            <p className="text-yellow-500 flex">
-              <FaStar className="text-yellow-500 h-[100%] my-auto mx-2" />{" "}
-              {item.rating}
-            </p>
-            {/* <p className="text-yellow-500"> {item.nutritionalfacts}</p> */}
-            <div className="relative  inline-block group ml-[0%]">
-              <a
-                href="#"
-                className="text-yellow-500 font-semibold w-auto  hover:underline "
-              >
-                Nutritional Fact
-              </a>
 
-              <div className="absolute shadow-2xl top-full mt-2 w-64 bg-white  rounded-xl p-4 text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-                <p>
-                  <strong>Weight:</strong>
-                  {item.nutritionalfacts?.weight || "0 g"}g
-                </p>
-                <p>
-                  <strong>Calories:</strong>
-                  {item.nutritionalfacts?.calories || "0 g"} kcal
-                </p>
-                <p>
-                  <strong>Protein:</strong>{" "}
-                  {item.nutritionalfacts?.protein || "0 g"}g
-                </p>
-                <p>
-                  <strong>Carbohydrate:</strong>{" "}
-                  {item.nutritionalfacts?.carbohydrate || "0 g"}g
-                </p>
-                <p>
-                  <strong>Fat:</strong> {item.nutritionalfacts?.fats || "0 g"}g
-                </p>
-
-                <p>
-                  <strong>Sugar:</strong>{" "}
-                  {item.nutritionalfacts?.sugar || "0 g"}g
-                </p>
-                <p>
-                  <strong>Fiber:</strong>{" "}
-                  {item.nutritionalfacts?.fiber || "0 g"}g
-                </p>
-                <p className="mt-3 ">
-                  The Nutrational Facts is Average of all Foods
-                </p>
+            {/* Nutritional Info */}
+            <div className="relative group">
+              <button className="text-yellow-500 font-semibold hover:underline">
+                Nutritional Facts
+              </button>
+              <div className="absolute top-full mt-2 w-72 bg-white rounded-xl p-4 text-sm shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                <p><strong>Weight:</strong> {item.nutritionalfacts?.weight || "0"}g</p>
+                <p><strong>Calories:</strong> {item.nutritionalfacts?.calories || "0"} kcal</p>
+                <p><strong>Protein:</strong> {item.nutritionalfacts?.protein || "0"}g</p>
+                <p><strong>Carbohydrate:</strong> {item.nutritionalfacts?.carbohydrate || "0"}g</p>
+                <p><strong>Fat:</strong> {item.nutritionalfacts?.fats || "0"}g</p>
+                <p><strong>Sugar:</strong> {item.nutritionalfacts?.sugar || "0"}g</p>
+                <p><strong>Fiber:</strong> {item.nutritionalfacts?.fiber || "0"}g</p>
+                <p className="mt-3 text-gray-600">*Average values for display only.</p>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 place-content-between gap-4">
-              <button className="bg-amber-500 px-5 py-2 text-white rounded-2xl  flex justify-center">
-                <FaShoppingCart className="h-[100%] my-auto mx-2" />
-                <span className="my-auto">Add</span>
+            {/* Action Buttons */}
+            <div className="flex justify-between mt-4 gap-2">
+              <button className="bg-amber-500 hover:bg-amber-600 px-4 py-2 text-white rounded-xl flex items-center justify-center w-full">
+                <FaShoppingCart className="mr-2" /> Add
               </button>
-              <button className="bg-amber-500 px-5 py-2 text-white rounded-2xl flex justify-center ">
-                <PiHeartFill className="h-[100%] my-auto mx-2" />
-                <span className="my-auto">Watchlist</span>
+              <button className="bg-amber-500 hover:bg-amber-600 px-4 py-2 text-white rounded-xl flex items-center justify-center w-full">
+                <PiHeartFill className="mr-2" /> Watchlist
               </button>
             </div>
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 };
 

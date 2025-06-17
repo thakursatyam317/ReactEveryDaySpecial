@@ -19,9 +19,9 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.static("public"));  // serve public/uploads
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("🗄️ MongoDB connected"))
-  .catch(console.error);
+ mongoose.connect(process.env.MONGO_URI)
+   .then(() => console.log("🗄️ MongoDB connected"))
+   .catch(console.error);
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);

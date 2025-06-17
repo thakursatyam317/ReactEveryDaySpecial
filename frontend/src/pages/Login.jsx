@@ -30,7 +30,7 @@ const Login = () => {
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(data.user));
 
-        // ✅ Trigger update in Navbar
+        //  Trigger update in Navbar
         window.dispatchEvent(new Event("authChange"));
 
         setIsSuccess(true);

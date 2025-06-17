@@ -32,7 +32,7 @@ const Category = () => {
   }, []);
 
   const handleCheckboxChange = (value, selected, setSelected) => {
-    if (selected.includes(value)) {
+    if (selected.includes(value)) {// it is checked or not
       setSelected(selected.filter((item) => item !== value));
     } else {
       setSelected([...selected, value]);
@@ -118,7 +118,7 @@ const Category = () => {
                   type="checkbox"
                   id={`category-${item}`}
                   className="mr-2"
-                  checked={selectedCategories.includes(item)}
+                  checked={selectedCategories.includes(item)}// includes() ek JavaScript method hai jo check karta hai ki kisi array ke andar koi value hai ya nahi
                   onChange={() =>
                     handleCheckboxChange(item, selectedCategories, setSelectedCategories)
                   }

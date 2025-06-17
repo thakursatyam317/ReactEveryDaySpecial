@@ -3,9 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom"; // 🔄 Import useNavigate
 
 const Register = () => {
-  const navigate = useNavigate(); // ✅ useNavigate for redirect
+  const navigate = useNavigate(); //  useNavigate for redirect
 
-  const [data, setData] = useState({
+  const [data, setData] = useState({ // it is use to re-render the web site (auto-Relaod) page
     fullName: "",
     email: "",
     phone: "",
@@ -31,14 +31,14 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (data.crPassword !== data.password) {
+    if (data.crPassword !== data.password) {// create password not equal to the password
       setSuccessMessage("❌ Passwords do not match");
       setIsSuccess(false);
       return;
     }
 
     try {
-      const res = await axios.post("http://127.0.0.1:4500/auth/register", data);
+      const res = await axios.post("http://127.0.0.1:4500/auth/register", data);//backend ko respone pe data bhej do 
       if (res.status === 200 || res.status === 201) {
         setSuccessMessage("✅ User Registered Successfully");
         setIsSuccess(true);
@@ -52,7 +52,7 @@ const Register = () => {
           password: "",
         });
 
-        // 🔁 Redirect to Login after 2.5s
+        //  Register to Login after 2.5s
         setTimeout(() => {
           navigate("/login");
         }, 2500);
@@ -76,7 +76,7 @@ const Register = () => {
           className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-white px-6 py-2 rounded shadow-lg text-lg font-semibold text-center w-fit ${
             isSuccess ? "text-green-600" : "text-red-500"
           }`}
-        >
+          >
           {successMessage}
         </div>
       )}

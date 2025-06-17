@@ -9,16 +9,19 @@ const home = () => {
   return (
     <>
       <div className="p-6 space-y-10 mt-20">
-        <div className="h-[60px] w-[400px] border-2 rounded mx-auto flex ">
-          <Link to="/menu" className="  my-auto flex border-none ">
-            <CiSearch className="my-auto mx-0.5 text-2xl" />
+
+         <div className="max-w-lg h-14 border-2 rounded-full mx-auto w-[95%] flex items-center px-4 shadow-sm hover:shadow-md transition">
+          <Link to="/menu" className="flex items-center w-full">
+            <CiSearch className="text-2xl text-gray-500" />
             <input
               type="text"
               placeholder="Search our Foods"
-              className="h-[60px] w-[400px] border-none outline-none text-2xl"
+              className="w-full h-full border-none outline-none text-lg pl-3"
             />
           </Link>
         </div>
+
+        
         {/* Hero Section */}
         <div className="bg-gray-100 rounded-2xl shadow-lg p-10 text-center">
           <h1 className="text-4xl font-bold mb-4">

@@ -29,7 +29,7 @@ const StickyScroll = () => {
           isSticky ? "fixed top-0 w-[1570px] z-50 mt-22 -ml-7" : ""
         }`}
       >
-        <div className="flex justify-center h-20  bg-white shadow-md">
+        <div className="flex justify-center h-20 -mt-1  bg-white shadow-md">
           <div className="flex gap-30">
             <div className="h-[50px] w-[220px] bg-white shadow rounded-xl flex items-center justify-center hover:bg-gray-100 transition">
               <Link
