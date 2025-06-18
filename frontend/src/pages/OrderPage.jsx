@@ -43,7 +43,7 @@ const OrderPage = () => {
               <h3 className="font-bold text-lg mb-2">Order ID: {order.id}</h3>
               <p>Date: {order.date}</p>
               <p>Payment: {order.payment}</p>
-              <p>Total Amount: ₹{order.total}</p>
+              <p>Total Amount: ₹{order.total.toFixed(2)}</p>
               <p>Status: {order.status}</p>
               <p className="mt-2 font-semibold">Items:</p>
 

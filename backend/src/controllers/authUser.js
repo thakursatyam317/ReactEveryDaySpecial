@@ -91,3 +91,23 @@ export const userLogin = async (req, res, next) => {
     next(error);
   }
 };
+
+
+
+export const userLogout = async (req, res, next) => {
+  try {
+    // Clear the token from the request (if using cookies, clear the cookie)
+    res.cookie("token", "", {
+      httpOnly: true,
+      expires: new Date(0), // Set expiration to the past
+    });
+
+    // Send response
+    res.status(200).json({
+      message: "Logout successful",
+    });
+  } catch (error) {
+    error.statusCode = 500;
+    next(error);
+  }
+};
