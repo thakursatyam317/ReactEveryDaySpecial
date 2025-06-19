@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { FaCamera } from "react-icons/fa";
 
 axios.defaults.withCredentials = true;
 
 const Profile = () => {
   const [profile, setProfile] = useState(null);
   const [formData, setFormData] = useState({});
-  const [image, setImage] = useState(null);
-  const [preview, setPreview] = useState("");
+ 
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
+  const [preview, setPreview] = useState("");
+  const [photo, setPhoto] = useState("");
+
+  const [loading, setLoading] = useState(false);
 
   const fetchProfile = async () => {
     try {
@@ -30,10 +33,7 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+ 
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -70,6 +70,47 @@ const Profile = () => {
     }
   };
 
+
+  
+
+
+  const handlePhotoChange = (e) => {
+    const fileURL = URL.createObjectURL(e.target.files[0]);
+    setPreview(fileURL);
+    setPhoto(e.target.files[0]);
+    console.log("Change photo button clicked");
+  };
+
+  const handleChange = (e) => {
+    //every time i am writing anything in the input the function is called and everything is stored
+    const { name, value } = e.target;
+    setData((prev) => ({ ...prev, [name]: value })); //...prev thing
+  };
+
+  const handelSave = async () => {
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("name", data.fullName);
+    formData.append("email", data.email);
+    formData.append("photo", photo);
+
+    try {
+      const res = await backend.put("/user/update", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      sessionStorage.setItem("user", JSON.stringify(res.data.user));
+      setUser(res.data.user);
+      setIsLogin(true);
+      toast.success(res.data.message);
+    } catch (error) {
+      toast.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   if (loading)
     return <div className="text-center mt-10 text-xl">Loading...</div>;
   if (error)
@@ -95,6 +136,14 @@ const Profile = () => {
             alt="Profile"
             className="w-60 h-60 rounded-full object-cover"
           />
+           <label className="absolute mt-40 ml-48 border h-10 w-10 p-2 rounded-full flex justify-center items-center hover:text-[#fac20c] group">
+              <FaCamera className=" text-[#fac20c] group-hover:text-shadow-yellow-700 text-lg" />
+              <input
+                type="file"
+                className="hidden"
+                onChange={handlePhotoChange}
+              />
+            </label>
           
         </div>
 

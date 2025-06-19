@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
-import Logo from "../assets/logo.png"; // Your logo path
+import Logo from "../assets/logo.png";
+import axios from "axios"; // Import axios if not already
+// import toast from "react-toastify"; // Removed toast since you are using your custom message
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -10,22 +12,18 @@ const Navbar = () => {
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
-  // Check login status & cart count on mount
   useEffect(() => {
     checkLoginStatus();
     updateCartCount();
   }, []);
 
-  // Update cart count & login status on storage changes and focus
   useEffect(() => {
     const updateState = () => {
       checkLoginStatus();
       updateCartCount();
     };
-
     window.addEventListener("storage", updateState);
     window.addEventListener("focus", updateState);
-
     return () => {
       window.removeEventListener("storage", updateState);
       window.removeEventListener("focus", updateState);
@@ -48,17 +46,29 @@ const Navbar = () => {
     setTimeout(() => setSuccessMessage(""), 3000);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("isLoggedIn");
-    localStorage.removeItem("user");
-    showSuccessMessage("Logged out successfully", true);
-    setIsLoggedIn(false);
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+     localStorage.removeItem("user");
+      localStorage.setItem("isLoggedIn", "false");
+
+      const res = await axios.post("http://127.0.0.1:4500/auth/logout");
+      if (res.data.message) {
+        showSuccessMessage(res.data.message, true);
+      } else {
+        showSuccessMessage("✅ Logged out successfully", true);
+      }
+
+      setIsLoggedIn(false);
+      setTimeout(() => navigate("/"), 1500); // Delay redirect for success message
+    } catch (error) {
+      console.error("Error during logout:", error);
+      showSuccessMessage("❌ Logout failed. Please try again.", false);
+    }
   };
 
   return (
     <>
-      {/* Success Message */}
+      {/* Success Message Popup */}
       {successMessage && (
         <div
           className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit transition duration-300 ${
@@ -69,6 +79,7 @@ const Navbar = () => {
         </div>
       )}
 
+      {/* Navbar */}
       <nav className="bg-yellow-400 text-white shadow fixed top-0 left-0 w-full z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           {/* Logo */}
@@ -76,7 +87,7 @@ const Navbar = () => {
             <img src={Logo} alt="Logo" className="h-[60px]" />
           </div>
 
-          {/* Navigation Links */}
+          {/* Nav Links */}
           <div className="space-x-5 flex items-center">
             <Link to="/" className="hover:text-gray-300">
               Home
@@ -106,7 +117,7 @@ const Navbar = () => {
               </button>
             )}
 
-            {/* Cart Icon with Badge */}
+            {/* Cart Icon */}
             <div
               className="relative cursor-pointer"
               onClick={() => navigate("/cart")}

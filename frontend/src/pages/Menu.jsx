@@ -8,17 +8,54 @@ import { CiSearch } from "react-icons/ci";
 const Manu = () => {
   const [foods, setFoods] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [cartItems, setCartItems] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
 
   useEffect(() => {
     setFoods(FoodApi);
+    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setCartItems(storedCart);
+    setWishlist(storedWishlist);
   }, []);
+
+  const showMessage = (msg) => {
+    setSuccessMessage(msg);
+    setTimeout(() => setSuccessMessage(""), 2000); // Hide after 2s
+  };
+
+  const handleAddToCart = (item) => {
+    const isAlreadyInCart = cartItems.some((i) => i.id === item.id);
+    if (isAlreadyInCart) {
+      showMessage("🛒 Already in cart");
+      return;
+    }
+
+    const updatedCart = [...cartItems, { ...item, quantity: 1 }];
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("cartUpdated"));
+    showMessage("✅ Added to cart");
+  };
+
+  const handleAddToWishlist = (item) => {
+    const isAlreadyInWishlist = wishlist.some((i) => i.id === item.id);
+    if (isAlreadyInWishlist) {
+      showMessage("❤️ Already in watchlist");
+      return;
+    }
+
+    const updatedWishlist = [...wishlist, item];
+    setWishlist(updatedWishlist);
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    showMessage("💖 Added to watchlist");
+  };
 
   const uniqueFoods = [];
   const seen = new Set();
   for (const item of foods) {
-    const name = (item.name || "").trim().toLowerCase();
-    const image = (item.image || "");
-    const key = `${name}||${image}`;
+    const key = `${item.name?.trim().toLowerCase()}||${item.image}`;
     if (!seen.has(key)) {
       seen.add(key);
       uniqueFoods.push(item);
@@ -30,7 +67,14 @@ const Manu = () => {
   );
 
   return (
-    <div className="px-4 md:px-10 mt-26">
+    <div className="px-4 md:px-10 mt-26 relative">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="fixed top-10 left-1/2 transform -translate-x-1/2 bg-amber-50 text-yellow-600 text-xl px-6 py-2 rounded-2xl font-semibold shadow-lg z-50 transition-all duration-300">
+          {successMessage}
+        </div>
+      )}
+
       {/* Search Box */}
       <div className="max-w-xl h-14 border-2 rounded-full mx-auto flex items-center px-4 my-8 shadow-md">
         <CiSearch className="text-2xl text-gray-500" />
@@ -62,16 +106,16 @@ const Manu = () => {
               <FaStar className="text-yellow-500 mr-2" /> {item.rating}
             </p>
 
-            {/* Nutritional Info */}
+            {/* Nutritional Info on Hover */}
             <div className="relative group">
               <button className="text-yellow-500 font-semibold hover:underline">
                 Nutritional Facts
               </button>
-              <div className="absolute top-full mt-2 w-72 bg-white rounded-xl p-4 text-sm shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+              <div className="absolute top-full left-0 mt-2 w-72 bg-white border rounded-xl p-4 text-sm shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-opacity duration-300 z-40">
                 <p><strong>Weight:</strong> {item.nutritionalfacts?.weight || "0"}g</p>
                 <p><strong>Calories:</strong> {item.nutritionalfacts?.calories || "0"} kcal</p>
                 <p><strong>Protein:</strong> {item.nutritionalfacts?.protein || "0"}g</p>
-                <p><strong>Carbohydrate:</strong> {item.nutritionalfacts?.carbohydrate || "0"}g</p>
+                <p><strong>Carbs:</strong> {item.nutritionalfacts?.carbohydrate || "0"}g</p>
                 <p><strong>Fat:</strong> {item.nutritionalfacts?.fats || "0"}g</p>
                 <p><strong>Sugar:</strong> {item.nutritionalfacts?.sugar || "0"}g</p>
                 <p><strong>Fiber:</strong> {item.nutritionalfacts?.fiber || "0"}g</p>
@@ -81,10 +125,16 @@ const Manu = () => {
 
             {/* Action Buttons */}
             <div className="flex justify-between mt-4 gap-2">
-              <button className="bg-amber-500 hover:bg-amber-600 px-4 py-2 text-white rounded-xl flex items-center justify-center w-full">
+              <button
+                onClick={() => handleAddToCart(item)}
+                className="bg-amber-500 hover:bg-amber-600 px-4 py-2 text-white rounded-xl flex items-center justify-center w-full"
+              >
                 <FaShoppingCart className="mr-2" /> Add
               </button>
-              <button className="bg-amber-500 hover:bg-amber-600 px-4 py-2 text-white rounded-xl flex items-center justify-center w-full">
+              <button
+                onClick={() => handleAddToWishlist(item)}
+                className="bg-amber-500 hover:bg-amber-600 px-4 py-2 text-white rounded-xl flex items-center justify-center w-full"
+              >
                 <PiHeartFill className="mr-2" /> Watchlist
               </button>
             </div>

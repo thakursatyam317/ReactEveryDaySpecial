@@ -8,18 +8,18 @@ const PaymentPage = () => {
   const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
   const appliedCoupon = JSON.parse(localStorage.getItem("appliedCoupon"));
   const [selectedUPI, setSelectedUPI] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
-  const totalAmount = cartItems.reduce((acc, item) => acc + parseFloat(item.price), 0);
+  const totalAmount = cartItems.reduce(
+    (acc, item) => acc + parseFloat(item.price) * (item.quantity || 1),
+    0
+  );
 
-  const finalAmount = (() => {
-    if (!appliedCoupon) return totalAmount;
-    if (appliedCoupon.discountType === "percentage") {
-      return totalAmount - (totalAmount * appliedCoupon.discountValue) / 100;
-    } else if (appliedCoupon.discountType === "flat") {
-      return totalAmount - appliedCoupon.value;
-    }
-    return totalAmount;
-  })();
+  const finalAmount = appliedCoupon
+    ? appliedCoupon.discountType === "percentage"
+      ? totalAmount - (totalAmount * appliedCoupon.discountValue) / 100
+      : totalAmount - appliedCoupon.value
+    : totalAmount;
 
   const handlePlaceOrder = (paymentMethod) => {
     const address = localStorage.getItem("deliveryAddress");
@@ -48,35 +48,44 @@ const PaymentPage = () => {
       status: "Confirmed",
     };
 
-    const updatedOrders = [...existingOrders, newOrder];
-    localStorage.setItem("orders", JSON.stringify(updatedOrders));
-
+    localStorage.setItem("orders", JSON.stringify([...existingOrders, newOrder]));
     localStorage.removeItem("cart");
     localStorage.removeItem("deliveryAddress");
     localStorage.removeItem("appliedCoupon");
 
-    navigate("/order");
+    
+
+    setTimeout(() => {
+      setSuccessMessage(`✅ Order placed successfully using ${paymentMethod}!`);
+      navigate("/order");
+    }, 500);
   };
 
   return (
-    <div className="max-w-xl mx-auto p-6 mt-30 bg-white rounded shadow">
-      <h2 className="text-2xl font-bold mb-6 text-center">💳 Choose Payment Method</h2>
+    <div className="max-w-xl mx-auto p-6 mt-10 bg-white rounded shadow relative">
+      {/* Success Message */}
+      {successMessage && (
+        <div className="absolute top-0 left-0 w-full bg-green-100 text-green-800 font-medium text-center py-2 rounded-t">
+          {successMessage}
+        </div>
+      )}
+
+      <h2 className="text-2xl font-bold mb-6 text-center mt-8">💳 Choose Payment Method</h2>
 
       <div className="space-y-6">
-
-        {/* QR Payment */}
+        {/* QR Code */}
         <div className="border p-4 rounded">
           <h3 className="text-xl font-semibold mb-2">Scan & Pay via QR</h3>
-          <img src={QRImage} alt="QR Code" className="w-64 h-64 mb-4" />
+          <img src={QRImage} alt="QR Code" className="w-64 h-64 mb-4 mx-auto" />
           <button
             onClick={() => handlePlaceOrder("QR Code")}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700"
+            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-700 w-full"
           >
             Done & Place Order (₹{finalAmount.toFixed(2)})
           </button>
         </div>
 
-        {/* UPI Icons */}
+        {/* UPI */}
         <div className="border p-4 rounded">
           <h3 className="text-xl font-semibold mb-4">Pay using UPI Apps</h3>
           <div className="flex justify-around items-center mb-4 text-5xl">
@@ -99,12 +108,12 @@ const PaymentPage = () => {
           </button>
         </div>
 
-        {/* COD */}
+        {/* Cash on Delivery */}
         <div className="border p-4 rounded">
           <h3 className="text-xl font-semibold mb-2">Cash on Delivery</h3>
           <button
             onClick={() => handlePlaceOrder("Cash on Delivery")}
-            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600"
+            className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 w-full"
           >
             Place Order (₹{finalAmount.toFixed(2)})
           </button>

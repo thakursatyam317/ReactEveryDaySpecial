@@ -12,7 +12,11 @@ const Cart = () => {
 
   useEffect(() => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCartItems(storedCart);
+    const updatedCart = storedCart.map((item) => ({
+      ...item,
+      quantity: item.quantity || 1,
+    }));
+    setCartItems(updatedCart);
   }, []);
 
   const handleRemoveFromCart = (id) => {
@@ -20,6 +24,24 @@ const Cart = () => {
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("cartUpdated"));
+  };
+
+  const handleIncreaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
+  const handleDecreaseQuantity = (id) => {
+    const updatedCart = cartItems.map((item) =>
+      item.id === id && item.quantity > 1
+        ? { ...item, quantity: item.quantity - 1 }
+        : item
+    );
+    setCartItems(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
   };
 
   const handleOrderNow = () => {
@@ -31,7 +53,7 @@ const Cart = () => {
   };
 
   const getTotalAmount = () =>
-    cartItems.reduce((acc, item) => acc + parseFloat(item.price), 0);
+    cartItems.reduce((acc, item) => acc + item.quantity * parseFloat(item.price), 0);
 
   const calculateDiscountedAmount = () => {
     const total = getTotalAmount();
@@ -53,7 +75,7 @@ const Cart = () => {
       return;
     }
     setAppliedCoupon(selectedCoupon);
-    localStorage.setItem("appliedCoupon", JSON.stringify(selectedCoupon)); // ⬅️ Save to localStorage
+    localStorage.setItem("appliedCoupon", JSON.stringify(selectedCoupon));
   };
 
   const totalAmount = getTotalAmount();
@@ -83,9 +105,24 @@ const Cart = () => {
                   <h3 className="text-3xl font-bold mt-2">{item.name}</h3>
                   <p className="text-xl font-semibold mt-2">{item.category}</p>
                   <p className="text-xl font-semibold mt-2">₹{item.price}</p>
-                  <p className="text-xl font-semibold mt-2">{item.rating}</p>
+                  <p className="text-xl font-semibold mt-2">⭐ {item.rating}</p>
 
                   <div className="flex items-center justify-start mt-6 space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={() => handleDecreaseQuantity(item.id)}
+                        className="px-3 py-1 bg-gray-300 rounded text-xl font-bold"
+                      >
+                        −
+                      </button>
+                      <span className="px-4 text-xl">{item.quantity}</span>
+                      <button
+                        onClick={() => handleIncreaseQuantity(item.id)}
+                        className="px-3 py-1 bg-gray-300 rounded text-xl font-bold"
+                      >
+                        +
+                      </button>
+                    </div>
                     <button
                       onClick={() => handleRemoveFromCart(item.id)}
                       className="bg-red-400 text-white px-6 py-2 rounded hover:bg-red-700"
