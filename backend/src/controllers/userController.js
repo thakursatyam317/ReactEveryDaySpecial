@@ -44,7 +44,7 @@ export const updateUserProfile = async (req, res, next) => {
       return next(error);
     }
 
-    let profilePictureURL = req.user.profilePicture;
+    let profilePictureURL = req.user.profilePic;
 
     // Upload to cloudinary if photo exists
     if (photo) {
@@ -76,7 +76,7 @@ export const updateUserProfile = async (req, res, next) => {
         email,
         phone,
         dob,
-        profilePicture: profilePictureURL,
+        profilePic:  result.secure_url || req.user.profilePic,
       },
       { new: true }
     ).select("-password");

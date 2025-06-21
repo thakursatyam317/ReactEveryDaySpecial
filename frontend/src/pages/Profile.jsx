@@ -25,7 +25,7 @@ const Profile = () => {
 
       const data = await res.json();
       setFormData(data.user);
-      setAuthUser(data.user); // ✅ Set in context
+      setAuthUser(data.user);
       setPreview(data.user.profilePic);
     } catch (err) {
       setError(err.message || "Server error");
@@ -38,7 +38,6 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
-  // Image change handler
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -48,14 +47,12 @@ const Profile = () => {
     }
   };
 
-  // Input change handler
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setIsEditing(true);
   };
 
-  // Update profile handler
   const handleUpdate = async () => {
     try {
       setLoading(true);
@@ -65,6 +62,9 @@ const Profile = () => {
       form.append("phone", formData.phone);
       form.append("dob", formData.dob);
       if (photo) form.append("profilePic", photo);
+
+      
+      
 
       const res = await fetch("http://localhost:4500/user/update", {
         method: "PUT",
@@ -78,6 +78,7 @@ const Profile = () => {
 
       setFormData(data.updatedUser);
       setAuthUser(data.updatedUser);
+      setPreview(data.updatedUser.profilePic); // ✅ Update image preview after update
       sessionStorage.setItem("user", JSON.stringify(data.updatedUser));
       setIsEditing(false);
       toast.success("✅ Profile updated successfully!");
@@ -113,8 +114,8 @@ const Profile = () => {
               alt="Profile"
               className="w-60 h-60 rounded-full object-cover"
             />
-            <label className="absolute bottom-2 right-2 bg-white border h-10 w-10 p-2 rounded-full flex justify-center items-center hover:bg-[#FF4081] group cursor-pointer">
-              <FaCamera className="text-[#FF4081] group-hover:text-white text-lg" />
+            <label className="absolute bottom-20 right-3 border h-10 w-10 p-2 rounded-full flex justify-center items-center hover:bg-amber-400 group cursor-pointer">
+              <FaCamera className="text-amber-900 group-hover:text-white text-lg" />
               <input
                 type="file"
                 className="hidden"
