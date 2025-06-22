@@ -33,20 +33,18 @@ export const userProfile = async (req, res, next) => {
 
 export const updateUserProfile = async (req, res, next) => {
   try {
-    const { fullName, email, phone, dob } = req.body;
+    const { fullName, email, phone, dob, gender } = req.body;
     const photo = req.file;
 
-    console.log("Received fields:", { fullName, email, phone, dob });
+    console.log("Debug: Incoming body", req.body);
+    console.log("Debug: Current user", req.user);
 
     if (!fullName || !email) {
-      const error = new Error("Full name and email are required");
-      error.statusCode = 400;
-      return next(error);
+      return res.status(400).json({ message: "Full name and email are required" });
     }
 
     let profilePictureURL = req.user.profilePic;
 
-    // Upload to cloudinary if photo exists
     if (photo) {
       const b64 = Buffer.from(photo.buffer).toString("base64");
       const dataURI = `data:${photo.mimetype};base64,${b64}`;
@@ -58,17 +56,17 @@ export const updateUserProfile = async (req, res, next) => {
         crop: "fill",
       });
 
-      if (!result || !result.secure_url) {
-        const error = new Error("Failed to upload image to Cloudinary");
-        error.statusCode = 500;
-        return next(error);
+      console.log("Cloudinary upload result:", result);
+
+      if (!result?.secure_url) {
+        return res.status(500).json({ message: "Failed to upload image to Cloudinary" });
       }
 
       profilePictureURL = result.secure_url;
-      console.log("Uploaded image URL:", profilePictureURL);
     }
 
-    // Update user in DB
+    console.log("Final profile URL to be saved:", profilePictureURL);
+
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       {
@@ -76,23 +74,25 @@ export const updateUserProfile = async (req, res, next) => {
         email,
         phone,
         dob,
-        profilePic:  result.secure_url || req.user.profilePic,
+        gender,
+        profilePic: profilePictureURL,
       },
       { new: true }
     ).select("-password");
 
+    console.log("Updated user response:", updatedUser);
+
     if (!updatedUser) {
-      const error = new Error("User not found");
-      error.statusCode = 404;
-      return next(error);
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json({
       message: "User updated successfully",
-      user: updatedUser,
+      updatedUser,
     });
   } catch (error) {
     console.error("Error updating user:", error);
-    next(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
+

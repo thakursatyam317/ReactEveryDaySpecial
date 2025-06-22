@@ -64,7 +64,6 @@ const Profile = () => {
       if (photo) form.append("profilePic", photo);
 
       
-      
 
       const res = await fetch("http://localhost:4500/user/update", {
         method: "PUT",
