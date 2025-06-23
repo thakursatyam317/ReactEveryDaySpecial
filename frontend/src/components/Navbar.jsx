@@ -2,24 +2,22 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
 import Logo from "../assets/logo.png";
-import axios from "axios"; // Import axios if not already
-// import toast from "react-toastify"; // Removed toast since you are using your custom message
+import axios from "axios";
+import { useAuth } from "../context/authContext"; // ✅ Import auth context
 
 const Navbar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { authUser, setAuthUser } = useAuth(); // ✅ use auth context
   const [successMessage, setSuccessMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkLoginStatus();
     updateCartCount();
   }, []);
 
   useEffect(() => {
     const updateState = () => {
-      checkLoginStatus();
       updateCartCount();
     };
     window.addEventListener("storage", updateState);
@@ -29,11 +27,6 @@ const Navbar = () => {
       window.removeEventListener("focus", updateState);
     };
   }, []);
-
-  const checkLoginStatus = () => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-    setIsLoggedIn(loggedIn);
-  };
 
   const updateCartCount = () => {
     const cartItems = JSON.parse(localStorage.getItem("cart")) || [];
@@ -48,7 +41,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-     localStorage.removeItem("user");
+      localStorage.removeItem("user");
       localStorage.setItem("isLoggedIn", "false");
 
       const res = await axios.post("http://127.0.0.1:4500/auth/logout");
@@ -58,8 +51,8 @@ const Navbar = () => {
         showSuccessMessage("✅ Logged out successfully", true);
       }
 
-      setIsLoggedIn(false);
-      setTimeout(() => navigate("/"), 1500); // Delay redirect for success message
+      setAuthUser(null); // ✅ Clear context
+      setTimeout(() => navigate("/"), 1500);
     } catch (error) {
       console.error("Error during logout:", error);
       showSuccessMessage("❌ Logout failed. Please try again.", false);
@@ -68,7 +61,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* Success Message Popup */}
       {successMessage && (
         <div
           className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit transition duration-300 ${
@@ -79,39 +71,38 @@ const Navbar = () => {
         </div>
       )}
 
-      {/* Navbar */}
       <nav className="bg-yellow-400 text-white shadow fixed top-0 left-0 w-full z-50">
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           {/* Logo */}
-          <div>
-            <img src={Logo} alt="Logo" className="h-[60px]" />
-          </div>
+          <Link to="/">
+            <img  src={Logo} alt="Logo" className="h-[60px]" />
+          </Link>
 
           {/* Nav Links */}
           <div className="space-x-5 flex items-center">
-            <Link to="/" className="hover:text-gray-300">
+            <Link to="/" className=" navAnimation hover:text-gray-300">
               Home
             </Link>
-            <Link to="/about" className="hover:text-gray-300">
+            <Link to="/about" className="navAnimation hover:text-gray-300">
               About
             </Link>
-            <Link to="/contactus" className="hover:text-gray-300">
+            <Link to="/contactus" className="navAnimation hover:text-gray-300">
               Contact Us
             </Link>
 
-            {!isLoggedIn ? (
+            {!authUser ? (
               <>
-                <Link to="/login" className="hover:text-gray-300">
+                <Link to="/login" className="navAnimation hover:text-gray-300">
                   Login
                 </Link>
-                <Link to="/register" className="hover:text-gray-300">
+                <Link to="/register" className="navAnimation hover:text-gray-300">
                   Register
                 </Link>
               </>
             ) : (
               <button
                 onClick={handleLogout}
-                className="hover:text-gray-300 focus:outline-none"
+                className="navAnimation hover:text-gray-300 focus:outline-none"
               >
                 Logout
               </button>
@@ -127,11 +118,11 @@ const Navbar = () => {
               onKeyDown={(e) => e.key === "Enter" && navigate("/cart")}
             >
               <FaShoppingCart size={24} />
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-[1px]">
-                  {cartCount}
-                </span>
-              )}
+              {/* {cartCount > 0 && (
+                // <span className="navAnimation absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-[1px]">
+                //   {cartCount}
+                // </span>
+              )} */}
             </div>
           </div>
         </div>

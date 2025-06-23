@@ -1,6 +1,29 @@
 @import "tailwindcss";
 
+.navAnimation {
+  width: max-content;
+  position: relative;
+ 
+  cursor: pointer;
+}
 
+.navAnimation::after {
+   right: 0%;
+  content: "";
+  position: absolute;
+  bottom: -5px;
+  height: 3px; /* Adjust thickness */
+  width: 100%;
+  border-radius: 10%;
+  background-color: white; /* ✅ Set line color */
+  transition: transform 0.3s ease-in-out;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.navAnimation:hover::after {
+  transform: scaleX(1);
+}
 
 /* .sticky-grid {
   position: fixed;

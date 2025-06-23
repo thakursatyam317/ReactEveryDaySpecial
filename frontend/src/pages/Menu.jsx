@@ -76,12 +76,12 @@ const Manu = () => {
       )}
 
       {/* Search Box */}
-      <div className="max-w-xl h-14 border-2 rounded-full mx-auto flex items-center px-4 my-8 shadow-md">
+      <div className=" max-w-xl h-14 border-2 rounded-full mx-auto flex items-center px-4 my-8 shadow-md">
         <CiSearch className="text-2xl text-gray-500" />
         <input
           type="text"
           placeholder="Search our Foods"
-          className="w-full h-full border-none outline-none text-lg pl-3"
+          className="w-full h-full border-none outline-none text-lg pl-3 "
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
