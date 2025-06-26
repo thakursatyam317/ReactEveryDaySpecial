@@ -21,6 +21,11 @@ import Drinks from "./pages/Drinks";
 import BestSeller from "./pages/BestSeller";
 import ScrollNavbar from "./components/ScrollNavbar";
 import Coupon from "./pages/Coupon";
+import AdminDashboard from "./admin/Dashboard";
+import OrderPlaceOrNot from "./admin/OrderPlaceOrNot"; // Uncomment if needed
+import ProductManagement from "./admin/ProductManagement";
+import UserManagement from "./admin/UserManagement"; // Uncomment if needed
+import CouponsAdmin from "./admin/CouponsAdmin";
 
 function App() {
   const [cartItems, setCartItems] = useState([]);
@@ -53,6 +58,16 @@ function App() {
           path="/coupon"
           element={<Coupon  />}
         />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        <Route path="/admin/order-status" element={<OrderPlaceOrNot />} />
+        <Route path="/admin/product-management" element={<ProductManagement />} />
+        <Route path="/admin/users" element={<UserManagement />} />
+        <Route path="/admin/coupons" element={<CouponsAdmin />} />
+        {/* Uncomment the line below if you want to use OrderPlaceOrNot */}
+        {/* <Route path="/admin/order-place-or-not" element={<OrderPlaceOrNot />} /> */}
+
+
+        
 
       </Routes>
     </Router>

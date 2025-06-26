@@ -1,24 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaShoppingCart } from "react-icons/fa";
+
 import Logo from "../assets/logo.png";
 import axios from "axios";
-import { useAuth } from "../context/authContext"; // ✅ Import auth context
+import { useAuth } from "../context/authContext";
 
 const Navbar = () => {
-  const { authUser, setAuthUser } = useAuth(); // ✅ use auth context
+  const { authUser, setAuthUser } = useAuth();
   const [successMessage, setSuccessMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(true);
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("user"));
+    setAuthUser(userData); // ✅ Ensure user is synced on reload
     updateCartCount();
   }, []);
 
   useEffect(() => {
     const updateState = () => {
       updateCartCount();
+      const userData = JSON.parse(localStorage.getItem("user"));
+      setAuthUser(userData); // ✅ Sync on focus or storage change
     };
     window.addEventListener("storage", updateState);
     window.addEventListener("focus", updateState);
@@ -51,7 +56,7 @@ const Navbar = () => {
         showSuccessMessage("✅ Logged out successfully", true);
       }
 
-      setAuthUser(null); // ✅ Clear context
+      setAuthUser(null);
       setTimeout(() => navigate("/"), 1500);
     } catch (error) {
       console.error("Error during logout:", error);
@@ -75,12 +80,12 @@ const Navbar = () => {
         <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
           {/* Logo */}
           <Link to="/">
-            <img  src={Logo} alt="Logo" className="h-[60px]" />
+            <img src={Logo} alt="Logo" className="h-[60px]" />
           </Link>
 
           {/* Nav Links */}
           <div className="space-x-5 flex items-center">
-            <Link to="/" className=" navAnimation hover:text-gray-300">
+            <Link to="/" className="navAnimation hover:text-gray-300">
               Home
             </Link>
             <Link to="/about" className="navAnimation hover:text-gray-300">
@@ -90,6 +95,18 @@ const Navbar = () => {
               Contact Us
             </Link>
 
+            {/* ✅ Admin Dashboard */}
+            {authUser?.role === "admin" && (
+              <Link
+                to="/admin/dashboard"
+                className="navAnimation hover:text-gray-300 flex items-center gap-1"
+              >
+              
+                Dashboard
+              </Link>
+            )}
+
+            {/* ✅ Auth Links */}
             {!authUser ? (
               <>
                 <Link to="/login" className="navAnimation hover:text-gray-300">
@@ -118,10 +135,11 @@ const Navbar = () => {
               onKeyDown={(e) => e.key === "Enter" && navigate("/cart")}
             >
               <FaShoppingCart size={24} />
+              {/* Optional cart count */}
               {/* {cartCount > 0 && (
-                // <span className="navAnimation absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-[1px]">
-                //   {cartCount}
-                // </span>
+                <span className="navAnimation absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold rounded-full px-2 py-[1px]">
+                  {cartCount}
+                </span>
               )} */}
             </div>
           </div>

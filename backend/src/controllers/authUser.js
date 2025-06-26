@@ -2,75 +2,80 @@ import User from "../models/userModels.js";
 import bcrypt from "bcrypt";
 import generateToken from "../config/jwtAuth.js";
 
+// ✅ Register User
 export const userRegister = async (req, res) => {
   try {
-    const {
-      fullName,
-      email,
-      phone,
-      dob,
-      gender,
-    
-      password,
-    } = req.body;
+    const { fullName, email, phone, dob, gender, password } = req.body;
 
-    if (
-      !fullName ||
-      !email ||
-      !phone ||
-      !dob ||
-      !gender ||
-      !password
-    ) {
-      console.log("all fields required");
-      return;
+    // Check all fields
+    if (!fullName || !email || !phone || !dob || !gender || !password) {
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const ProfilePic =
-      `https://placehold.co/600x400?text=` + fullName.charAt(0).toUpperCase();
+    // Check if user already exists
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(409).json({ message: "User already exists" });
+    }
 
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Generate placeholder profile image
+    const profilePic = `https://placehold.co/600x400?text=${fullName
+      .charAt(0)
+      .toUpperCase()}`;
+
+    // Create user
     const newUser = await User.create({
       fullName,
       email,
       phone,
       dob,
       gender,
-      profilePic: ProfilePic,
       password: hashedPassword,
-      
+      profilePic,
     });
 
-    res.status(200).json({ messsage: "User Created ", newUser });
-  } catch (e) {
-    console.log(e.message);
+    res.status(201).json({
+      message: "User created successfully",
+      user: {
+        fullName: newUser.fullName,
+        email: newUser.email,
+        phone: newUser.phone,
+        dob: newUser.dob,
+        gender: newUser.gender,
+        profilePic: newUser.profilePic,
+        role: newUser.role,
+        status: newUser.status,
+      },
+    });
+  } catch (error) {
+    console.error("Register Error:", error.message);
+    res.status(500).json({ message: "Server error during registration" });
   }
 };
 
+// ✅ Login User
 export const userLogin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
+
     if (!email || !password) {
-      const error = new Error("All fields are required");
-      error.statusCode = 400;
-      return next(error);
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const user = await User.findOne({ email });
     if (!user) {
-      const error = new Error("User not found");
-      error.statusCode = 404;
-      return next(error);
+      return res.status(404).json({ message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      const error = new Error("Invalid password");
-      error.statusCode = 401;
-      return next(error);
+      return res.status(401).json({ message: "Invalid password" });
     }
 
-    //generate token
+    // Generate token in cookie
     generateToken(user._id, res);
 
     res.status(200).json({
@@ -81,33 +86,27 @@ export const userLogin = async (req, res, next) => {
         phone: user.phone,
         dob: user.dob,
         gender: user.gender,
-        password: user.password,
         profilePic: user.profilePic,
-        token : user.token,
+        role: user.role,
+        status: user.status,
       },
     });
   } catch (error) {
-    console.log(error);
-    next(error);
+    console.error("Login Error:", error.message);
+    res.status(500).json({ message: "Server error during login" });
   }
 };
 
-
-
-export const userLogout = async (req, res, next) => {
+// ✅ Logout User
+export const userLogout = (req, res) => {
   try {
-    // Clear the token from the request (if using cookies, clear the cookie)
     res.cookie("token", "", {
       httpOnly: true,
-      expires: new Date(0), // Set expiration to the past
+      expires: new Date(0),
     });
 
-    // Send response
-    res.status(200).json({
-      message: "Logout successful",
-    });
+    res.status(200).json({ message: "Logout successful" });
   } catch (error) {
-    error.statusCode = 500;
-    next(error);
+    res.status(500).json({ message: "Server error during logout" });
   }
 };

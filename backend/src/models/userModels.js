@@ -9,6 +9,7 @@ const userSchema = mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
     },
     phone: {
       type: String,
@@ -26,15 +27,14 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    // status: {
-    //   type: String,
-    //   enum: ["Active", "Suspended", "Terminated", "Retired", "Resigned"],
-    //   required: true,
-    //   default: "Active",
-    // },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
     profilePic: {
       type: String,
-      default: "", // Placeholder URL
+      default: "",
     },
   },
   { timestamps: true }

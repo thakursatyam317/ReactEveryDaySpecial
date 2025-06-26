@@ -7,6 +7,7 @@ import cors from "cors";
 import authRoutes from "./src/router/authRouter.js";
 import userRoutes from "./src/router/userRouter.js";
 
+import adminRoutes from "./src/router/adminRouter.js"; // Import admin routes
 dotenv.config();
 
 const app = express();
@@ -25,5 +26,6 @@ app.use(express.static("public"));  // serve public/uploads
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.listen(process.env.PORT, () => console.log(`🚀 Server running on port ${process.env.PORT}`));

@@ -5,6 +5,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [role, setRole] = useState("user"); // 👈 Default to user
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,28 +28,38 @@ const Login = () => {
       console.log("Response from backend:", data);
 
       if (response.ok) {
+        const user = data.user;
         localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(user));
 
-        //  Trigger update in Navbar
         window.dispatchEvent(new Event("authChange"));
 
+        // Handle Role-based redirect
+        if (role === "admin" && user.role !== "admin") {
+          setIsSuccess(false);
+          setSuccessMessage("❌ You are not authorized as Admin");
+          localStorage.removeItem("isLoggedIn");
+          localStorage.removeItem("user");
+          setTimeout(() => setSuccessMessage(""), 3000);
+          return;
+        }
+
         setIsSuccess(true);
-        setSuccessMessage("✅ Login Successfully");
+        setSuccessMessage("✅ Login Successful!");
 
         setTimeout(() => {
           setSuccessMessage("");
-          navigate("/");
-        }, 2000);
+          navigate(role === "admin" ? "/admin/dashboard" : "/");
+        }, 1500);
       } else {
         setIsSuccess(false);
-        setSuccessMessage(data.message || "❌ Login failed. Please try again.");
+        setSuccessMessage(data.message || "❌ Login failed. Try again.");
         setTimeout(() => setSuccessMessage(""), 3000);
       }
     } catch (error) {
       console.error("Login error:", error);
       setIsSuccess(false);
-      setSuccessMessage("❌ Login failed. Please try again.");
+      setSuccessMessage("❌ Login failed. Try again.");
       setTimeout(() => setSuccessMessage(""), 3000);
     }
   };
@@ -57,8 +68,9 @@ const Login = () => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100 relative">
       {successMessage && (
         <div
-          className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit
-          ${isSuccess ? "bg-white text-green-600" : "bg-white text-red-500"}`}
+          className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit ${
+            isSuccess ? "bg-white text-green-600" : "bg-white text-red-500"
+          }`}
         >
           {successMessage}
         </div>
@@ -69,6 +81,32 @@ const Login = () => {
         className="bg-white p-8 rounded-lg shadow-md w-full max-w-md"
       >
         <h2 className="text-4xl font-bold text-center mb-6">Login</h2>
+
+        {/* Radio buttons for User or Admin */}
+        <div className="mb-6 flex justify-center gap-6">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="role"
+              value="user"
+              checked={role === "user"}
+              onChange={() => setRole("user")}
+              className="accent-yellow-400"
+            />
+            <span className="text-gray-700 font-medium">User</span>
+          </label>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="role"
+              value="admin"
+              checked={role === "admin"}
+              onChange={() => setRole("admin")}
+              className="accent-blue-600"
+            />
+            <span className="text-gray-700 font-medium">Admin</span>
+          </label>
+        </div>
 
         <div className="mb-4">
           <label className="block text-gray-700 mb-2">Email</label>
