@@ -1,34 +1,39 @@
-// src/middleware/adminMiddleware.js
 import jwt from "jsonwebtoken";
-import User from "../models/userModels.js"; // ✅ Ensure path is correct
+import User from "../models/userModels.js";
 
-// Middleware to check if user is logged in
 export const userProtect = async (req, res, next) => {
+  const token = req.cookies.token;
+
+  console.log("Cookies:", req.cookies);
+
+  if (!token) {
+    console.log("❌ No token found in cookie");
+    return res.status(401).json({ message: "Token Not Found" });
+  }
+
   try {
-    const token = req.cookies.token;
+    console.log("🔍 Verifying Token:", token);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // should contain userId
+    console.log("✅ Token Decoded:", decoded);
 
-    if (!token) {
-      return res.status(401).json({ message: "Unauthorized: Token missing" });
+    const verifiedUser = await User.findById(decoded.userId); // ✅ fixed this line
+    if (!verifiedUser) {
+      return res.status(404).json({ message: "User not found" });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id).select("-password");
-
-    if (!user) {
-      return res.status(401).json({ message: "Unauthorized: User not found" });
-    }
-
-    req.user = user;
+    req.user = verifiedUser;
     next();
-  } catch (error) {
-    res.status(401).json({ message: "Unauthorized: Invalid token" });
+  } catch (err) {
+    console.error("❌ Invalid Token:", err.message);
+    return res.status(403).json({ message: "Invalid or Expired Token" });
   }
 };
 
-// Middleware to check if logged-in user is an admin
-export const isAdmin = (req, res, next) => {
-  if (req.user?.role !== "admin") {
-    return res.status(403).json({ message: "Access denied: Admins only" });
+// ✅ Optional: Middleware for Admin-Only Routes
+export const adminOnly = (req, res, next) => {
+  if (req.user && req.user.role === "admin") {
+    next();
+  } else {
+    return res.status(403).json({ message: "Admin access only" });
   }
-  next();
 };

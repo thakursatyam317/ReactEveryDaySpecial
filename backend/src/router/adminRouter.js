@@ -1,20 +1,15 @@
-// src/routes/adminRoutes.js
 import express from 'express';
 import {
   getAllUsers,
-  deleteUser,
-  promoteToAdmin,
+  toggleUserRole,
+  toggleUserStatus
 } from '../controllers/adminController.js';
-import {
-  userProtect,
-  isAdmin,
-} from '../middleware/adminMiddleware.js'; // ✅ Correct middleware
+import { adminOnly } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// 🔐 Protected Admin Routes
-router.get('/users', userProtect, isAdmin, getAllUsers);         // Fetch all users
-router.delete('/user/:id', userProtect, isAdmin, deleteUser);    // Delete a user
-router.put('/promote/:id', userProtect, isAdmin, promoteToAdmin); // Promote user to admin
+router.get('/users', adminOnly, getAllUsers);
+router.put('/users/userId/role', adminOnly, toggleUserRole);
+router.put('/users/userId/status', adminOnly, toggleUserStatus);
 
 export default router;

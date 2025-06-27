@@ -50,7 +50,7 @@ function App() {
         <Route path="/wishlist" element={<Wishlist cartItems={cartItems} />} />
         <Route path="/confirm-address" element={<ConfirmAddress />} />
         <Route path="/payment" element={<PaymentPage />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/user/profile" element={<Profile />} />
         <Route path="/drink" element={<Drinks />} />
         <Route path="/scrollnavbar" element={<ScrollNavbar />} />
         <Route path="/bestseller" element={<BestSeller />} />
