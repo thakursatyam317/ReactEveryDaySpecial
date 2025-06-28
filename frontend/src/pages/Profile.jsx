@@ -6,17 +6,25 @@ import { useAuth } from "../context/authContext";
 
 const Profile = () => {
   const { authUser, setAuthUser } = useAuth();
-  const [formData, setFormData] = useState({});
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    dob: "",
+  });
+
   const [isEditing, setIsEditing] = useState(false);
   const [error, setError] = useState("");
   const [preview, setPreview] = useState("");
-  const [photo, setPhoto] = useState("");
+  const [photo, setPhoto] = useState(null);
   const [loading, setLoading] = useState(false);
 
   // Fetch profile on component mount
   const fetchProfile = async () => {
     try {
       setLoading(true);
+      setError(""); // clear old error
       const res = await fetch("http://localhost:4500/user/profile", {
         credentials: "include",
       });
@@ -38,6 +46,15 @@ const Profile = () => {
     fetchProfile();
   }, []);
 
+  // Cleanup preview memory leaks
+  useEffect(() => {
+    return () => {
+      if (preview?.startsWith("blob:")) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
+
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -56,14 +73,15 @@ const Profile = () => {
   const handleUpdate = async () => {
     try {
       setLoading(true);
+
       const form = new FormData();
       form.append("fullName", formData.fullName);
       form.append("email", formData.email);
       form.append("phone", formData.phone);
       form.append("dob", formData.dob);
-      if (photo) form.append("profilePic", photo);
-
-      
+      if (photo && typeof photo === "object") {
+        form.append("profilePic", photo);
+      }
 
       const res = await fetch("http://localhost:4500/user/update", {
         method: "PUT",
@@ -71,13 +89,13 @@ const Profile = () => {
         body: form,
       });
 
-      if (!res.ok) throw new Error("Update failed");
-
       const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Update failed");
 
       setFormData(data.updatedUser);
       setAuthUser(data.updatedUser);
-      setPreview(data.updatedUser.profilePic); // ✅ Update image preview after update
+      setPreview(data.updatedUser.profilePic);
       sessionStorage.setItem("user", JSON.stringify(data.updatedUser));
       setIsEditing(false);
       toast.success("✅ Profile updated successfully!");
@@ -88,18 +106,21 @@ const Profile = () => {
     }
   };
 
-  if (loading && !authUser)
+  if (loading && !authUser) {
     return <div className="text-center mt-10 text-xl">Loading...</div>;
+  }
 
-  if (error)
+  if (error) {
     return <div className="text-center mt-10 text-red-500">{error}</div>;
+  }
 
-  if (!authUser)
+  if (!authUser) {
     return (
       <div className="text-center mt-10 text-gray-500">
         No profile data found
       </div>
     );
+  }
 
   return (
     <div className="flex justify-center mt-40">
@@ -109,7 +130,10 @@ const Profile = () => {
         <div className="flex">
           <div className="flex justify-center mb-4 mx-32 relative">
             <img
-              src={preview || "https://via.placeholder.com/150"}
+              src={
+                preview ||
+                "https://ui-avatars.com/api/?name=User&background=ccc"
+              }
               alt="Profile"
               className="w-60 h-60 rounded-full object-cover"
             />
@@ -117,6 +141,7 @@ const Profile = () => {
               <FaCamera className="text-amber-900 group-hover:text-white text-lg" />
               <input
                 type="file"
+                accept="image/*"
                 className="hidden"
                 onChange={handlePhotoChange}
               />
@@ -129,7 +154,7 @@ const Profile = () => {
               <input
                 type="text"
                 name="fullName"
-                value={formData.fullName || ""}
+                value={formData.fullName}
                 onChange={handleChange}
                 className="w-full mt-1 p-2 border rounded"
               />
@@ -140,7 +165,7 @@ const Profile = () => {
               <input
                 type="email"
                 name="email"
-                value={formData.email || ""}
+                value={formData.email}
                 onChange={handleChange}
                 className="w-full mt-1 p-2 border rounded"
               />
@@ -151,7 +176,7 @@ const Profile = () => {
               <input
                 type="text"
                 name="phone"
-                value={formData.phone || ""}
+                value={formData.phone}
                 onChange={handleChange}
                 className="w-full mt-1 p-2 border rounded"
               />
@@ -162,7 +187,11 @@ const Profile = () => {
               <input
                 type="date"
                 name="dob"
-                value={formData.dob?.slice(0, 10) || ""}
+                value={
+                  typeof formData.dob === "string"
+                    ? formData.dob.slice(0, 10)
+                    : ""
+                }
                 onChange={handleChange}
                 className="w-full mt-1 p-2 border rounded"
               />
