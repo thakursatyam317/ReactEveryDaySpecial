@@ -11,6 +11,7 @@ import adminRoutes from "./src/router/adminRouter.js"; // Import admin routes
 dotenv.config();
 
 const app = express();
+app.use(express.urlencoded({ extended: true })); 
 
 app.use(cors({
   origin: "http://localhost:5173",  // Adjust to your React frontend URL

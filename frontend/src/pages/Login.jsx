@@ -5,7 +5,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [successMessage, setSuccessMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
-  const [role, setRole] = useState("user"); // 👈 Default to user
+  const [role, setRole] = useState("user");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,17 +29,21 @@ const Login = () => {
 
       if (response.ok) {
         const user = data.user;
+        const token = data.token; // ✅ Get token
+
         localStorage.setItem("isLoggedIn", "true");
         localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token); // ✅ Save token
 
         window.dispatchEvent(new Event("authChange"));
 
-        // Handle Role-based redirect
+        // Admin check
         if (role === "admin" && user.role !== "admin") {
           setIsSuccess(false);
           setSuccessMessage("❌ You are not authorized as Admin");
           localStorage.removeItem("isLoggedIn");
           localStorage.removeItem("user");
+          localStorage.removeItem("token");
           setTimeout(() => setSuccessMessage(""), 3000);
           return;
         }
@@ -82,7 +86,6 @@ const Login = () => {
       >
         <h2 className="text-4xl font-bold text-center mb-6">Login</h2>
 
-        {/* Radio buttons for User or Admin */}
         <div className="mb-6 flex justify-center gap-6">
           <label className="flex items-center gap-2 cursor-pointer">
             <input

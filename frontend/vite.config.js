@@ -8,3 +8,5 @@ export default defineConfig({
         tailwindcss(),
   ],
 })
+
+export const API_BASE = "http://localhost:4500";

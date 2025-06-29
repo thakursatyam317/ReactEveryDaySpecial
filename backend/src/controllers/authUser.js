@@ -1,3 +1,4 @@
+// authUser.js
 import User from "../models/userModels.js";
 import bcrypt from "bcrypt";
 import generateToken from "../config/jwtAuth.js";
@@ -7,26 +8,18 @@ export const userRegister = async (req, res) => {
   try {
     const { fullName, email, phone, dob, gender, password } = req.body;
 
-    // Check all fields
     if (!fullName || !email || !phone || !dob || !gender || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(409).json({ message: "User already exists" });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
+    const profilePic = `https://placehold.co/600x400?text=${fullName.charAt(0).toUpperCase()}`;
 
-    // Generate placeholder profile image
-    const profilePic = `https://placehold.co/600x400?text=${fullName
-      .charAt(0)
-      .toUpperCase()}`;
-
-    // Create user
     const newUser = await User.create({
       fullName,
       email,
@@ -57,7 +50,7 @@ export const userRegister = async (req, res) => {
 };
 
 // ✅ Login User
-export const userLogin = async (req, res, next) => {
+export const userLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -75,11 +68,11 @@ export const userLogin = async (req, res, next) => {
       return res.status(401).json({ message: "Invalid password" });
     }
 
-    // Generate token in cookie
-    generateToken(user._id, res);
+    const token = generateToken(user._id, res);
 
     res.status(200).json({
       message: "User logged in successfully",
+      token,
       user: {
         fullName: user.fullName,
         email: user.email,
@@ -100,13 +93,9 @@ export const userLogin = async (req, res, next) => {
 // ✅ Logout User
 export const userLogout = (req, res) => {
   try {
-    res.cookie("token", "", {
-      httpOnly: true,
-      expires: new Date(0),
-    });
-
     res.status(200).json({ message: "Logout successful" });
   } catch (error) {
+    
     res.status(500).json({ message: "Server error during logout" });
   }
 };
