@@ -1,46 +1,46 @@
-import User from '../models/userModels.js';
+import User from "../models/userModels.js";
 
+// 🧾 Get All Users (admin only)
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}).select('-password -__v');
-    res.status(200).json({ success: true, users });
+    const users = await User.find().select("-password"); // don't send password
+    res.status(200).json({ users });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "Server error while fetching users" });
   }
 };
 
+// 🔁 Toggle Role (user <-> admin)
 export const toggleUserRole = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    const user = await User.findById(req.params.id);
 
-    user.role = user.role === 'admin' ? 'user' : 'admin';
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.role = user.role === "admin" ? "user" : "admin";
     await user.save();
 
-    res.status(200).json({ 
-      success: true,
-      message: `Role updated to ${user.role}`,
-      user: { _id: user._id, role: user.role }
-    });
+    res.status(200).json({ message: "User role updated", role: user.role });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Error updating role:", err);
+    res.status(500).json({ message: "Error updating role" });
   }
 };
 
+// 🚫 Toggle Status (active <-> blocked)
 export const toggleUserStatus = async (req, res) => {
   try {
-    const user = await User.findById(req.params.userId);
-    if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+    const user = await User.findById(req.params.id);
 
-    user.status = user.status === 'active' ? 'blocked' : 'active';
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.status = user.status === "active" ? "blocked" : "active";
     await user.save();
 
-    res.status(200).json({ 
-      success: true,
-      message: `Status updated to ${user.status}`,
-      user: { _id: user._id, status: user.status }
-    });
+    res.status(200).json({ message: "User status updated", status: user.status });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Error updating status:", err);
+    res.status(500).json({ message: "Error updating status" });
   }
 };

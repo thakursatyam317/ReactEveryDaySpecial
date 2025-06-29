@@ -27,6 +27,6 @@ app.use(express.static("public"));  // serve public/uploads
 
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
-app.use('/api/admin', adminRoutes);
+app.use("/api/admin", adminRoutes); // Use admin routes under /api/admin
 
 app.listen(process.env.PORT, () => console.log(`🚀 Server running on port ${process.env.PORT}`));

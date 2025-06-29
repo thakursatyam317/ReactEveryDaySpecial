@@ -1,9 +1,7 @@
 import React, { useState, useContext, useEffect, createContext } from "react";
 
-// Create the context
 const AuthContext = createContext();
 
-// Create the provider
 export const AuthProvider = ({ children }) => {
   const [authUser, setAuthUser] = useState(() => {
     try {
@@ -15,26 +13,82 @@ export const AuthProvider = ({ children }) => {
   });
 
   const [isLogin, setIsLogin] = useState(!!authUser);
+  const [loading, setLoading] = useState(true);
 
-  // Sync login state with sessionStorage
-  useEffect(() => {
-    if (authUser) {
-      sessionStorage.setItem("user", JSON.stringify(authUser));
-      setIsLogin(true);
-    } else {
-      sessionStorage.removeItem("user");
+  // 🔄 Fetch profile from backend
+  const fetchProfile = async () => {
+    try {
+      const res = await fetch("http://localhost:4500/user/profile", {
+        credentials: "include",
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setAuthUser(data.user);
+        sessionStorage.setItem("user", JSON.stringify(data.user));
+        setIsLogin(true);
+      } else {
+        setAuthUser(null);
+        sessionStorage.removeItem("user");
+        setIsLogin(false);
+      }
+    } catch (err) {
+      console.error("Error fetching profile:", err);
+      setAuthUser(null);
       setIsLogin(false);
+    } finally {
+      setLoading(false);
     }
-  }, [authUser]);
+  };
+
+  // ✏️ Update profile
+  const updateProfile = async (updatedData) => {
+    try {
+      const res = await fetch("http://localhost:4500/user/update-profile", {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (!res.ok) throw new Error("Failed to update profile");
+
+      const data = await res.json();
+      setAuthUser(data.updatedUser);
+      sessionStorage.setItem("user", JSON.stringify(data.updatedUser));
+    } catch (error) {
+      console.error("Update profile failed:", error);
+      throw error;
+    }
+  };
+
+  // On initial load
+  useEffect(() => {
+    if (!authUser) {
+      fetchProfile();
+    } else {
+      setLoading(false);
+    }
+  }, []);
 
   return (
-    <AuthContext.Provider value={{ authUser, setAuthUser, isLogin, setIsLogin }}>
+    <AuthContext.Provider
+      value={{
+        authUser,
+        setAuthUser,
+        isLogin,
+        setIsLogin,
+        fetchProfile,
+        updateProfile,
+        loading,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -42,5 +96,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-

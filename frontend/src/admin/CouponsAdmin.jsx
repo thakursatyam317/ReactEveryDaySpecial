@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
 const CouponsAdmin = () => {
   const navItemStyle = 'block px-4 py-3 rounded-md hover:bg-gray-700 transition-all';
 
-  // Dummy Coupons
+  // Coupons state
   const [coupons, setCoupons] = useState([
     { id: 1, code: 'SAVE10', discount: '10%' },
     { id: 2, code: 'FREESHIP', discount: 'Free Shipping' },
@@ -13,8 +13,8 @@ const CouponsAdmin = () => {
   const [newCoupon, setNewCoupon] = useState({ code: '', discount: '' });
 
   const handleAddCoupon = () => {
-    if (newCoupon.code && newCoupon.discount) {
-      const newId = coupons.length + 1;
+    if (newCoupon.code.trim() && newCoupon.discount.trim()) {
+      const newId = coupons.length > 0 ? coupons[coupons.length - 1].id + 1 : 1;
       setCoupons([...coupons, { id: newId, ...newCoupon }]);
       setNewCoupon({ code: '', discount: '' });
     }
@@ -34,7 +34,7 @@ const CouponsAdmin = () => {
           <NavLink to="/admin/product-management" className={navItemStyle}>🛍️ Products</NavLink>
           <NavLink to="/admin/order-status" className={navItemStyle}>📦 Orders</NavLink>
           <NavLink to="/admin/users" className={navItemStyle}>👥 Users</NavLink>
-          <NavLink to="/admin/coupons" className={navItemStyle}>💸 Coupons</NavLink>
+          <NavLink to="/admin/coupons" className={`${navItemStyle} bg-gray-800`}>💸 Coupons</NavLink>
         </nav>
       </div>
 
