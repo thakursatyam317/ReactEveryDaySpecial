@@ -3,10 +3,10 @@ import jwt from "jsonwebtoken";
 
 const genAuthToken = (userId, res) => {
   try {
-    const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ userId: userId }, process.env.JWT_SECRET, {
       expiresIn: "1d",
     });
-
+console.log("Generated Token:", token); // Debugging line to check token generation
     res.cookie("token", token, {
       maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,

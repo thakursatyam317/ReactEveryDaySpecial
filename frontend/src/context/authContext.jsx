@@ -17,23 +17,24 @@ export const AuthProvider = ({ children }) => {
 
   // 🔄 Fetch profile from backend
   const fetchProfile = async () => {
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:4500/user/profile", {
         credentials: "include",
       });
+
       if (res.ok) {
         const data = await res.json();
         setAuthUser(data.user);
         sessionStorage.setItem("user", JSON.stringify(data.user));
         setIsLogin(true);
       } else {
-        setAuthUser(null);
-        sessionStorage.removeItem("user");
-        setIsLogin(false);
+        throw new Error("Failed to fetch profile");
       }
     } catch (err) {
       console.error("Error fetching profile:", err);
       setAuthUser(null);
+      sessionStorage.removeItem("user");
       setIsLogin(false);
     } finally {
       setLoading(false);
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }) => {
   // ✏️ Update profile
   const updateProfile = async (updatedData) => {
     try {
-      const res = await fetch("http://localhost:4500/user/update-profile", {
+      const res = await fetch("http://localhost:4500/user/update", {
         method: "PUT",
         credentials: "include",
         headers: {
@@ -63,14 +64,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // On initial load
+  // 🔁 Initial load
   useEffect(() => {
     if (!authUser) {
       fetchProfile();
     } else {
       setLoading(false);
     }
-  }, []);
+  }, []); // ✅ Only on first mount
 
   return (
     <AuthContext.Provider

@@ -4,63 +4,67 @@ import cloudinary from "../config/cloudinary.js";
 // ==================
 // GET USER PROFILE
 // ==================
-export const userProfile = async (req, res, next) => {
+export const userProfile = async (req, res) => {
   try {
-    if (!req.user || !req.user._id) {
-      return res.status(404).json({ message: "User not found" });
+    if (!req.user?.id && !req.user?._id) {
+      return res.status(401).json({ message: "Unauthorized: No user info" });
     }
 
-    const user = await User.findById(req.user._id).select("-password");
+    const user = await User.findById(req.user._id || req.user.id).select("-password");
 
     if (!user) {
-      return res.status(404).json({ message: "User not found in DB" });
+      return res.status(404).json({ message: "User not found in database" });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User profile fetched successfully",
       user,
     });
   } catch (error) {
-    console.error("Error fetching profile:", error);
-    res.status(500).json({ message: "Internal server error while fetching profile" });
+    console.error("Error fetching user profile:", error);
+    return res.status(500).json({ message: "Server error while fetching profile" });
   }
 };
 
 // ==================
 // UPDATE USER PROFILE
 // ==================
-export const updateUserProfile = async (req, res, next) => {
+export const updateUserProfile = async (req, res) => {
   try {
     const { fullName, email, phone, dob, gender } = req.body;
     const photo = req.file;
 
-    if (!req.user || !req.user._id) {
-      return res.status(401).json({ message: "Unauthorized" });
+    if (!req.user?._id) {
+      return res.status(401).json({ message: "Unauthorized: No user token" });
     }
 
     if (!fullName || !email) {
       return res.status(400).json({ message: "Full name and email are required" });
     }
 
-    let profilePictureURL = req.user.profilePic;
+    let profilePicUrl = req.user.profilePic;
 
-    // Upload to Cloudinary if photo exists
     if (photo) {
-      const b64 = Buffer.from(photo.buffer).toString("base64");
-      const dataURI = `data:${photo.mimetype};base64,${b64}`;
+      try {
+        const base64Image = photo.buffer.toString("base64");
+        const dataUri = `data:${photo.mimetype};base64,${base64Image}`;
 
-      const result = await cloudinary.uploader.upload(dataURI, {
-        folder: "everydayspecial",
-        width: 300,
-        height: 300,
-        crop: "fill",
-      });
+        const result = await cloudinary.uploader.upload(dataUri, {
+          folder: "everydayspecial",
+          width: 300,
+          height: 300,
+          crop: "fill",
+        });
 
-      if (!result?.secure_url) {
+        if (!result?.secure_url) {
+          return res.status(500).json({ message: "Failed to upload image" });
+        }
+
+        profilePicUrl = result.secure_url;
+      } catch (cloudErr) {
+        console.error("Cloudinary Upload Error:", cloudErr);
         return res.status(500).json({ message: "Image upload failed" });
       }
-
-      profilePictureURL = result.secure_url;
     }
 
     const updatedUser = await User.findByIdAndUpdate(
@@ -71,7 +75,7 @@ export const updateUserProfile = async (req, res, next) => {
         phone,
         dob,
         gender,
-        profilePic: profilePictureURL,
+        profilePic: profilePicUrl,
       },
       { new: true }
     ).select("-password");
@@ -80,12 +84,12 @@ export const updateUserProfile = async (req, res, next) => {
       return res.status(404).json({ message: "User not found during update" });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       message: "User updated successfully",
-      user: updatedUser,
+      updatedUser,
     });
   } catch (error) {
-    console.error("Error updating user:", error);
-    res.status(500).json({ message: "Internal server error while updating profile" });
+    console.error("Error updating user profile:", error);
+    return res.status(500).json({ message: "Server error while updating profile" });
   }
 };
