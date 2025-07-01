@@ -13,6 +13,7 @@ console.log("Generated Token:", token); // Debugging line to check token generat
       sameSite: "strict",
       secure: process.env.NODE_ENV === "production",
     });
+    console.log("Token set in cookie");
   } catch (error) {
     console.log(error);
   }

@@ -4,6 +4,7 @@ import Infinite from "../assets/infinite-spinner.svg";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
+import { authFetch } from "../utils/authUtils"; // ✅ imported
 
 const Profile = () => {
   const { authUser, fetchProfile } = useAuth();
@@ -71,9 +72,8 @@ const Profile = () => {
         formDataToSend.append("file", photoFile);
       }
 
-      const res = await fetch("http://localhost:4500/user/update", {
+      const res = await authFetch("http://localhost:4500/user/update", {
         method: "PUT",
-        credentials: "include",
         body: formDataToSend,
       });
 

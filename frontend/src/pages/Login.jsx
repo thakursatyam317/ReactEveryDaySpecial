@@ -28,32 +28,36 @@ const Login = () => {
       console.log("Response from backend:", data);
 
       if (response.ok) {
-        const user = data.user;
-        const token = data.token; // ✅ Get token
+        const { user, token } = data;
 
-        localStorage.setItem("isLoggedIn", "true");
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("token", token); // ✅ Save token
+        if (!user || !user.role) {
+          throw new Error("Invalid user data from server");
+        }
 
-        window.dispatchEvent(new Event("authChange"));
-
-        // Admin check
+        // Admin access restriction
         if (role === "admin" && user.role !== "admin") {
           setIsSuccess(false);
           setSuccessMessage("❌ You are not authorized as Admin");
-          localStorage.removeItem("isLoggedIn");
-          localStorage.removeItem("user");
-          localStorage.removeItem("token");
+          localStorage.clear();
           setTimeout(() => setSuccessMessage(""), 3000);
           return;
         }
 
+        // Save login info
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("user", JSON.stringify(user));
+        localStorage.setItem("token", token);
+
+        // Notify other components
+        window.dispatchEvent(new Event("authChange"));
+
         setIsSuccess(true);
         setSuccessMessage("✅ Login Successful!");
+        e.target.reset();
 
         setTimeout(() => {
           setSuccessMessage("");
-          navigate(role === "admin" ? "/admin/dashboard" : "/");
+          navigate(user.role === "admin" ? "/admin/dashboard" : "/");
         }, 1500);
       } else {
         setIsSuccess(false);
@@ -86,6 +90,7 @@ const Login = () => {
       >
         <h2 className="text-4xl font-bold text-center mb-6">Login</h2>
 
+        {/* Role Selection */}
         <div className="mb-6 flex justify-center gap-6">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -111,6 +116,7 @@ const Login = () => {
           </label>
         </div>
 
+        {/* Email */}
         <div className="mb-4">
           <label className="block text-gray-700 mb-2">Email</label>
           <input
@@ -122,6 +128,7 @@ const Login = () => {
           />
         </div>
 
+        {/* Password */}
         <div className="mb-6">
           <label className="block text-gray-700 mb-2">Password</label>
           <input
