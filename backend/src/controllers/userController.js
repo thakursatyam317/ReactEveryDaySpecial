@@ -37,12 +37,14 @@ export const updateUserProfile = async (req, res) => {
     if (!req.user?._id) {
       return res.status(401).json({ message: "Unauthorized: No user token" });
     }
+    console.log(email);
 
     if (!fullName || !email) {
       return res.status(400).json({ message: "Full name and email are required" });
     }
 
     let profilePicUrl = req.user.profilePic;
+    console.log(profilePicUrl);
 
     if (photo) {
       try {
@@ -80,6 +82,7 @@ export const updateUserProfile = async (req, res) => {
       { new: true }
     ).select("-password");
 
+    console.log("Updated User:", req.user.fullName, updatedUser.fullName);
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found during update" });
     }

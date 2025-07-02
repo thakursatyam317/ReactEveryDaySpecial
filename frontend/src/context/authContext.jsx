@@ -3,11 +3,12 @@ import React, { useState, useContext, useEffect, createContext } from "react";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  // 🌟 Load user from localStorage on first render
   const [authUser, setAuthUser] = useState(() => {
     try {
-      return JSON.parse(sessionStorage.getItem("user")) || null;
+      return JSON.parse(localStorage.getItem("user")) || null;
     } catch (error) {
-      console.error("Failed to parse user from sessionStorage", error);
+      console.error("Failed to parse user from localStorage", error);
       return null;
     }
   });
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
   const [isLogin, setIsLogin] = useState(!!authUser);
   const [loading, setLoading] = useState(true);
 
-  // 🔄 Fetch profile from backend
+  // 🔁 Profile fetch (for re-auth if needed)
   const fetchProfile = async () => {
     setLoading(true);
     try {
@@ -26,7 +27,7 @@ export const AuthProvider = ({ children }) => {
       if (res.ok) {
         const data = await res.json();
         setAuthUser(data.user);
-        sessionStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("user", JSON.stringify(data.user));
         setIsLogin(true);
       } else {
         throw new Error("Failed to fetch profile");
@@ -34,14 +35,14 @@ export const AuthProvider = ({ children }) => {
     } catch (err) {
       console.error("Error fetching profile:", err);
       setAuthUser(null);
-      sessionStorage.removeItem("user");
+      localStorage.removeItem("user");
       setIsLogin(false);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✏️ Update profile
+  // 📝 Profile update
   const updateProfile = async (updatedData) => {
     try {
       const res = await fetch("http://localhost:4500/user/update", {
@@ -57,21 +58,36 @@ export const AuthProvider = ({ children }) => {
 
       const data = await res.json();
       setAuthUser(data.updatedUser);
-      sessionStorage.setItem("user", JSON.stringify(data.updatedUser));
+      localStorage.setItem("user", JSON.stringify(data.updatedUser));
     } catch (error) {
       console.error("Update profile failed:", error);
       throw error;
     }
   };
 
-  // 🔁 Initial load
+  // ✅ Check localStorage on mount
   useEffect(() => {
     if (!authUser) {
-      fetchProfile();
+      fetchProfile(); // Try to fetch from backend if not found
     } else {
       setLoading(false);
     }
-  }, []); // ✅ Only on first mount
+
+    // 🔁 Listen for login/logout from other tabs or components
+    const handleStorageChange = () => {
+      const updatedUser = localStorage.getItem("user");
+      if (updatedUser) {
+        setAuthUser(JSON.parse(updatedUser));
+        setIsLogin(true);
+      } else {
+        setAuthUser(null);
+        setIsLogin(false);
+      }
+    };
+
+    window.addEventListener("authChange", handleStorageChange);
+    return () => window.removeEventListener("authChange", handleStorageChange);
+  }, []);
 
   return (
     <AuthContext.Provider
@@ -85,7 +101,7 @@ export const AuthProvider = ({ children }) => {
         loading,
       }}
     >
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

@@ -27,7 +27,7 @@ export const userRegister = async (req, res) => {
       dob,
       gender,
       password: hashedPassword,
-      profilePic,
+      profilePic 
     });
 
     res.status(201).json({
@@ -55,34 +55,34 @@ export const userLogin = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
     const user = await User.findOne({ email });
+    console.log("User found:", user);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: "Invalid password" });
+      return res.status(401).json({ message: "Invalid credentials" });
     }
+    console.log("user._id:", user._id);
+    // Generate JWT token
 
     const token = genAuthToken(user._id, res);
-
+    console.log("Generated Token:", token);
     res.status(200).json({
-      message: "User logged in successfully",
-      token,
+      message: "Login successful",
       user: {
         fullName: user.fullName,
         email: user.email,
         phone: user.phone,
         dob: user.dob,
-        gender: user.gender,
-        profilePic: user.profilePic,
         role: user.role,
-        status: user.status,
       },
+      token,
     });
   } catch (error) {
     console.error("Login Error:", error.message);

@@ -1,4 +1,3 @@
-// src/pages/AccountSection.js
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -10,15 +9,33 @@ import {
   FaQuestionCircle,
   FaSignOutAlt,
 } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const AccountSection = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    alert("Logged out successfully");
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+  localStorage.removeItem("isLoggedIn");
+
+  window.dispatchEvent(new Event("authChange"));
+
+  // ✅ Show toast first
+  toast.success("Saved!", {
+  duration: 2000,
+  style: {
+    background: "#333",
+    color: "#fff",
+  },
+});
+
+
+  // ⏳ Wait before navigating
+  setTimeout(() => {
     navigate("/login");
-  };
+  }, 1800); // match toast duration
+};
 
   return (
     <div className="w-[90%] md:w-[50%] mx-auto mt-40 p-6 bg-white shadow-lg rounded-2xl">

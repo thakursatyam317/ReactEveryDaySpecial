@@ -4,7 +4,7 @@ import Infinite from "../assets/infinite-spinner.svg";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
-import { authFetch } from "../utils/authUtils"; // ✅ imported
+import { authFetch } from "../utils/authUtils";
 
 const Profile = () => {
   const { authUser, fetchProfile } = useAuth();
@@ -20,7 +20,6 @@ const Profile = () => {
   const [photoFile, setPhotoFile] = useState(null);
   const [preview, setPreview] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -58,40 +57,42 @@ const Profile = () => {
   };
 
   const handleUpdate = async () => {
+    const formDataToSend = new FormData();
+    formDataToSend.append("fullName", formData.fullName);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("phone", formData.phone);
+    formDataToSend.append("dob", formData.dob);
+
+    if (photoFile) {
+      formDataToSend.append("profilePic", photoFile);
+    }
+
     setLoading(true);
-    setError("");
 
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append("fullName", formData.fullName);
-      formDataToSend.append("email", formData.email);
-      formDataToSend.append("phone", formData.phone);
-      formDataToSend.append("dob", formData.dob);
-
-      if (photoFile) {
-        formDataToSend.append("file", photoFile);
-      }
-
-      const res = await authFetch("http://localhost:4500/user/update", {
+    toast.promise(
+      authFetch("http://localhost:4500/user/update", {
         method: "PUT",
         body: formDataToSend,
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success("Profile updated successfully!");
-        setIsEditing(false);
-        fetchProfile();
-      } else {
-        toast.error(data?.message || "Update failed");
+      })
+        .then(async (res) => {
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.message || "Update failed");
+          fetchProfile(); // 🔄 refresh context
+          setIsEditing(false);
+        })
+        .catch((err) => {
+          console.error("❌ Update error:", err.message);
+          throw err;
+        })
+        .finally(() => {
+          setLoading(false);
+        }),
+      {
+        loading: "Saving profile...",
+        success: "✅ Profile updated!",
+        error: (err) => err?.message || "❌ Failed to update",
       }
-    } catch (err) {
-      console.error("Update error:", err);
-      toast.error("Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
+    );
   };
 
   if (authLoading) {
@@ -143,7 +144,8 @@ const Profile = () => {
             <img
               src={
                 preview ||
-                "https://placehold.co/600x400?text=" + authUser.fullName.toUpperCase().slice(0, 1)
+                "https://placehold.co/600x400?text=" +
+                  authUser.fullName.toUpperCase().slice(0, 1)
               }
               alt="Profile"
               className="w-60 h-60 rounded-full object-cover border"
