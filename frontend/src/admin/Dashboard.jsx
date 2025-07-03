@@ -1,11 +1,38 @@
 import React, { useEffect, useState } from "react";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  LineChart,
+  Line,
+  CartesianGrid,
+  Legend,
+} from "recharts";
 import toast from "react-hot-toast";
-
+import { NavLink } from "react-router-dom";
 const STATUS_OPTIONS = ["Pending", "Processing", "Shipped", "Delivered", "Pickup", "Cancelled", "Paid"];
+
+const growthData = [
+  { month: "Jan", sales: 4000 },
+  { month: "Feb", sales: 7000 },
+  { month: "Mar", sales: 9500 },
+  { month: "Apr", sales: 11000 },
+  { month: "May", sales: 13500 },
+  { month: "Jun", sales: 16000 },
+  { month: "Jul", sales: 19000 },
+];
 
 const Dashboard = () => {
   const [orders, setOrders] = useState([]);
+
+  const navItemStyle =
+    'block px-4 py-3 rounded-md hover:bg-gray-700 transition-all';
 
   const fetchOrders = async () => {
     try {
@@ -23,7 +50,7 @@ const Dashboard = () => {
 
   const updateOrderStatus = async (orderId, status) => {
     try {
-      const res = await fetch(`http://localhost:4500/admin/orders/${orderId}`, {
+      await fetch(`http://localhost:4500/admin/orders/${orderId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -31,9 +58,8 @@ const Dashboard = () => {
         },
         body: JSON.stringify({ status }),
       });
-      const data = await res.json();
       toast.success("✅ Status Updated");
-      fetchOrders(); // refresh
+      fetchOrders();
     } catch (err) {
       toast.error("❌ Failed to update status");
     }
@@ -48,18 +74,64 @@ const Dashboard = () => {
     total: order.total || 0,
   }));
 
+  const totalRevenue = orders.reduce((acc, order) => acc + order.total, 0);
+  const totalProfit = totalRevenue * 0.2;
+
   const profitPie = [
-    { name: "Profit", value: orders.reduce((acc, o) => acc + o.total * 0.2, 0) },
-    { name: "Cost", value: orders.reduce((acc, o) => acc + o.total * 0.8, 0) },
+    { name: "Profit", value: totalProfit },
+    { name: "Cost", value: totalRevenue - totalProfit },
   ];
 
   return (
-    <div className="ml-64 p-6">
+
+
+   <>
+     <div className="w-64 h-screen bg-gray-900 text-white p-6 fixed top-0 left-0 shadow-xl">
+        <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
+        <nav className="space-y-2">
+          <NavLink to="/admin/dashboard" className={navItemStyle}>
+            📊 Dashboard
+          </NavLink>
+          <NavLink to="/admin/product-management" className={navItemStyle}>
+            🛍️ Products
+          </NavLink>
+          <NavLink to="/admin/order-status" className={navItemStyle}>
+            📦 Orders
+          </NavLink>
+          <NavLink to="/admin/users" className={navItemStyle}>
+            👥 Users
+          </NavLink>
+          <NavLink to="/admin/coupons" className={navItemStyle}>
+            💸 Coupons
+          </NavLink>
+        </nav>
+      </div>
+
+
+       <div className="ml-64 p-6">
       <h1 className="text-3xl font-bold mb-4">📊 Admin Dashboard</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+      {/* Summary Widgets */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+        <div className="bg-green-100 text-green-800 p-4 rounded-xl shadow-sm">
+          <h3 className="text-lg font-medium">Total Orders</h3>
+          <p className="text-2xl font-bold">{orders.length}</p>
+        </div>
+        <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow-sm">
+          <h3 className="text-lg font-medium">Total Revenue</h3>
+          <p className="text-2xl font-bold">₹{totalRevenue}</p>
+        </div>
+        <div className="bg-yellow-100 text-yellow-800 p-4 rounded-xl shadow-sm">
+          <h3 className="text-lg font-medium">Estimated Profit</h3>
+          <p className="text-2xl font-bold">₹{totalProfit}</p>
+        </div>
+      </div>
+
+      {/* Charts */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+        {/* Sales Chart */}
         <div className="bg-white shadow-md p-4 rounded-xl">
-          <h2 className="text-xl font-semibold mb-2">Sales Chart</h2>
+          <h2 className="text-xl font-semibold mb-2">💰 Sales by Customer</h2>
           <ResponsiveContainer width="100%" height={250}>
             <BarChart data={salesData}>
               <XAxis dataKey="name" />
@@ -70,8 +142,9 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
 
+        {/* Profit Pie Chart */}
         <div className="bg-white shadow-md p-4 rounded-xl">
-          <h2 className="text-xl font-semibold mb-2">Profit Distribution</h2>
+          <h2 className="text-xl font-semibold mb-2">📊 Profit Distribution</h2>
           <ResponsiveContainer width="100%" height={250}>
             <PieChart>
               <Pie
@@ -89,9 +162,31 @@ const Dashboard = () => {
             </PieChart>
           </ResponsiveContainer>
         </div>
+
+        {/* Growth Chart */}
+        <div className="bg-white shadow-md p-4 rounded-xl">
+          <h2 className="text-xl font-semibold mb-2">📈 Company Product Growth</h2>
+          <ResponsiveContainer width="100%" height={250}>
+            <LineChart data={growthData}>
+              <XAxis dataKey="month" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+              <Line
+                type="monotone"
+                dataKey="sales"
+                stroke="#6366f1"
+                strokeWidth={3}
+                dot={{ r: 5 }}
+                activeDot={{ r: 8 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
-      {/* Order Status Management */}
+      {/* Order Table */}
       <div className="bg-white shadow-md p-4 rounded-xl">
         <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
         <div className="overflow-x-auto">
@@ -106,41 +201,43 @@ const Dashboard = () => {
               </tr>
             </thead>
             <tbody>
-              {orders.map((order) => (
-                <tr key={order._id} className="border-b">
-                  <td className="p-2">{order.user?.fullName}</td>
-                  <td className="p-2">{order.items?.length} items</td>
-                  <td className="p-2">₹{order.total}</td>
-                  <td className="p-2">
-                    <span className="font-semibold text-blue-600">{order.status}</span>
-                  </td>
-                  <td className="p-2">
-                    <select
-                      className="border p-1 rounded"
-                      value={order.status}
-                      onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                    >
-                      {STATUS_OPTIONS.map((status) => (
-                        <option key={status} value={status}>
-                          {status}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))}
-              {orders.length === 0 && (
+              {orders.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="text-center p-4 text-gray-500">
                     No orders found.
                   </td>
                 </tr>
+              ) : (
+                orders.map((order) => (
+                  <tr key={order._id} className="border-b">
+                    <td className="p-2">{order.user?.fullName}</td>
+                    <td className="p-2">{order.items?.length} items</td>
+                    <td className="p-2">₹{order.total}</td>
+                    <td className="p-2">
+                      <span className="font-semibold text-blue-600">{order.status}</span>
+                    </td>
+                    <td className="p-2">
+                      <select
+                        className="border p-1 rounded"
+                        value={order.status}
+                        onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                      >
+                        {STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>
         </div>
       </div>
     </div>
+   </>
   );
 };
 

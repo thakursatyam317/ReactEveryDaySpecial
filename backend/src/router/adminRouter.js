@@ -18,7 +18,7 @@ router.put("/user/role/:id", toggleUserRole);
 // /api/admin/user/status/:id (PUT toggle status)
 router.put("/user/status/:id", toggleUserStatus);
 
-router.get("/orders-summary", adminAuth, async (req, res) => {
+router.get("/orders-summary", async (req, res) => {
   try {
     const orders = await Order.find()
       .populate("user", "fullName email") // populate user info
@@ -32,7 +32,7 @@ router.get("/orders-summary", adminAuth, async (req, res) => {
 });
 
 // ✅ PATCH: Admin updates order status
-router.patch("/orders/:id", adminAuth, async (req, res) => {
+router.patch("/orders/:id",  async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
