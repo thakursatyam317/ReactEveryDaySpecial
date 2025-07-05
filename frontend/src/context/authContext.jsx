@@ -18,29 +18,37 @@ export const AuthProvider = ({ children }) => {
 
   // 🔁 Profile fetch (for re-auth if needed)
   const fetchProfile = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("http://localhost:4500/user/profile", {
-        credentials: "include",
-      });
+  setLoading(true);
+  try {
+    const res = await fetch("http://localhost:4500/user/profile", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`, // ✅ If you're using token-based auth
+      },
+      credentials: "include", // ✅ For cookie-based auth (optional if you're using token)
+    });
 
-      if (res.ok) {
-        const data = await res.json();
-        setAuthUser(data.user);
-        localStorage.setItem("user", JSON.stringify(data.user));
-        setIsLogin(true);
-      } else {
-        throw new Error("Failed to fetch profile");
-      }
-    } catch (err) {
-      console.error("Error fetching profile:", err);
-      setAuthUser(null);
-      localStorage.removeItem("user");
-      setIsLogin(false);
-    } finally {
-      setLoading(false);
+    if (!res.ok) {
+      throw new Error("Failed to fetch profile");
     }
-  };
+
+    const data = await res.json();
+    if (!data.user) throw new Error("Invalid user data");
+
+    setAuthUser(data.user);
+    localStorage.setItem("user", JSON.stringify(data.user));
+    setIsLogin(true);
+  } catch (err) {
+    console.error("❌ Error fetching profile:", err.message);
+    setAuthUser(null);
+    localStorage.removeItem("user");
+    setIsLogin(false);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // 📝 Profile update
   const updateProfile = async (updatedData) => {

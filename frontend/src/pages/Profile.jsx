@@ -31,7 +31,7 @@ const Profile = () => {
         phone: authUser.phone || "",
         dob: authUser.dob?.slice(0, 10) || "",
       });
-      setPreview(authUser.profilePic);
+      setPreview(`${authUser.profilePic}?t=${Date.now()}`);
     }
     setAuthLoading(false);
   }, [authUser]);
@@ -78,9 +78,10 @@ const Profile = () => {
           const data = await res.json();
           if (!res.ok) throw new Error(data.message || "Update failed");
 
-          await fetchProfile(); // 🔁 refresh authUser
-          setPreview(data?.profilePic); // ✅ new photo preview
+          await fetchProfile(); // 🔁 refresh authUser from backend
           setIsEditing(false);
+          setPhotoFile(null);
+          setPreview(`${ authUser?.profilePic}?t=${Date.now()}`); // ✅ force refresh image
         })
         .catch((err) => {
           console.error("❌ Update error:", err.message);
@@ -146,7 +147,9 @@ const Profile = () => {
             <img
               src={
                 preview
-                  ? `${preview}?t=${Date.now()}`
+                  ? preview
+                  : authUser?.profilePic
+                  ? `${authUser.profilePic}?t=${Date.now()}`
                   : "https://placehold.co/600x400?text=" +
                     authUser.fullName.toUpperCase().slice(0, 1)
               }

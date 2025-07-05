@@ -20,7 +20,7 @@ router.put("/user/role/:id", toggleUserRole);
 // /api/admin/user/status/:id (PUT toggle status)
 router.put("/user/status/:id", toggleUserStatus);
 
-router.get("/orders-summary", orderSummary);
+// router.get("/orders-summary", orderSummary);
 
 
 router.patch("/orders/:id", orderUpdate);
