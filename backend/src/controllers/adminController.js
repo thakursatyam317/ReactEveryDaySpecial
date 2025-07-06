@@ -1,6 +1,7 @@
 import User from "../models/userModels.js";
 import Order from "../models/orderModels.js";
 
+
 // 🧾 Get All Users (admin only)
 export const getAllUsers = async (req, res) => {
   try {
@@ -105,4 +106,39 @@ export const orderUpdate = async (req, res) => {
 };
 
 
+
+
+
+
+
+// ✅ Get All Orders (Admin Only)
+
+export const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate("user", "fullName email")
+      .sort({ createdAt: -1 });
+
+    res.json({ orders });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch orders" });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  try {
+    const order = await Order.findById(orderId);
+    if (!order) return res.status(404).json({ message: "Order not found" });
+
+    order.status = status;
+    await order.save();
+
+    res.json({ message: "Order status updated", order });
+  } catch (err) {
+    res.status(500).json({ message: "Status update failed" });
+  }
+};
 
