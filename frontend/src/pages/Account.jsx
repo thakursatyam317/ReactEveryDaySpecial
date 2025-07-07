@@ -50,7 +50,7 @@ const AccountSection = () => {
         </div>
 
         <AccountButton icon={<FaUser />} text="Profile" onClick={() => navigate("/user/profile")} />
-        <AccountButton icon={<FaMapMarkerAlt />} text="Saved Addresses" />
+        <AccountButton icon={<FaMapMarkerAlt />} text="Saved Addresses" onClick={() => navigate("/checkout/save-address")} />
         <AccountButton text="🌐 Select Language" />
         <AccountButton icon={<FaSignOutAlt />} text="Logout" onClick={handleLogout} />
       </div>

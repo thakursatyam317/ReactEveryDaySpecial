@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -13,6 +13,7 @@ const indianStates = [
 
 const ConfirmAddress = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     houseNumber: "",
     colony: "",
@@ -24,6 +25,16 @@ const ConfirmAddress = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [selectedOption, setSelectedOption] = useState("new");
+  const [savedAddress, setSavedAddress] = useState("");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("deliveryAddress");
+    if (saved) {
+      setSavedAddress(saved);
+      setSelectedOption("saved"); // Auto-select saved address if it exists
+    }
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,6 +42,11 @@ const ConfirmAddress = () => {
   };
 
   const handleConfirm = () => {
+    if (selectedOption === "saved") {
+      navigate("/payment");
+      return;
+    }
+
     const { houseNumber, colony, city, district, state } = formData;
     const newErrors = {};
 
@@ -50,6 +66,8 @@ const ConfirmAddress = () => {
     const fullAddress = `${houseNumber}, ${colony}, ${landmark ? landmark + "," : ""} ${city}, ${district}, ${state}${mapLink ? " (Map: " + mapLink + ")" : ""}`;
 
     localStorage.setItem("deliveryAddress", fullAddress);
+    setSavedAddress(fullAddress);
+    setSelectedOption("saved"); // switch to saved immediately
     navigate("/payment");
   };
 
@@ -69,71 +87,104 @@ const ConfirmAddress = () => {
         🍱 Confirm Delivery Address
       </motion.h2>
 
-      <div className="grid gap-4">
-        {[
-          { name: "houseNumber", label: "🏠 House Number" },
-          { name: "colony", label: "🏘️ Colony Name" },
-          { name: "landmark", label: "📍 Landmark (Optional)" },
-          { name: "city", label: "🏙️ City" },
-          { name: "district", label: "📌 District" },
-        ].map((field) => (
-          <div key={field.name}>
+      {savedAddress && (
+        <div className="mb-6 space-y-3">
+          <div className="flex items-center gap-2">
             <input
-              name={field.name}
-              type="text"
-              value={formData[field.name]}
-              onChange={handleChange}
-              placeholder={field.label}
-              className="p-3 border rounded w-full focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+              type="radio"
+              id="saved"
+              value="saved"
+              checked={selectedOption === "saved"}
+              onChange={() => setSelectedOption("saved")}
+              className="accent-orange-500"
             />
-            {errors[field.name] && (
-              <p className="text-red-500 text-sm">{errors[field.name]}</p>
+            <label htmlFor="saved" className="font-medium">Use Saved Address</label>
+          </div>
+          <div className="ml-6 text-gray-600 text-sm bg-gray-50 p-3 rounded border">
+            {savedAddress}
+          </div>
+
+          <div className="flex items-center gap-2">
+            <input
+              type="radio"
+              id="new"
+              value="new"
+              checked={selectedOption === "new"}
+              onChange={() => setSelectedOption("new")}
+              className="accent-orange-500"
+            />
+            <label htmlFor="new" className="font-medium">Enter New Address</label>
+          </div>
+        </div>
+      )}
+
+      {selectedOption === "new" && (
+        <div className="grid gap-4">
+          {[
+            { name: "houseNumber", label: "🏠 House Number" },
+            { name: "colony", label: "🏘️ Colony Name" },
+            { name: "landmark", label: "📍 Landmark (Optional)" },
+            { name: "city", label: "🏙️ City" },
+            { name: "district", label: "📌 District" },
+          ].map((field) => (
+            <div key={field.name}>
+              <input
+                name={field.name}
+                type="text"
+                value={formData[field.name]}
+                onChange={handleChange}
+                placeholder={field.label}
+                className="p-3 border rounded w-full focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
+              />
+              {errors[field.name] && (
+                <p className="text-red-500 text-sm">{errors[field.name]}</p>
+              )}
+            </div>
+          ))}
+
+          <div>
+            <select
+              name="state"
+              value={formData.state}
+              onChange={handleChange}
+              className="p-3 border rounded w-full bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
+            >
+              <option value="">🌐 Select State</option>
+              {indianStates.map((state) => (
+                <option key={state} value={state}>
+                  {state}
+                </option>
+              ))}
+            </select>
+            {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
+          </div>
+
+          <div>
+            <input
+              name="mapLink"
+              type="text"
+              value={formData.mapLink}
+              onChange={handleChange}
+              placeholder="🗺️ Google Map Link (Optional)"
+              className="p-3 border rounded w-full focus:outline-none"
+            />
+            {formData.city && formData.state && (
+              <button
+                type="button"
+                onClick={() => {
+                  const query = encodeURIComponent(
+                    `${formData.houseNumber}, ${formData.colony}, ${formData.city}, ${formData.district}, ${formData.state}`
+                  );
+                  window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
+                }}
+                className="mt-2 text-sm text-blue-600 hover:underline"
+              >
+                📍 Preview on Google Maps
+              </button>
             )}
           </div>
-        ))}
-
-        <div>
-          <select
-            name="state"
-            value={formData.state}
-            onChange={handleChange}
-            className="p-3 border rounded w-full bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
-          >
-            <option value="">🌐 Select State</option>
-            {indianStates.map((state) => (
-              <option key={state} value={state}>
-                {state}
-              </option>
-            ))}
-          </select>
-          {errors.state && <p className="text-red-500 text-sm">{errors.state}</p>}
         </div>
-
-        <div>
-          <input
-            name="mapLink"
-            type="text"
-            value={formData.mapLink}
-            onChange={handleChange}
-            placeholder="🗺️ Google Map Link (Optional)"
-            className="p-3 border rounded w-full focus:outline-none"
-          />
-          {formData.city && formData.state && (
-            <button
-              type="button"
-              onClick={() => {
-                const query = encodeURIComponent(
-                  `${formData.houseNumber}, ${formData.colony}, ${formData.city}, ${formData.district}, ${formData.state}`
-                );
-                window.open(`https://www.google.com/maps/search/?api=1&query=${query}`, "_blank");
-              }}
-              className="mt-2 text-sm text-blue-600 hover:underline"
-            >
-              📍 Preview on Google Maps
-            </button>
-          )}
-        </div>
-      </div>
+      )}
 
       <motion.button
         whileHover={{ scale: 1.03 }}
