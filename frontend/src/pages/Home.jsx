@@ -5,6 +5,7 @@ import Footer from "../components/Footer";
 import BestSeller from "./BestSeller";
 import ScrollNavbar from "../components/ScrollNavbar";
 import { motion } from "framer-motion";
+import ManWalking from "../assets/ManWalking.mp4"; // Ensure this path is correct
 
 const Home = () => {
   return (
@@ -49,6 +50,16 @@ const Home = () => {
           <p className="text-gray-700 text-lg md:text-xl mb-6 max-w-2xl mx-auto">
             Discover mouth-watering vegetarian meals, snacks & drinks — all in one place. Save big on your everyday cravings!
           </p>
+
+          {/* Updated Video Tag */}
+          {/* <video
+            src={ManWalking}
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="mx-auto w-full max-w-md rounded-xl shadow-lg mb-6"
+          /> */}
 
           <Link
             to="/menu"

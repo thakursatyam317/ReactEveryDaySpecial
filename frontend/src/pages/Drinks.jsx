@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import DrinkApi from "../assets/DrinkApi"; // Replace with actual path to DrinkApi
 import { PiHeartFill } from "react-icons/pi";
 import { FaShoppingCart } from "react-icons/fa";
+import { IoArrowBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const categories = ["Juice", "Soda", "Tea", "Coffee"];
 const types = ["Hot", "Cold"];
@@ -15,6 +17,7 @@ const Drinks = () => {
   const [filteredDrinks, setFilteredDrinks] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setDrinks(DrinkApi);
@@ -85,6 +88,12 @@ const Drinks = () => {
 
   return (
     <>
+     <button
+        onClick={() => navigate(-1)} // 👈 go back to previous page
+        className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
+      >
+        <IoArrowBack />
+      </button>
       {successMessage && (
         <div
           className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit transition duration-300 ${

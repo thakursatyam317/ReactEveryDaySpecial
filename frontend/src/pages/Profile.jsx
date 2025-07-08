@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 import { authFetch } from "../utils/authUtils";
+import { IoArrowBack } from "react-icons/io5";
 
 const Profile = () => {
   const { authUser, fetchProfile } = useAuth();
@@ -111,7 +112,16 @@ const Profile = () => {
   }
 
   return (
-    <div className="flex justify-center mt-20">
+    <>
+       <button
+        onClick={() => navigate(-1)} // 👈 go back to previous page
+        className="ml-0.5 mt-22 inline-block h-10  bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md"
+      >
+       <IoArrowBack />
+      </button>
+    <div className="flex justify-center mt-0">
+    
+
       <div className="bg-white shadow-md rounded-lg p-8 w-[75%]">
         <div className="flex justify-between mb-4">
           <h1 className="text-2xl font-bold">👤 Your Profile</h1>
@@ -221,6 +231,7 @@ const Profile = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

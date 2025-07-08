@@ -1,9 +1,19 @@
 import React from "react";
 import coupons from "../assets/Coupon"; // Adjust path as needed
+import { IoArrowBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 const Coupon = () => {
+  const navigate = useNavigate();
   return (
-    <div className="p-4 mt-30 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+   <>
+    <button
+        onClick={() => navigate(-1)} // 👈 go back to previous page
+        className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
+      >
+        <IoArrowBack />
+      </button>
+       <div className="p-4 mt-30 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
       {coupons.map((coupon) => (
         <div key={coupon.id} className="bg-white rounded-xl shadow-md p-5 border border-dashed border-green-400">
           <h2 className="text-lg font-bold text-green-600">{coupon.code}</h2>
@@ -16,6 +26,7 @@ const Coupon = () => {
         </div>
       ))}
     </div>
+   </>
   );
 };
 

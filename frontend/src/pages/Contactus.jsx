@@ -1,8 +1,12 @@
 import React from 'react'
 import { FaEnvelope, FaPhoneAlt, FaMapMarkerAlt } from "react-icons/fa";
+import { IoArrowBack } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 
 
 const Contactus = () => {
+    const navigate = useNavigate();
+
     return (
    <section className="h-[65%] bg-gray-50 py-12 px-4 flex justify-center items-start mt-20">
       <div className="bg-white shadow-md rounded-lg max-w-4xl w-[85%]  p-8">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { IoArrowBack } from "react-icons/io5";
 
 const SaveAddress = () => {
   const navigate = useNavigate();
@@ -40,7 +41,14 @@ const SaveAddress = () => {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-30 p-6 bg-white shadow-md rounded-xl">
+   <>
+    <button
+        onClick={() => navigate(-1)} // 👈 go back to previous page
+        className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
+      >
+        <IoArrowBack />
+      </button>
+     <div className="max-w-xl mx-auto mt-30 p-6 bg-white shadow-md rounded-xl">
       <h2 className="text-2xl font-semibold mb-6 text-center">Save Delivery Address</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
        
@@ -87,6 +95,7 @@ const SaveAddress = () => {
         </button>
       </form>
     </div>
+   </>
   );
 };
 

@@ -1,68 +1,124 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { NavLink } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const ProductManagement = () => {
-  const [orders, setOrders] = useState([]);
-  const token = sessionStorage.getItem("token");
+  const [products, setProducts] = useState([]);
 
-  const fetchOrders = async () => {
+  const dummyProducts = [
+    {
+      _id: "prod1",
+      title: "Veggie Pizza",
+      price: 299,
+      category: "Pizza",
+    },
+    {
+      _id: "prod2",
+      title: "Classic Burger",
+      price: 149,
+      category: "Burger",
+    },
+    {
+      _id: "prod3",
+      title: "French Fries",
+      price: 99,
+      category: "Snacks",
+    },
+    {
+      _id: "prod4",
+      title: "Pasta Alfredo",
+      price: 229,
+      category: "Pasta",
+    },
+  ];
+
+  const fetchProducts = async () => {
     try {
-      const res = await axios.get("http://localhost:4500/admin/orders-summary", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setOrders(res.data);
+      // In real case, replace with your API call
+      setProducts(dummyProducts);
+      toast.success("Loaded dummy products");
     } catch (err) {
-      toast.error("Failed to load orders");
+      toast.error("Failed to load products");
     }
   };
 
-  const updateStatus = async (orderId, status) => {
-    try {
-      await axios.put(
-        `http://localhost:4500/admin/orders-status/${orderId}`,
-        { status },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      toast.success("Order status updated");
-      fetchOrders();
-    } catch (err) {
-      toast.error("Failed to update status");
-    }
+  const handleEdit = (id) => {
+    toast.success(`Edit clicked for product ID: ${id}`);
+    // Navigate or open modal to edit product
+  };
+
+  const handleDelete = (id) => {
+    const updated = products.filter((prod) => prod._id !== id);
+    setProducts(updated);
+    toast.success("Product deleted (dummy)");
   };
 
   useEffect(() => {
-    fetchOrders();
+    fetchProducts();
   }, []);
 
-  return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Admin Orders</h2>
-      {orders.map((order) => (
-        <div
-          key={order._id}
-          className="bg-white shadow-md rounded-xl p-4 mb-4 border"
-        >
-          <p><strong>Order ID:</strong> {order._id}</p>
-          <p><strong>User:</strong> {order.user?.fullName}</p>
-          <p><strong>Total:</strong> ₹{order.totalPrice}</p>
-          <p><strong>Status:</strong> {order.orderStatus}</p>
+  const navItemStyle =
+    "block px-4 py-2 rounded hover:bg-gray-700 transition duration-200";
 
-          <select
-            className="mt-2 p-2 border rounded"
-            value={order.orderStatus}
-            onChange={(e) => updateStatus(order._id, e.target.value)}
+  return (
+    <div className="flex mt-20">
+      {/* Sidebar */}
+      <div className="w-64 h-screen bg-gray-900 text-white p-6 fixed top-0 left-0 shadow-xl">
+        <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
+        <nav className="space-y-2">
+          <NavLink to="/admin/dashboard" className={navItemStyle}>
+            📊 Dashboard
+          </NavLink>
+          <NavLink to="/admin/product-management" className={navItemStyle}>
+            🛍️ Products
+          </NavLink>
+          <NavLink to="/admin/order-status" className={navItemStyle}>
+            📦 Orders
+          </NavLink>
+          <NavLink to="/admin/users" className={navItemStyle}>
+            👥 Users
+          </NavLink>
+          <NavLink to="/admin/coupons" className={navItemStyle}>
+            💸 Coupons
+          </NavLink>
+        </nav>
+      </div>
+
+      {/* Main Content */}
+      <div className="ml-64 p-6 w-full">
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">🛍️ Product Management</h2>
+
+        {products.map((product) => (
+          <div
+            key={product._id}
+            className="bg-white shadow-md rounded-xl p-6 mb-6 border"
           >
-            <option>Pending</option>
-            <option>Confirmed</option>
-            <option>Shipped</option>
-            <option>Delivered</option>
-            <option>Cancelled</option>
-          </select>
-        </div>
-      ))}
+            <p className="text-sm text-gray-500">
+              <strong>ID:</strong> #{product._id}
+            </p>
+            <p className="text-lg font-semibold text-gray-800">
+              {product.title}
+            </p>
+            <p className="text-sm text-gray-600">Category: {product.category}</p>
+            <p className="text-sm text-gray-600 mb-4">Price: ₹{product.price}</p>
+
+            <div className="flex gap-4">
+              <button
+                onClick={() => handleEdit(product._id)}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDelete(product._id)}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
