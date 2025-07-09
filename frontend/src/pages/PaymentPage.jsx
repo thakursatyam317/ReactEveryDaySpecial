@@ -11,6 +11,7 @@ const PaymentPage = () => {
   const [selectedUPI, setSelectedUPI] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
+  // Calculate totals
   const totalAmount = cartItems.reduce(
     (acc, item) => acc + parseFloat(item.price) * (item.quantity || 1),
     0
@@ -23,7 +24,9 @@ const PaymentPage = () => {
     : totalAmount;
 
   const handlePlaceOrder = (paymentMethod) => {
-    const address = localStorage.getItem("deliveryAddress");
+    const address =
+      localStorage.getItem("deliveryAddress") ||
+      JSON.stringify(localStorage.getItem("eds-address"));
 
     if (!address) {
       alert("Address not found! Please enter your address.");
@@ -49,31 +52,28 @@ const PaymentPage = () => {
       status: "Confirmed",
     };
 
-    localStorage.setItem(
-      "orders",
-      JSON.stringify([...existingOrders, newOrder])
-    );
+    localStorage.setItem("orders", JSON.stringify([...existingOrders, newOrder]));
     localStorage.removeItem("cart");
     localStorage.removeItem("deliveryAddress");
     localStorage.removeItem("appliedCoupon");
 
+    setSuccessMessage(`✅ Order placed successfully using ${paymentMethod}!`);
+
     setTimeout(() => {
-      setSuccessMessage(`✅ Order placed successfully using ${paymentMethod}!`);
       navigate("/order");
-    }, 500);
+    }, 800);
   };
 
   return (
     <>
       <button
-        onClick={() => navigate(-1)} // 👈 go back to previous page
-        className="ml-0.5 mt-22 inline-block  h-10  bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md"
+        onClick={() => navigate(-1)}
+        className="ml-0.5 mt-22 inline-block h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md"
       >
         <IoArrowBack />
       </button>
 
       <div className="max-w-xl mx-auto p-6 -mt-10 bg-white rounded shadow relative">
-        {/* Success Message */}
         {successMessage && (
           <div className="absolute top-0 left-0 w-full bg-green-100 text-green-800 font-medium text-center py-2 rounded-t">
             {successMessage}
@@ -101,7 +101,7 @@ const PaymentPage = () => {
             </button>
           </div>
 
-          {/* UPI */}
+          {/* UPI Payment */}
           <div className="border p-4 rounded">
             <h3 className="text-xl font-semibold mb-4">Pay using UPI Apps</h3>
             <div className="flex justify-around items-center mb-4 text-5xl">

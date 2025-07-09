@@ -3,37 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { IoArrowBack } from "react-icons/io5";
 
-
 const indianStates = [
-  "Andhra Pradesh",
-  "Arunachal Pradesh",
-  "Assam",
-  "Bihar",
-  "Chhattisgarh",
-  "Delhi",
-  "Goa",
-  "Gujarat",
-  "Haryana",
-  "Himachal Pradesh",
-  "Jharkhand",
-  "Karnataka",
-  "Kerala",
-  "Madhya Pradesh",
-  "Maharashtra",
-  "Manipur",
-  "Meghalaya",
-  "Mizoram",
-  "Nagaland",
-  "Odisha",
-  "Punjab",
-  "Rajasthan",
-  "Sikkim",
-  "Tamil Nadu",
-  "Telangana",
-  "Tripura",
-  "Uttar Pradesh",
-  "Uttarakhand",
-  "West Bengal",
+  "Andhra Pradesh", "Arunachal Pradesh", "Assam", "Bihar", "Chhattisgarh",
+  "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh", "Jharkhand",
+  "Karnataka", "Kerala", "Madhya Pradesh", "Maharashtra", "Manipur",
+  "Meghalaya", "Mizoram", "Nagaland", "Odisha", "Punjab", "Rajasthan",
+  "Sikkim", "Tamil Nadu", "Telangana", "Tripura", "Uttar Pradesh",
+  "Uttarakhand", "West Bengal"
 ];
 
 const ConfirmAddress = () => {
@@ -51,13 +27,20 @@ const ConfirmAddress = () => {
 
   const [errors, setErrors] = useState({});
   const [selectedOption, setSelectedOption] = useState("new");
-  const [savedAddress, setSavedAddress] = useState("");
+  const [savedAddress, setSavedAddress] = useState(null);
 
   useEffect(() => {
-    const saved = localStorage.getItem("deliveryAddress");
+    const saved = JSON.parse(localStorage.getItem("eds-address"));
     if (saved) {
-      setSavedAddress(saved);
-      setSelectedOption("saved"); // Auto-select saved address if it exists
+      const fullAddress = `${saved.addressLine}, ${saved.city}, ${saved.state} - ${saved.pincode}`;
+      const formatted = {
+        label: "Home",
+        address: fullAddress,
+        name: saved.fullName,
+        mobile: saved.mobile,
+      };
+      setSavedAddress(formatted);
+      setSelectedOption("saved");
     }
   }, []);
 
@@ -75,8 +58,7 @@ const ConfirmAddress = () => {
     const { houseNumber, colony, city, district, state } = formData;
     const newErrors = {};
 
-    if (!houseNumber.trim())
-      newErrors.houseNumber = "House number is required.";
+    if (!houseNumber.trim()) newErrors.houseNumber = "House number is required.";
     if (!colony.trim()) newErrors.colony = "Colony name is required.";
     if (!city.trim()) newErrors.city = "City is required.";
     if (!district.trim()) newErrors.district = "District is required.";
@@ -88,27 +70,21 @@ const ConfirmAddress = () => {
     }
 
     const { landmark, mapLink } = formData;
-
-    const fullAddress = `${houseNumber}, ${colony}, ${
-      landmark ? landmark + "," : ""
-    } ${city}, ${district}, ${state}${
-      mapLink ? " (Map: " + mapLink + ")" : ""
-    }`;
+    const fullAddress = `${houseNumber}, ${colony}, ${landmark ? landmark + ", " : ""}${city}, ${district}, ${state}${mapLink ? " (Map: " + mapLink + ")" : ""}`;
 
     localStorage.setItem("deliveryAddress", fullAddress);
-    setSavedAddress(fullAddress);
-    setSelectedOption("saved"); // switch to saved immediately
     navigate("/payment");
   };
 
   return (
     <>
       <button
-        onClick={() => navigate(-1)} // 👈 go back to previous page
+        onClick={() => navigate(-1)}
         className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
       >
         <IoArrowBack />
       </button>
+
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -139,8 +115,10 @@ const ConfirmAddress = () => {
                 Use Saved Address
               </label>
             </div>
+
             <div className="ml-6 text-gray-600 text-sm bg-gray-50 p-3 rounded border">
-              {savedAddress}
+              {/* <p><strong>{savedAddress.name}</strong> ({savedAddress.mobile})</p> */}
+              <p>{savedAddress.address}</p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -161,8 +139,7 @@ const ConfirmAddress = () => {
 
         {selectedOption === "new" && (
           <div className="grid gap-4">
-            {[
-              { name: "houseNumber", label: "🏠 House Number" },
+            {[{ name: "houseNumber", label: "🏠 House Number" },
               { name: "colony", label: "🏘️ Colony Name" },
               { name: "landmark", label: "📍 Landmark (Optional)" },
               { name: "city", label: "🏙️ City" },

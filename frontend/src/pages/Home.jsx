@@ -6,6 +6,7 @@ import BestSeller from "./BestSeller";
 import ScrollNavbar from "../components/ScrollNavbar";
 import { motion } from "framer-motion";
 import ManWalking from "../assets/ManWalking.mp4"; // Ensure this path is correct
+import HomeAnimation from "../assets/HomeAnimation.png"; // Ensure this path is correct
 
 const Home = () => {
   return (
@@ -48,7 +49,8 @@ const Home = () => {
             Welcome to <span className="text-orange-500">EveryDaySpecial</span>
           </h1>
           <p className="text-gray-700 text-lg md:text-xl mb-6 max-w-2xl mx-auto">
-            Discover mouth-watering vegetarian meals, snacks & drinks — all in one place. Save big on your everyday cravings!
+            Discover mouth-watering vegetarian meals, snacks & drinks — all in
+            one place. Save big on your everyday cravings!
           </p>
 
           {/* Updated Video Tag */}
@@ -60,6 +62,11 @@ const Home = () => {
             playsInline
             className="mx-auto w-full max-w-md rounded-xl shadow-lg mb-6"
           /> */}
+          <img
+            src={HomeAnimation}
+            alt="Sliding"
+            className="sliding-image absolute top-1/2 left-0 transform -translate-y-1/2 animate-slideRight h-30"
+          />
 
           <Link
             to="/menu"

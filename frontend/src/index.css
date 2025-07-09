@@ -126,3 +126,35 @@
   padding-top: 102px;
 }
 
+
+
+
+
+
+
+
+
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 150px; /* Adjust height as needed */
+  overflow: hidden;
+  background-color: #f8f8f8; /* Optional */
+}
+
+.sliding-image {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: slideRight 10s linear infinite;
+  height: 120px; /* Adjust image size as needed */
+}
+
+@keyframes slideRight {
+  0% {
+    left: -100px; /* Start off-screen */
+  }
+  100% {
+    left: 100%; /* End off-screen to the right */
+  }
+}
