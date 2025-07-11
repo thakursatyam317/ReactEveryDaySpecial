@@ -61,7 +61,7 @@ function App() {
           element={<Coupon  />}
         />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/order-status" element={<OrderPlaceOrNot />} />
+        <Route path="/admin/orders" element={<OrderPlaceOrNot />} />
         <Route path="/admin/product-management" element={<ProductManagement />} />
         <Route path="/admin/users" element={<UserManagement />} />
         <Route path="/admin/coupons" element={<CouponsAdmin />} />

@@ -16,13 +16,12 @@ const ConfirmAddress = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    houseNumber: "",
-    colony: "",
-    landmark: "",
+    fullName: "",
+    mobile: "",
+    pincode: "",
     city: "",
-    district: "",
     state: "",
-    mapLink: "",
+    addressLine: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -30,16 +29,10 @@ const ConfirmAddress = () => {
   const [savedAddress, setSavedAddress] = useState(null);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem("eds-address"));
+    const saved = localStorage.getItem("eds-address");
     if (saved) {
-      const fullAddress = `${saved.addressLine}, ${saved.city}, ${saved.state} - ${saved.pincode}`;
-      const formatted = {
-        label: "Home",
-        address: fullAddress,
-        name: saved.fullName,
-        mobile: saved.mobile,
-      };
-      setSavedAddress(formatted);
+      const parsed = JSON.parse(saved);
+      setSavedAddress(parsed);
       setSelectedOption("saved");
     }
   }, []);
@@ -49,176 +42,92 @@ const ConfirmAddress = () => {
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
+  const validate = () => {
+    const newErrors = {};
+    const { fullName, mobile, pincode, city, state, addressLine } = formData;
+
+    if (!fullName.trim()) newErrors.fullName = "Full name is required.";
+    if (!mobile.trim()) newErrors.mobile = "Mobile number is required.";
+    if (!pincode.trim()) newErrors.pincode = "Pincode is required.";
+    if (!city.trim()) newErrors.city = "City is required.";
+    if (!state.trim()) newErrors.state = "State is required.";
+    if (!addressLine.trim()) newErrors.addressLine = "Address line is required.";
+
+    return newErrors;
+  };
+
   const handleConfirm = () => {
     if (selectedOption === "saved") {
+      localStorage.setItem("deliveryAddress", JSON.stringify(savedAddress));
       navigate("/payment");
       return;
     }
 
-    const { houseNumber, colony, city, district, state } = formData;
-    const newErrors = {};
-
-    if (!houseNumber.trim()) newErrors.houseNumber = "House number is required.";
-    if (!colony.trim()) newErrors.colony = "Colony name is required.";
-    if (!city.trim()) newErrors.city = "City is required.";
-    if (!district.trim()) newErrors.district = "District is required.";
-    if (!state.trim()) newErrors.state = "Please select a state.";
-
+    const newErrors = validate();
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    const { landmark, mapLink } = formData;
-    const fullAddress = `${houseNumber}, ${colony}, ${landmark ? landmark + ", " : ""}${city}, ${district}, ${state}${mapLink ? " (Map: " + mapLink + ")" : ""}`;
-
-    localStorage.setItem("deliveryAddress", fullAddress);
+    localStorage.setItem("deliveryAddress", JSON.stringify(formData));
+    localStorage.setItem("eds-address", JSON.stringify(formData)); // Save for future use
     navigate("/payment");
   };
 
   return (
-    <>
-      <button
-        onClick={() => navigate(-1)}
-        className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
-      >
-        <IoArrowBack />
+    <div className="p-6 max-w-xl mx-auto mt-28 bg-white rounded-xl shadow">
+      <button onClick={() => navigate(-1)} className="mb-4 text-orange-600"><IoArrowBack /></button>
+
+      <h2 className="text-2xl font-bold text-orange-600 mb-4">Confirm Delivery Address</h2>
+
+      {savedAddress && (
+        <div className="mb-4">
+          <label className="flex gap-2 items-center mb-2">
+            <input
+              type="radio"
+              checked={selectedOption === "saved"}
+              onChange={() => setSelectedOption("saved")}
+            />
+            Use Saved Address
+          </label>
+          <div className="ml-6 text-sm text-gray-700">{savedAddress.addressLine}, {savedAddress.city}, {savedAddress.state} - {savedAddress.pincode}</div>
+          <label className="flex gap-2 items-center mt-4">
+            <input
+              type="radio"
+              checked={selectedOption === "new"}
+              onChange={() => setSelectedOption("new")}
+            />
+            Enter New Address
+          </label>
+        </div>
+      )}
+
+      {selectedOption === "new" && (
+        <div className="grid gap-3">
+          {["fullName", "mobile", "pincode", "city", "addressLine"].map((field) => (
+            <div key={field}>
+              <input
+                name={field}
+                placeholder={field.replace(/([A-Z])/g, " $1")}
+                value={formData[field]}
+                onChange={handleChange}
+                className="w-full p-2 border rounded"
+              />
+              {errors[field] && <p className="text-sm text-red-500">{errors[field]}</p>}
+            </div>
+          ))}
+          <select name="state" value={formData.state} onChange={handleChange} className="p-2 border rounded">
+            <option value="">Select State</option>
+            {indianStates.map((s) => <option key={s}>{s}</option>)}
+          </select>
+          {errors.state && <p className="text-sm text-red-500">{errors.state}</p>}
+        </div>
+      )}
+
+      <button onClick={handleConfirm} className="mt-5 w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600">
+        Confirm Address
       </button>
-
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-xl mx-auto p-6 mt-28 bg-white rounded-xl shadow-lg border border-orange-100"
-      >
-        <motion.h2
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", stiffness: 100 }}
-          className="text-3xl font-bold mb-6 text-center text-orange-600"
-        >
-          🍱 Confirm Delivery Address
-        </motion.h2>
-
-        {savedAddress && (
-          <div className="mb-6 space-y-3">
-            <div className="flex items-center gap-2">
-              <input
-                type="radio"
-                id="saved"
-                value="saved"
-                checked={selectedOption === "saved"}
-                onChange={() => setSelectedOption("saved")}
-                className="accent-orange-500"
-              />
-              <label htmlFor="saved" className="font-medium">
-                Use Saved Address
-              </label>
-            </div>
-
-            <div className="ml-6 text-gray-600 text-sm bg-gray-50 p-3 rounded border">
-              {/* <p><strong>{savedAddress.name}</strong> ({savedAddress.mobile})</p> */}
-              <p>{savedAddress.address}</p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <input
-                type="radio"
-                id="new"
-                value="new"
-                checked={selectedOption === "new"}
-                onChange={() => setSelectedOption("new")}
-                className="accent-orange-500"
-              />
-              <label htmlFor="new" className="font-medium">
-                Enter New Address
-              </label>
-            </div>
-          </div>
-        )}
-
-        {selectedOption === "new" && (
-          <div className="grid gap-4">
-            {[{ name: "houseNumber", label: "🏠 House Number" },
-              { name: "colony", label: "🏘️ Colony Name" },
-              { name: "landmark", label: "📍 Landmark (Optional)" },
-              { name: "city", label: "🏙️ City" },
-              { name: "district", label: "📌 District" },
-            ].map((field) => (
-              <div key={field.name}>
-                <input
-                  name={field.name}
-                  type="text"
-                  value={formData[field.name]}
-                  onChange={handleChange}
-                  placeholder={field.label}
-                  className="p-3 border rounded w-full focus:outline-none focus:ring-2 focus:ring-orange-400 transition"
-                />
-                {errors[field.name] && (
-                  <p className="text-red-500 text-sm">{errors[field.name]}</p>
-                )}
-              </div>
-            ))}
-
-            <div>
-              <select
-                name="state"
-                value={formData.state}
-                onChange={handleChange}
-                className="p-3 border rounded w-full bg-white focus:outline-none focus:ring-2 focus:ring-orange-400"
-              >
-                <option value="">🌐 Select State</option>
-                {indianStates.map((state) => (
-                  <option key={state} value={state}>
-                    {state}
-                  </option>
-                ))}
-              </select>
-              {errors.state && (
-                <p className="text-red-500 text-sm">{errors.state}</p>
-              )}
-            </div>
-
-            <div>
-              <input
-                name="mapLink"
-                type="text"
-                value={formData.mapLink}
-                onChange={handleChange}
-                placeholder="🗺️ Google Map Link (Optional)"
-                className="p-3 border rounded w-full focus:outline-none"
-              />
-              {formData.city && formData.state && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    const query = encodeURIComponent(
-                      `${formData.houseNumber}, ${formData.colony}, ${formData.city}, ${formData.district}, ${formData.state}`
-                    );
-                    window.open(
-                      `https://www.google.com/maps/search/?api=1&query=${query}`,
-                      "_blank"
-                    );
-                  }}
-                  className="mt-2 text-sm text-blue-600 hover:underline"
-                >
-                  📍 Preview on Google Maps
-                </button>
-              )}
-            </div>
-          </div>
-        )}
-
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.97 }}
-          onClick={handleConfirm}
-          className="mt-6 bg-orange-500 text-white px-6 py-2 rounded-lg hover:bg-orange-600 w-full transition"
-        >
-          ✅ Confirm Address
-        </motion.button>
-      </motion.div>
-    </>
+    </div>
   );
 };
 

@@ -32,7 +32,7 @@ const CouponsAdmin = () => {
         <nav className="space-y-2">
           <NavLink to="/admin/dashboard" className={navItemStyle}>📊 Dashboard</NavLink>
           <NavLink to="/admin/product-management" className={navItemStyle}>🛍️ Products</NavLink>
-          <NavLink to="/admin/order-status" className={navItemStyle}>📦 Orders</NavLink>
+          <NavLink to="/admin/orders" className={navItemStyle}>📦 Orders</NavLink>
           <NavLink to="/admin/users" className={navItemStyle}>👥 Users</NavLink>
           <NavLink to="/admin/coupons" className={`${navItemStyle} bg-gray-800`}>💸 Coupons</NavLink>
         </nav>

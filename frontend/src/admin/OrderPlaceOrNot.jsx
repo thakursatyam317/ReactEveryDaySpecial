@@ -1,72 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { NavLink } from "react-router-dom";
-import toast from "react-hot-toast";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 const OrderPlaceOrNot = () => {
   const [orders, setOrders] = useState([]);
+  const [filter, setFilter] = useState('');
 
-  const dummyOrders = [
-    {
-      _id: "order1",
-      user: { fullName: "John Doe" },
-      totalPrice: 299.99,
-      orderStatus: "Pending",
-    },
-    {
-      _id: "order2",
-      user: { fullName: "Jane Smith" },
-      totalPrice: 549.0,
-      orderStatus: "Shipped",
-    },
-    {
-      _id: "order3",
-      user: { fullName: "Rahul Sharma" },
-      totalPrice: 1200.5,
-      orderStatus: "Delivered",
-    },
-    {
-      _id: "order4",
-      user: { fullName: "Priya Mehta" },
-      totalPrice: 450.75,
-      orderStatus: "Confirmed",
-    },
-  ];
+  // Set baseURL if not already
+  axios.defaults.baseURL = 'http://localhost:5000'; // change to your backend url
 
   const fetchOrders = async () => {
+    const token = localStorage.getItem('token');
+    console.log("Admin token:", token); // ✅ Debug
+
+    if (!token) return alert("Please login as admin.");
+
     try {
-      setOrders(dummyOrders);
-      toast.success("Loaded dummy orders");
+      const res = await axios.get('/admin/orders', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setOrders(res.data);
     } catch (err) {
-      toast.error("Failed to load orders");
+      console.error('Error fetching orders:', err);
     }
   };
 
-  const updateStatus = async (orderId, status) => {
+  const handleStatusChange = async (id, status) => {
+    const token = localStorage.getItem('token');
     try {
-      const updated = orders.map((order) =>
-        order._id === orderId ? { ...order, orderStatus: status } : order
-      );
-      setOrders(updated);
-      toast.success("Order status updated (dummy)");
+      await axios.patch(`/admin/orders/${id}`, { status }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      fetchOrders(); // refetch orders
     } catch (err) {
-      toast.error("Failed to update status");
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "Confirmed":
-        return "bg-blue-100 text-blue-800";
-      case "Shipped":
-        return "bg-purple-100 text-purple-800";
-      case "Delivered":
-        return "bg-green-100 text-green-800";
-      case "Cancelled":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+      console.error('Error updating status:', err);
     }
   };
 
@@ -74,76 +40,55 @@ const OrderPlaceOrNot = () => {
     fetchOrders();
   }, []);
 
-  const navItemStyle =
-    "block px-4 py-2 rounded hover:bg-gray-700 transition duration-200";
+  const filteredOrders = filter
+    ? orders.filter(order => order.status === filter)
+    : orders;
 
   return (
-    <div className="flex mt-20">
-      {/* Sidebar */}
-      <div className="w-64 h-screen bg-gray-900 text-white p-6 fixed top-0 left-0 shadow-xl">
-        <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
-        <nav className="space-y-2">
-          <NavLink to="/admin/dashboard" className={navItemStyle}>
-            📊 Dashboard
-          </NavLink>
-          <NavLink to="/admin/product-management" className={navItemStyle}>
-            🛍️ Products
-          </NavLink>
-          <NavLink to="/admin/order-status" className={navItemStyle}>
-            📦 Orders
-          </NavLink>
-          <NavLink to="/admin/users" className={navItemStyle}>
-            👥 Users
-          </NavLink>
-          <NavLink to="/admin/coupons" className={navItemStyle}>
-            💸 Coupons
-          </NavLink>
-        </nav>
-      </div>
+    <div className="p-4 mt-20">
+      <h2 className="text-2xl font-semibold mb-4">Order Management</h2>
 
-      {/* Main content */}
-      <div className="ml-64 p-6 w-full">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">📦 Order Management</h2>
+      <select
+        value={filter}
+        onChange={e => setFilter(e.target.value)}
+        className="mb-4 border px-3 py-1 rounded"
+      >
+        <option value="">All</option>
+        <option value="Pending">Pending</option>
+        <option value="Shipped">Shipped</option>
+        <option value="Delivered">Delivered</option>
+      </select>
 
-        {orders.map((order) => (
-          <div
-            key={order._id}
-            className="bg-white shadow-md rounded-xl p-6 mb-6 border"
-          >
-            <div className="mb-3">
-              <p className="text-sm text-gray-500">
-                <strong>Order ID:</strong> #{order._id}
-              </p>
-              <p className="text-sm text-gray-700">
-                <strong>User:</strong> {order.user?.fullName}
-              </p>
-              <p className="text-sm text-gray-700">
-                <strong>Total:</strong> ₹{order.totalPrice.toFixed(2)}
-              </p>
-            </div>
-
-            <div className="flex items-center justify-between mt-4">
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusColor(order.orderStatus)}`}
-              >
-                {order.orderStatus}
-              </span>
-
-              <select
-                className="ml-4 p-2 text-sm border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={order.orderStatus}
-                onChange={(e) => updateStatus(order._id, e.target.value)}
-              >
-                <option>Pending</option>
-                <option>Confirmed</option>
-                <option>Shipped</option>
-                <option>Delivered</option>
-                <option>Cancelled</option>
-              </select>
-            </div>
-          </div>
-        ))}
-      </div>
+      <table className="w-full table-auto border">
+        <thead>
+          <tr className="bg-gray-200">
+            <th className="border p-2">User</th>
+            <th className="border p-2">Amount</th>
+            <th className="border p-2">Status</th>
+            <th className="border p-2">Change Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredOrders.map(order => (
+            <tr key={order._id}>
+              <td className="border p-2">{order.user?.name || 'No Name'}</td>
+              <td className="border p-2">₹{order.totalPrice}</td>
+              <td className="border p-2">{order.status}</td>
+              <td className="border p-2">
+                <select
+                  value={order.status}
+                  onChange={e => handleStatusChange(order._id, e.target.value)}
+                  className="border px-2 py-1"
+                >
+                  <option>Pending</option>
+                  <option>Shipped</option>
+                  <option>Delivered</option>
+                </select>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

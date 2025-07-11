@@ -95,7 +95,7 @@ const Dashboard = () => {
           <NavLink to="/admin/product-management" className={navItemStyle}>
             🛍️ Products
           </NavLink>
-          <NavLink to="/admin/order-status" className={navItemStyle}>
+          <NavLink to="/admin/orders" className={navItemStyle}>
             📦 Orders
           </NavLink>
           <NavLink to="/admin/users" className={navItemStyle}>
