@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    orderItems: [
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    orderItems: 
       {
         _id: String,
         name: String,
@@ -11,7 +11,7 @@ const orderSchema = new mongoose.Schema(
         quantity: Number,
         image: String,
       },
-    ],
+    
     shippingAddress: {
       fullName: String,
       mobile: String,
@@ -20,10 +20,12 @@ const orderSchema = new mongoose.Schema(
       state: String,
       addressLine: String,
     },
+    //image: {type : String, required : true},
     totalPrice: { type: Number, required: true },
     paymentMethod: { type: String, required: true },
     paymentStatus: { type: String, default: "Pending" },
     orderStatus: { type: String, default: "Pending" },
+
   },
   { timestamps: true }
 );

@@ -23,6 +23,7 @@ const PaymentPage = () => {
   const address = getParsedLocalStorage("deliveryAddress");
   const appliedCoupon = getParsedLocalStorage("appliedCoupon");
   const token = localStorage.getItem("token");
+  // const image = getParsedLocalStorage("image");
 
   const [selectedUPI, setSelectedUPI] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
@@ -55,14 +56,24 @@ const PaymentPage = () => {
   try {
     const token = localStorage.getItem("token");
     console.log("Placing order with token:", token); // ✅ Debug
+    console.log("Order details:", {
+      orderItems: cartItems,  
+      totalPrice: finalAmount,
+      shippingAddress: address,
+      paymentMethod,
+      // image: image
+     
+    });
+    console.log(typeof(cartItems), typeof(finalAmount), typeof(address), typeof(paymentMethod),typeof(image));
 
     const response = await axios.post(
-      "http://localhost:4500/order/create",
+      "http://127.0.0.1:4500/order/create",
       {
         orderItems: cartItems,
         totalPrice: finalAmount,
         shippingAddress: address,
         paymentMethod,
+        // image: image
       },
       {
         headers: {

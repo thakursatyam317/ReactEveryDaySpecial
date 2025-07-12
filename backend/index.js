@@ -6,7 +6,6 @@ import cors from "cors";
 
 import authRoutes from "./src/router/authRouter.js";
 import userRoutes from "./src/router/userRouter.js";
-import adminOrders from "./src/router/adminOrders.js"; // Import admin orders
 import orderRoutes from "./src/router/orderRouter.js";
 import adminRoutes from "./src/router/adminRouter.js"; // Import admin routes
 dotenv.config();
@@ -30,6 +29,6 @@ app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
 app.use('/order', orderRoutes);// Use order routes under /order
 app.use("/api/admin", adminRoutes); // Use admin routes under /api/admin
-app.use('/admin/orders', adminOrders);
+
 
 app.listen(process.env.PORT, () => console.log(`🚀 Server running on port ${process.env.PORT}`));
