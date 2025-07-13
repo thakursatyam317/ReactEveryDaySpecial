@@ -4,6 +4,7 @@ import Order from '../models/orderModels.js';
 
 export const createOrder = async (req, res) => {
   const { orderItems, totalPrice, shippingAddress, paymentMethod } = req.body;
+  const photo = req.file;
   console.log("Order Iteam:", orderItems);//object
   // console.log("orderItems:", typeof(orderItems) );
   console.log("Total price:", totalPrice);//Number
@@ -21,18 +22,40 @@ export const createOrder = async (req, res) => {
   if (!shippingAddress || !totalPrice || !paymentMethod) {
     return res.status(400).json({ error: "Missing required order fields." });
   }
+
+  let profilePicUrl = req.user.profilePic;
+  if (photo) {
+        const base64Image = photo.buffer.toString("base64");
+        const dataUri = `data:${photo.mimetype};base64,${base64Image}`;
   
-// const image = `https://placehold.co/600x400?text=${fullName.charAt(0).toUpperCase()}`;
-// console.log("image : ", image)
+        try {
+          const result = await cloudinary.uploader.upload(dataUri, {
+            folder: "everydayspecial",
+            width: 300,
+            height: 300,
+            crop: "fill",
+          });
+  
+          if (!result?.secure_url) {
+            return res.status(500).json({ message: "Failed to upload image" });
+          }
+  
+          profilePicUrl = result.secure_url;
+        } catch (cloudErr) {
+          console.error("❌ Cloudinary Error:", cloudErr);
+          return res.status(500).json({ message: "Image upload failed" });
+        }
+      }
+      console.log("Profile Pic URL:", profilePicUrl);
+
   try {
     const newOrder = await Order.create({
+      user: req.user._id, // Link to logged-in user
       orderItems,
       totalPrice,
       shippingAddress,
       paymentMethod,
-      // image
-      
-      
+      profilePic: profilePicUrl,
     });
     // console.log("✅ Order created:", newOrder);
 
@@ -53,7 +76,8 @@ export const createOrder = async (req, res) => {
 
 
 
-// ✅ User: Get logged-in user's orders
+// ✅ User: Get logged-in user's orders in admin dashboard
+
 export const getUserOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });

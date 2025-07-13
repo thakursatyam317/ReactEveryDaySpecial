@@ -24,7 +24,7 @@ const PaymentPage = () => {
   const appliedCoupon = getParsedLocalStorage("appliedCoupon");
   const token = localStorage.getItem("token");
   // const image = getParsedLocalStorage("image");
-
+  const [profile, setProfile] = useState(""); // Assuming you want to handle image upload
   const [selectedUPI, setSelectedUPI] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -61,8 +61,7 @@ const PaymentPage = () => {
       totalPrice: finalAmount,
       shippingAddress: address,
       paymentMethod,
-      // image: image
-     
+      image: profile
     });
     console.log(typeof(cartItems), typeof(finalAmount), typeof(address), typeof(paymentMethod),typeof(image));
 
@@ -73,7 +72,7 @@ const PaymentPage = () => {
         totalPrice: finalAmount,
         shippingAddress: address,
         paymentMethod,
-        // image: image
+        image: profile
       },
       {
         headers: {

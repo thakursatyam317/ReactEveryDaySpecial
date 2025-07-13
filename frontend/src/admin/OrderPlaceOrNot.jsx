@@ -7,6 +7,7 @@ const navItemStyle = 'block py-2 px-4 hover:bg-gray-700 rounded transition';
 const OrderPlaceOrNot = () => {
   const [orders, setOrders] = useState([]);
   const [filter, setFilter] = useState('');
+  
 
   axios.defaults.baseURL = 'http://localhost:4500';
 
@@ -15,6 +16,7 @@ const OrderPlaceOrNot = () => {
     if (!token) return alert("Please login as admin.");
     console.log("Fetching orders with token:", token); // ✅ Debug
     try {
+      console.log("Fetching orders..."); // ✅ Debug
       const res = await axios.get('/order/myorders', {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -33,7 +35,7 @@ const OrderPlaceOrNot = () => {
       if (paymentStatus !== null) updateData.paymentStatus = paymentStatus;
       if (paymentConfirmed !== null) updateData.paymentConfirmed = paymentConfirmed;
 
-      await axios.put(`/order/update/${orderId}`, updateData, {
+      await axios.put(`/order/OrderStatus`, updateData, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
