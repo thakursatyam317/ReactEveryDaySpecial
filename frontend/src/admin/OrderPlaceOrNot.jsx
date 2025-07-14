@@ -27,7 +27,7 @@ const OrderPlaceOrNot = () => {
     }
   };
 
-  const handleStatusChange = async (orderId, newStatus = null, paymentStatus = null, paymentConfirmed = null) => {
+  const handleStatusChange = async (_id, newStatus = null, paymentStatus = null, paymentConfirmed = null) => {
     const token = localStorage.getItem('token');
     try {
       const updateData = {};
@@ -85,9 +85,11 @@ const OrderPlaceOrNot = () => {
         <table className="w-full table-auto border text-sm">
           <thead>
             <tr className="bg-gray-200 text-left">
-              <th className="border p-2">User</th>
+              <th className="border p-2">Name</th>
+              <th className="border p-2">UserID</th>
+              <th className="border p-2">OrderID</th>
               <th className="border p-2">Amount</th>
-              <th className="border p-2">Status</th>
+              {/* <th className="border p-2">Status</th> */}
               <th className="border p-2">Change Status</th>
               <th className="border p-2">Payment Status</th>
               <th className="border p-2">Confirm Payment</th>
@@ -97,15 +99,17 @@ const OrderPlaceOrNot = () => {
             {filteredOrders.length > 0 ? (
               filteredOrders.map((order) => (
                 <tr key={order._id}>
-                  <td className="border p-2">{order.user?.name || 'Unknown'}</td>
+                  <td className="border p-2">{order.shippingAddress.fullName || 'Unknown'}</td>
+                  <td className="border p-2">{order.user || 'Unknown'}</td>
+                  <td className="border p-2">{order._id}</td>
                   <td className="border p-2">₹{order.totalPrice}</td>
-                  <td className="border p-2">{order.status}</td>
+                  {/* <td className="border p-2">{order.status}</td> */}
                   <td className="border p-2">
                     <select
                       value={order.status}
                       onChange={(e) => handleStatusChange(order._id, e.target.value)}
                       className="border px-2 py-1 rounded"
-                    >
+                      >
                       <option value="Pending">Pending</option>
                       <option value="Shipped">Shipped</option>
                       <option value="Delivered">Delivered</option>

@@ -90,21 +90,24 @@ export const getUserOrders = async (req, res) => {
 
 // ✅ Admin: Update order status/payment info
 export const UpdateOrderStatus = async (req, res) => {
-  const { orderId, orderStatus, paymentStatus, paymentConfirmed } = req.body;
-  console.log("Update Order Status:", { orderId, orderStatus, paymentStatus, paymentConfirmed });
+  const { _id,  paymentStatus, paymentConfirmed } = req.body;
 
-  if (!orderId) {
+  // console.log("Update Order Status:", { _id, paymentStatus, paymentConfirmed });
+
+  console.log(_id);
+  if (!_id) {
     return res.status(400).json({ error: "Order ID is required" });
   }
 
+  console.log("Updating order with ID:", _id);
   try {
-    const order = await Order.findById(orderId);
+    const order = await Order.findById(_id);
+    console.log("Order found:", order);
     if (!order) {
       return res.status(404).json({ error: "Order not found" });
     }
     console.log("Order found:", order);
 
-    if (orderStatus) order.orderStatus = orderStatus;
     if (paymentStatus) order.paymentStatus = paymentStatus;
     if (typeof paymentConfirmed === "boolean") order.paymentConfirmed = paymentConfirmed;
 
