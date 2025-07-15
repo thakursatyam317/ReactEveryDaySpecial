@@ -16,6 +16,7 @@ import {
 } from "recharts";
 import toast from "react-hot-toast";
 import { NavLink } from "react-router-dom";
+
 const STATUS_OPTIONS = ["Pending", "Processing", "Shipped", "Delivered", "Pickup", "Cancelled", "Paid"];
 
 const growthData = [
@@ -69,12 +70,8 @@ const Dashboard = () => {
     fetchOrders();
   }, []);
 
-  const salesData = orders.map((order) => ({
-    name: order.user?.fullName || "Unknown",
-    total: order.total || 0,
-  }));
-
-  const totalRevenue = orders.reduce((acc, order) => acc + order.total, 0);
+  // Total Revenue and Profit
+  const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
   const totalProfit = totalRevenue * 0.2;
 
   const profitPie = [
@@ -82,11 +79,15 @@ const Dashboard = () => {
     { name: "Cost", value: totalRevenue - totalProfit },
   ];
 
+  const salesData = orders.map((order) => ({
+    name: order.user?.fullName || "Unknown",
+    total: order.total || 0,
+  }));
+
   return (
-
-
-   <>
-     <div className="w-64 h-screen bg-gray-900 text-white p-6 fixed top-0 left-0 shadow-xl">
+    <>
+      {/* Sidebar */}
+      <div className="w-64 h-screen bg-gray-900 text-white p-6 fixed top-0 left-0 shadow-xl">
         <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
         <nav className="space-y-2">
           <NavLink to="/admin/dashboard" className={navItemStyle}>
@@ -107,137 +108,141 @@ const Dashboard = () => {
         </nav>
       </div>
 
+      {/* Main Content */}
+      <div className="ml-64 p-6">
+        <h1 className="text-3xl font-bold mb-4">📊 Admin Dashboard</h1>
 
-       <div className="ml-64 p-6">
-      <h1 className="text-3xl font-bold mb-4">📊 Admin Dashboard</h1>
+        {/* Summary Widgets */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+          <div className="bg-green-100 text-green-800 p-4 rounded-xl shadow-sm">
+            <h3 className="text-lg font-medium">Total Orders</h3>
+            <p className="text-2xl font-bold">{orders.length}</p>
+          </div>
+          <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow-sm">
+            <h3 className="text-lg font-medium">Total Revenue</h3>
+            <p className="text-2xl font-bold">₹{totalRevenue}</p>
+          </div>
+          <div className="bg-yellow-100 text-yellow-800 p-4 rounded-xl shadow-sm">
+            <h3 className="text-lg font-medium">Estimated Profit</h3>
+            <p className="text-2xl font-bold">₹{totalProfit}</p>
+          </div>
+        </div>
 
-      {/* Summary Widgets */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-100 text-green-800 p-4 rounded-xl shadow-sm">
-          <h3 className="text-lg font-medium">Total Orders</h3>
-          <p className="text-2xl font-bold">{orders.length}</p>
-        </div>
-        <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow-sm">
-          <h3 className="text-lg font-medium">Total Revenue</h3>
-          <p className="text-2xl font-bold">₹{totalRevenue}</p>
-        </div>
-        <div className="bg-yellow-100 text-yellow-800 p-4 rounded-xl shadow-sm">
-          <h3 className="text-lg font-medium">Estimated Profit</h3>
-          <p className="text-2xl font-bold">₹{totalProfit}</p>
-        </div>
-      </div>
+        {/* Charts */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+          {/* Sales Chart */}
+          <div className="bg-white shadow-md p-4 rounded-xl">
+            <h2 className="text-xl font-semibold mb-2">💰 Sales by Customer</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={salesData}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="total" fill="#3b82f6" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
-        {/* Sales Chart */}
+          {/* Profit Pie Chart */}
+          <div className="bg-white shadow-md p-4 rounded-xl">
+            <h2 className="text-xl font-semibold mb-2">📊 Profit Distribution</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={profitPie}
+                  dataKey="value"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={80}
+                  label
+                >
+                  <Cell fill="#10b981" />
+                  <Cell fill="#f97316" />
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Growth Chart */}
+          <div className="bg-white shadow-md p-4 rounded-xl">
+            <h2 className="text-xl font-semibold mb-2">📈 Company Product Growth</h2>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={growthData}>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+                <Line
+                  type="monotone"
+                  dataKey="sales"
+                  stroke="#6366f1"
+                  strokeWidth={3}
+                  dot={{ r: 5 }}
+                  activeDot={{ r: 8 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Order Table */}
         <div className="bg-white shadow-md p-4 rounded-xl">
-          <h2 className="text-xl font-semibold mb-2">💰 Sales by Customer</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <BarChart data={salesData}>
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="total" fill="#3b82f6" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Profit Pie Chart */}
-        <div className="bg-white shadow-md p-4 rounded-xl">
-          <h2 className="text-xl font-semibold mb-2">📊 Profit Distribution</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <PieChart>
-              <Pie
-                data={profitPie}
-                dataKey="value"
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                label
-              >
-                <Cell fill="#10b981" />
-                <Cell fill="#f97316" />
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-
-        {/* Growth Chart */}
-        <div className="bg-white shadow-md p-4 rounded-xl">
-          <h2 className="text-xl font-semibold mb-2">📈 Company Product Growth</h2>
-          <ResponsiveContainer width="100%" height={250}>
-            <LineChart data={growthData}>
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-              <Line
-                type="monotone"
-                dataKey="sales"
-                stroke="#6366f1"
-                strokeWidth={3}
-                dot={{ r: 5 }}
-                activeDot={{ r: 8 }}
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* Order Table */}
-      <div className="bg-white shadow-md p-4 rounded-xl">
-        <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="p-2">Customer</th>
-                <th className="p-2">Items</th>
-                <th className="p-2">Amount</th>
-                <th className="p-2">Status</th>
-                <th className="p-2">Update</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.length === 0 ? (
+          <h2 className="text-xl font-semibold mb-4">Recent Orders</h2>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border">
+              <thead className="bg-gray-200">
                 <tr>
-                  <td colSpan="5" className="text-center p-4 text-gray-500">
-                    No orders found.
-                  </td>
+                  <th className="p-2">Customer</th>
+                  <th className="p-2">Items</th>
+                  <th className="p-2">Amount</th>
+                  <th className="p-2">Status</th>
+                  <th className="p-2">Update</th>
                 </tr>
-              ) : (
-                orders.map((order) => (
-                  <tr key={order._id} className="border-b">
-                    <td className="p-2">{order.user?.fullName}</td>
-                    <td className="p-2">{order.items?.length} items</td>
-                    <td className="p-2">₹{order.total}</td>
-                    <td className="p-2">
-                      <span className="font-semibold text-blue-600">{order.status}</span>
-                    </td>
-                    <td className="p-2">
-                      <select
-                        className="border p-1 rounded"
-                        value={order.status}
-                        onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                      >
-                        {STATUS_OPTIONS.map((status) => (
-                          <option key={status} value={status}>
-                            {status}
-                          </option>
-                        ))}
-                      </select>
+              </thead>
+              <tbody>
+                {orders.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center p-4 text-gray-500">
+                      No orders found.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  orders.map((order) => (
+                    <tr key={order._id} className="border-b">
+                      <td className="p-2">{order.user?.fullName || "Unknown"}</td>
+                      <td className="p-2">
+                        {Array.isArray(order.items) ? order.items.length : 0} items
+                      </td>
+                      <td className="p-2">₹{order.total || 0}</td>
+                      <td className="p-2">
+                        <span className="font-semibold text-blue-600">
+                          {order.status || "Pending"}
+                        </span>
+                      </td>
+                      <td className="p-2">
+                        <select
+                          className="border p-1 rounded"
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                        >
+                          {STATUS_OPTIONS.map((status) => (
+                            <option key={status} value={status}>
+                              {status}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
-   </>
+    </>
   );
 };
 

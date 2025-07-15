@@ -22,13 +22,10 @@ const PaymentPage = () => {
   const cartItems = getParsedLocalStorage("cart") || [];
   const address = getParsedLocalStorage("deliveryAddress");
   const appliedCoupon = getParsedLocalStorage("appliedCoupon");
-  const token = localStorage.getItem("token");
-  // const image = getParsedLocalStorage("image");
-  const [profile, setProfile] = useState(""); // Assuming you want to handle image upload
+  const [profile, setProfile] = useState(""); // image base64
   const [selectedUPI, setSelectedUPI] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
-  // Calculate final price with coupon
   const totalAmount = cartItems.reduce(
     (acc, item) => acc + parseFloat(item.price) * (item.quantity || 1),
     0
@@ -40,62 +37,52 @@ const PaymentPage = () => {
       : totalAmount - appliedCoupon.value
     : totalAmount;
 
- const handlePlaceOrder = async (paymentMethod) => {
-  if (!address) {
-    alert("Address not found! Please confirm your address.");
-    navigate("/confirm-address");
-    return;
-  }
+  const handlePlaceOrder = async (paymentMethod) => {
+    if (!address) {
+      alert("Address not found! Please confirm your address.");
+      navigate("/confirm-address");
+      return;
+    }
 
-  if (cartItems.length === 0) {
-    alert("Cart is empty!");
-    navigate("/cart");
-    return;
-  }
+    if (cartItems.length === 0) {
+      alert("Cart is empty!");
+      navigate("/cart");
+      return;
+    }
 
-  try {
-    const token = localStorage.getItem("token");
-    console.log("Placing order with token:", token); // ✅ Debug
-    console.log("Order details:", {
-      orderItems: cartItems,  
-      totalPrice: finalAmount,
-      shippingAddress: address,
-      paymentMethod,
-      image: profile
-    });
-    console.log(typeof(cartItems), typeof(finalAmount), typeof(address), typeof(paymentMethod),typeof(image));
+    try {
+      const token = localStorage.getItem("token");
 
-    const response = await axios.post(
-      "http://127.0.0.1:4500/order/create",
-      {
-        orderItems: cartItems,
-        totalPrice: finalAmount,
-        shippingAddress: address,
-        paymentMethod,
-        image: profile
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+      const response = await axios.post(
+        "http://127.0.0.1:4500/order/create",
+        {
+          orderItems: cartItems,
+          totalPrice: finalAmount,
+          shippingAddress: address,
+          paymentMethod,
+          image: profile,
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Order response:", response.data);
+      
 
-    console.log("✅ Order saved:", response.data);
+      // Clear localStorage
+      localStorage.removeItem("cart");
+      localStorage.removeItem("deliveryAddress");
+      localStorage.removeItem("appliedCoupon");
 
-    // Clear localStorage after success
-    localStorage.removeItem("cart");
-    localStorage.removeItem("deliveryAddress");
-    localStorage.removeItem("appliedCoupon");
-
-    setSuccessMessage(`✅ Order placed using ${paymentMethod}!`);
-    setTimeout(() => navigate("/order"), 1000);
-  } catch (err) {
-    console.error("❌ Order failed:", err);
-    alert("Failed to place order. Please try again.");
-  }
-};
-
+      setSuccessMessage(`✅ Order placed using ${paymentMethod}!`);
+      setTimeout(() => navigate("/order"), 1000);
+    } catch (err) {
+      console.error("❌ Order failed:", err);
+      alert("Failed to place order. Please try again.");
+    }
+  };
 
   return (
     <>
@@ -115,7 +102,25 @@ const PaymentPage = () => {
 
         <h2 className="text-2xl font-bold text-center mb-6">💳 Choose Payment Method</h2>
 
-        {/* QR CODE */}
+        {/* ✅ Upload Screenshot */}
+        <div className="mb-6">
+          <label className="block font-semibold mb-1">Upload Payment Screenshot (optional):</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => setProfile(reader.result);
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="w-full border rounded p-2"
+          />
+        </div>
+
+        {/* QR */}
         <div className="border p-4 rounded mb-6">
           <h3 className="text-xl font-semibold mb-2">Scan & Pay via QR</h3>
           <img src={QRImage} alt="QR Code" className="w-64 h-64 mx-auto mb-4" />
@@ -127,7 +132,7 @@ const PaymentPage = () => {
           </button>
         </div>
 
-        {/* UPI APPS */}
+        {/* UPI */}
         <div className="border p-4 rounded mb-6">
           <h3 className="text-xl font-semibold mb-4">Pay using UPI Apps</h3>
           <div className="flex justify-around text-5xl mb-4">
@@ -163,7 +168,7 @@ const PaymentPage = () => {
           </button>
         </div>
 
-        {/* CASH ON DELIVERY */}
+        {/* COD */}
         <div className="border p-4 rounded">
           <h3 className="text-xl font-semibold mb-2">Cash on Delivery</h3>
           <button

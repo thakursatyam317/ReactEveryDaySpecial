@@ -3,24 +3,41 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const OrderPage = () => {
   const [orders, setOrders] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedOrders = JSON.parse(localStorage.getItem("orders")) || [];
-    setOrders(storedOrders);
+  axios.defaults.baseURL = "http://localhost:4500";
 
-    if (storedOrders.length > 0) {
-      toast.success("🟢 Orders loaded successfully");
-    }
+  useEffect(() => {
+    const fetchOrders = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        toast.error("Please log in first.");
+        return;
+      }
+
+      try {
+        const res = await axios.get("/order/myorders", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setOrders(res.data);
+        toast.success("🟢 Orders loaded successfully");
+      } catch (error) {
+        toast.error("Failed to fetch orders");
+        console.error("Fetch orders error:", error);
+      }
+    };
+
+    fetchOrders();
   }, []);
 
   return (
     <>
       <button
-        onClick={() => navigate(-1)} // 👈 go back to previous page
+        onClick={() => navigate(-1)}
         className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
       >
         <IoArrowBack />
@@ -47,7 +64,7 @@ const OrderPage = () => {
           <div className="space-y-6">
             {[...orders].reverse().map((order, index) => (
               <motion.div
-                key={order.id}
+                key={order._id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
@@ -55,30 +72,28 @@ const OrderPage = () => {
               >
                 <div className="mb-3">
                   <h3 className="font-bold text-xl text-orange-700">
-                    🆔 Order ID: {order.id}
+                    🆔 Order ID: {order._id}
                   </h3>
-                  <p className="text-sm text-gray-600">📅 {order.date}</p>
                   <p className="text-sm text-gray-600">
-                    💳 Payment: {order.payment}
+                    💳 Payment: {order.paymentMethod}
                   </p>
+                  <p className="text-sm text-gray-600">📦 Status: {order.status}</p>
                   <p className="text-sm text-gray-600">
-                    📦 Status: {order.status}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    📍 Address: {order.address}
+                    📍 Address:{" "}
+                    {order.shippingAddress?.fullName}, {order.shippingAddress?.addressLine}, {order.shippingAddress?.city} - {order.shippingAddress?.pincode}, {order.shippingAddress?.state}
                   </p>
                 </div>
 
                 <p className="font-semibold mb-2 text-orange-700">🛒 Items:</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {order.items.map((item, idx) => (
+                  {order.orderItems?.map((item, idx) => (
                     <motion.div
                       key={idx}
                       whileHover={{ scale: 1.05 }}
                       className="border rounded-lg p-3 bg-white shadow-sm flex flex-col items-center transition"
                     >
                       <img
-                        src={item.image}
+                        src={item.image || "https://via.placeholder.com/150"}
                         alt={item.name}
                         className="w-full h-32 object-cover rounded mb-2"
                       />
@@ -89,7 +104,7 @@ const OrderPage = () => {
                 </div>
 
                 <p className="text-right mt-4 font-bold text-lg text-green-700">
-                  Total: ₹{order.total.toFixed(2)}
+                  Total: ₹{order.totalPrice.toFixed(2)}
                 </p>
               </motion.div>
             ))}
