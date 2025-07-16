@@ -62,7 +62,7 @@ const OrderPage = () => {
           <p className="text-gray-500 text-center">No orders yet.</p>
         ) : (
           <div className="space-y-6">
-            {[...orders].reverse().map((order, index) => (
+            {orders.map((order, index) => (
               <motion.div
                 key={order._id}
                 initial={{ opacity: 0, y: 20 }}
@@ -77,10 +77,15 @@ const OrderPage = () => {
                   <p className="text-sm text-gray-600">
                     💳 Payment: {order.paymentMethod}
                   </p>
-                  <p className="text-sm text-gray-600">📦 Status: {order.status}</p>
                   <p className="text-sm text-gray-600">
-                    📍 Address:{" "}
-                    {order.shippingAddress?.fullName}, {order.shippingAddress?.addressLine}, {order.shippingAddress?.city} - {order.shippingAddress?.pincode}, {order.shippingAddress?.state}
+                    📦 Status: {order.status}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    📍 Address: {order.shippingAddress?.fullName},{" "}
+                    {order.shippingAddress?.addressLine},{" "}
+                    {order.shippingAddress?.city} -{" "}
+                    {order.shippingAddress?.pincode},{" "}
+                    {order.shippingAddress?.state}
                   </p>
                 </div>
 

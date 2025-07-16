@@ -15,7 +15,8 @@ export const createOrder = async (req, res) => {
     return res.status(400).json({ error: "Missing required order fields." });
   }
 
-  let profilePicUrl = req.user.profilePic;
+  let profilePicUrl = req.order.profilePic;
+  console.log("Profile Pic URL:", profilePicUrl);
   if (photo) {
     const base64Image = photo.buffer.toString("base64");
     const dataUri = `data:${photo.mimetype};base64,${base64Image}`;
