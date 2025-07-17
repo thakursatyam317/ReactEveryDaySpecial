@@ -5,7 +5,7 @@ import { get } from 'mongoose';
 
 export const createOrder = async (req, res) => {
   const { orderItems, totalPrice, shippingAddress, paymentMethod } = req.body;
-  const photo = req.file;
+  // const photo = req.file;
 
 
   if (!orderItems || orderItems.length === 0) {
@@ -15,28 +15,28 @@ export const createOrder = async (req, res) => {
     return res.status(400).json({ error: "Missing required order fields." });
   }
 
-  let profilePicUrl = req.order.profilePic;
-  console.log("Profile Pic URL:", profilePicUrl);
-  if (photo) {
-    const base64Image = photo.buffer.toString("base64");
-    const dataUri = `data:${photo.mimetype};base64,${base64Image}`;
-    try {
-      const result = await cloudinary.uploader.upload(dataUri, {
-        folder: "everydayspecial",
-        width: 300,
-        height: 300,
-        crop: "fill",
-      });
-      if (!result?.secure_url) {
-        return res.status(500).json({ message: "Failed to upload image" });
-      }
-      // profilePicUrl = get(result, 'secure_url', '') || profilePicUrl; // Fallback to existing URL if upload fails
-      console.log("✅ Image uploaded successfully:", profilePicUrl);
-    } catch (cloudErr) {
-      console.error("❌ Cloudinary Error:", cloudErr);
-      return res.status(500).json({ message: "Image upload failed" });
-    }
-  }
+  // let profilePicUrl = req.order.profilePic;
+  // console.log("Profile Pic URL:", profilePicUrl);
+  // if (photo) {
+  //   const base64Image = photo.buffer.toString("base64");
+  //   const dataUri = `data:${photo.mimetype};base64,${base64Image}`;
+  //   try {
+  //     const result = await cloudinary.uploader.upload(dataUri, {
+  //       folder: "everydayspecial",
+  //       width: 300,
+  //       height: 300,
+  //       crop: "fill",
+  //     });
+  //     if (!result?.secure_url) {
+  //       return res.status(500).json({ message: "Failed to upload image" });
+  //     }
+  //     // profilePicUrl = get(result, 'secure_url', '') || profilePicUrl; // Fallback to existing URL if upload fails
+  //     // console.log("✅ Image uploaded successfully:", profilePicUrl);
+  //   } catch (cloudErr) {
+  //     console.error("❌ Cloudinary Error:", cloudErr);
+  //     return res.status(500).json({ message: "Image upload failed" });
+  //   }
+  // }
 
   try {
     const newOrder = await Order.create({
@@ -45,9 +45,9 @@ export const createOrder = async (req, res) => {
       totalPrice,
       shippingAddress,
       paymentMethod,
-      profilePic: profilePicUrl,
+      // profilePic: profilePicUrl,
     });
-    console.log(profilePicUrl)
+    // console.log(profilePicUrl)
 
     const savedOrder = await newOrder.save();
     res.status(201).json({
@@ -63,7 +63,7 @@ export const createOrder = async (req, res) => {
 export const getUserOrders = async (req, res) => {
   try {
     const orders = await Order.find({})
-      .populate("_id", ) // Optional: populate user info
+      .populate("_id" ) // Optional: populate user info
       .sort({ createdAt: -1 });
 
     console.log("Fetched all orders for user:", req.user._id);

@@ -52,6 +52,7 @@ const PaymentPage = () => {
 
     try {
       const token = localStorage.getItem("token");
+      console.log("Placing order with token:", token);
 
       const response = await axios.post(
         "http://127.0.0.1:4500/order/create",
@@ -60,8 +61,9 @@ const PaymentPage = () => {
           totalPrice: finalAmount,
           shippingAddress: address,
           paymentMethod,
-          image: profile,
+          // image: profile,
         },
+        
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -103,22 +105,7 @@ const PaymentPage = () => {
         <h2 className="text-2xl font-bold text-center mb-6">💳 Choose Payment Method</h2>
 
         {/* ✅ Upload Screenshot */}
-        <div className="mb-6">
-          <label className="block font-semibold mb-1">Upload Payment Screenshot (optional):</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files[0];
-              if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => setProfile(reader.result);
-                reader.readAsDataURL(file);
-              }
-            }}
-            className="w-full border rounded p-2"
-          />
-        </div>
+       /?
 
         {/* QR */}
         <div className="border p-4 rounded mb-6">
