@@ -1,27 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
+import axios from 'axios';
 
 const CouponsAdmin = () => {
   const navItemStyle = 'block px-4 py-3 rounded-md hover:bg-gray-700 transition-all';
 
-  // Coupons state
-  const [coupons, setCoupons] = useState([
-    { id: 1, code: 'SAVE10', discount: '10%' },
-    { id: 2, code: 'FREESHIP', discount: 'Free Shipping' },
-  ]);
+  const [coupons, setCoupons] = useState([]);
+  const [newCoupon, setNewCoupon] = useState({
+    name: '',
+    code: '',
+    description: '',
+    discount: '',
+    validTill: '',
+  });
 
-  const [newCoupon, setNewCoupon] = useState({ code: '', discount: '' });
+  const fetchCoupons = async () => {
+    const res = await axios.get('http://localhost:4500/api/coupons/all');
+    setCoupons(res.data);
+  };
 
-  const handleAddCoupon = () => {
-    if (newCoupon.code.trim() && newCoupon.discount.trim()) {
-      const newId = coupons.length > 0 ? coupons[coupons.length - 1].id + 1 : 1;
-      setCoupons([...coupons, { id: newId, ...newCoupon }]);
-      setNewCoupon({ code: '', discount: '' });
+  useEffect(() => {
+    fetchCoupons();
+  }, []);
+
+  const handleAddCoupon = async () => {
+    try {
+      const { name, code, description, discount, validTill } = newCoupon;
+      if (!code || !discount) return alert("Code and discount are required!");
+
+      const res = await axios.post('http://localhost:4500/api/coupons/create', {
+        name, code, description, discount, validTill
+      });
+
+      setCoupons([...coupons, res.data]);
+      setNewCoupon({ name: '', code: '', description: '', discount: '', validTill: '' });
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to add coupon");
     }
   };
 
-  const handleDelete = (id) => {
-    setCoupons(coupons.filter(c => c.id !== id));
+  const handleDelete = async (id) => {
+    await axios.delete(`http://localhost:4500/api/coupons/delete/${id}`);
+    setCoupons(coupons.filter(c => c._id !== id));
   };
 
   return (
@@ -45,20 +65,18 @@ const CouponsAdmin = () => {
         {/* Add Coupon */}
         <div className="bg-white shadow p-6 rounded-lg max-w-md mx-auto mb-8">
           <h2 className="text-xl font-semibold mb-4">Add New Coupon</h2>
-          <input
-            type="text"
-            placeholder="Coupon Code"
-            value={newCoupon.code}
-            onChange={(e) => setNewCoupon({ ...newCoupon, code: e.target.value })}
-            className="border w-full px-4 py-2 mb-2 rounded"
-          />
-          <input
-            type="text"
-            placeholder="Discount (e.g., 10% or Free Shipping)"
-            value={newCoupon.discount}
-            onChange={(e) => setNewCoupon({ ...newCoupon, discount: e.target.value })}
-            className="border w-full px-4 py-2 mb-4 rounded"
-          />
+
+          {['name', 'code', 'description', 'discount', 'validTill'].map((field, i) => (
+            <input
+              key={i}
+              type={field === 'validTill' ? 'date' : 'text'}
+              placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+              value={newCoupon[field]}
+              onChange={(e) => setNewCoupon({ ...newCoupon, [field]: e.target.value })}
+              className="border w-full px-4 py-2 mb-2 rounded"
+            />
+          ))}
+
           <button
             onClick={handleAddCoupon}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
@@ -68,7 +86,7 @@ const CouponsAdmin = () => {
         </div>
 
         {/* Coupon List */}
-        <div className="bg-white shadow rounded-lg p-4 max-w-2xl mx-auto">
+        <div className="bg-white shadow rounded-lg p-4 max-w-4xl mx-auto">
           <h2 className="text-xl font-semibold mb-4">All Coupons</h2>
           {coupons.length === 0 ? (
             <p className="text-gray-600 text-center">No coupons available.</p>
@@ -76,21 +94,27 @@ const CouponsAdmin = () => {
             <table className="min-w-full text-center border">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="py-2 px-4 border">ID</th>
                   <th className="py-2 px-4 border">Code</th>
+                  <th className="py-2 px-4 border">Name</th>
+                  <th className="py-2 px-4 border">Description</th>
                   <th className="py-2 px-4 border">Discount</th>
+                  <th className="py-2 px-4 border">Valid Till</th>
                   <th className="py-2 px-4 border">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {coupons.map(coupon => (
-                  <tr key={coupon.id}>
-                    <td className="py-2 px-4 border">{coupon.id}</td>
+                {coupons.map((coupon) => (
+                  <tr key={coupon._id}>
                     <td className="py-2 px-4 border">{coupon.code}</td>
+                    <td className="py-2 px-4 border">{coupon.name}</td>
+                    <td className="py-2 px-4 border">{coupon.description}</td>
                     <td className="py-2 px-4 border">{coupon.discount}</td>
                     <td className="py-2 px-4 border">
+                      {coupon.validTill ? new Date(coupon.validTill).toLocaleDateString() : 'N/A'}
+                    </td>
+                    <td className="py-2 px-4 border">
                       <button
-                        onClick={() => handleDelete(coupon.id)}
+                        onClick={() => handleDelete(coupon._id)}
                         className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
                       >
                         Delete
