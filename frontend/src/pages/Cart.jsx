@@ -90,7 +90,7 @@ const Cart = () => {
   return (
     <>
       <button
-        onClick={() => navigate(-1)} // 👈 go back to previous page
+        onClick={() => navigate(-1)}
         className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
       >
         <IoArrowBack />

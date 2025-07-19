@@ -12,7 +12,7 @@ const UserManagement = () => {
 
   // 🔄 Fetch all users
   const fetchUsers = async () => {
-    setLoading(true); // Set loading to true before fetching
+    setLoading(true);
     try {
       const res = await axios.get(`${BASE_URL}/user`);
       setUsers(res.data.users); // Set users to state
@@ -21,7 +21,7 @@ const UserManagement = () => {
       console.error("❌ Fetch error:", error);
       toast.error("❌ Failed to fetch users");
     } finally {
-      setLoading(false); // Set loading to false after fetching
+      setLoading(false);
     }
   };
 

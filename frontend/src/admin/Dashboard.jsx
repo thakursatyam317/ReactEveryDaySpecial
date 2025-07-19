@@ -19,15 +19,6 @@ import { NavLink } from "react-router-dom";
 
 const STATUS_OPTIONS = ["Pending", "Processing", "Shipped", "Delivered", "Pickup", "Cancelled", "Paid"];
 
-const growthData = [
-  { month: "Jan", sales: 4000 },
-  { month: "Feb", sales: 7000 },
-  { month: "Mar", sales: 9500 },
-  { month: "Apr", sales: 11000 },
-  { month: "May", sales: 13500 },
-  { month: "Jun", sales: 16000 },
-  { month: "Jul", sales: 19000 },
-];
 
 const Dashboard = () => {
   const [orders, setOrders] = useState([]);
@@ -37,7 +28,7 @@ const Dashboard = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:4500/admin/orders-summary", {
+      const res = await fetch("http://localhost:4500/order/myorders", {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -48,10 +39,19 @@ const Dashboard = () => {
       toast.error("Failed to fetch orders");
     }
   };
-
+  
+const growthData = [
+  { month: "Jan", sales: orders.reduce((acc, order) => acc + (order.totalPrice || 0), 0) },
+  { month: "Feb", sales: orders.reduce((acc, order) => acc + (order.totalPrice || 0), 0) },
+  { month: "Mar", sales: orders.reduce((acc, order) => acc + (order.totalPrice || 0), 0) },
+  { month: "Apr", sales: orders.reduce((acc, order) => acc + (order.totalPrice || 0), 0) },
+  { month: "May", sales: orders.reduce((acc, order) => acc + (order.totalPrice || 0), 0) },
+  { month: "Jun", sales: orders.reduce((acc, order) => acc + (order.totalPrice || 0), 0) },
+  { month: "Jul", sales: orders.reduce((acc, order) => acc + (order.totalPrice || 0), 0) },
+];
   const updateOrderStatus = async (orderId, status) => {
     try {
-      await fetch(`http://localhost:4500/admin/orders/${orderId}`, {
+      await fetch(`http://localhost:4500/order/OrderStatus`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -71,8 +71,8 @@ const Dashboard = () => {
   }, []);
 
   // Total Revenue and Profit
-  const totalRevenue = orders.reduce((sum, order) => sum + (order.total || 0), 0);
-  const totalProfit = totalRevenue * 0.2;
+  const totalRevenue = orders.reduce((sum, order) => sum + (order.totalPrice || 0), 0);
+  const totalProfit = (totalRevenue * 0.2);
 
   const profitPie = [
     { name: "Profit", value: totalProfit },
@@ -80,8 +80,8 @@ const Dashboard = () => {
   ];
 
   const salesData = orders.map((order) => ({
-    name: order.user?.fullName || "Unknown",
-    total: order.total || 0,
+    name: order._id || "Unknown",
+    total: order.totalPrice || 0,
   }));
 
   return (
@@ -120,11 +120,11 @@ const Dashboard = () => {
           </div>
           <div className="bg-blue-100 text-blue-800 p-4 rounded-xl shadow-sm">
             <h3 className="text-lg font-medium">Total Revenue</h3>
-            <p className="text-2xl font-bold">₹{totalRevenue}</p>
+            <p className="text-2xl font-bold">₹{totalRevenue.toFixed(2)}</p>
           </div>
           <div className="bg-yellow-100 text-yellow-800 p-4 rounded-xl shadow-sm">
             <h3 className="text-lg font-medium">Estimated Profit</h3>
-            <p className="text-2xl font-bold">₹{totalProfit}</p>
+            <p className="text-2xl font-bold">₹{totalProfit.toFixed(2)}</p>
           </div>
         </div>
 
@@ -137,7 +137,7 @@ const Dashboard = () => {
               <BarChart data={salesData}>
                 <XAxis dataKey="name" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip className="bg-amber-900" />
                 <Bar dataKey="total" fill="#3b82f6" />
               </BarChart>
             </ResponsiveContainer>
@@ -195,7 +195,7 @@ const Dashboard = () => {
               <thead className="bg-gray-200">
                 <tr>
                   <th className="p-2">Customer</th>
-                  <th className="p-2">Items</th>
+                  <th className="p-2">UserId</th>
                   <th className="p-2">Amount</th>
                   <th className="p-2">Status</th>
                   <th className="p-2">Update</th>
@@ -211,11 +211,9 @@ const Dashboard = () => {
                 ) : (
                   orders.map((order) => (
                     <tr key={order._id} className="border-b">
-                      <td className="p-2">{order.user?.fullName || "Unknown"}</td>
-                      <td className="p-2">
-                        {Array.isArray(order.items) ? order.items.length : 0} items
-                      </td>
-                      <td className="p-2">₹{order.total || 0}</td>
+                      <td className="p-2">{order.shippingAddress?.fullName || "Unknown"}</td>
+                      <td className="p-2">{order.user|| "Unknown"}</td>
+                      <td className="p-2">₹{order.totalPrice.toFixed(2) || 0}</td>
                       <td className="p-2">
                         <span className="font-semibold text-blue-600">
                           {order.status || "Pending"}
