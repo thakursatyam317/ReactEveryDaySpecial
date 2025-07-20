@@ -22,7 +22,8 @@ const PaymentPage = () => {
   const cartItems = getParsedLocalStorage("cart") || [];
   const address = getParsedLocalStorage("deliveryAddress");
   const appliedCoupon = getParsedLocalStorage("appliedCoupon");
-  const [profile, setProfile] = useState(""); // image base64
+
+  const [profile, setProfile] = useState(""); // image base64 if needed
   const [selectedUPI, setSelectedUPI] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
 
@@ -31,10 +32,11 @@ const PaymentPage = () => {
     0
   );
 
+  // ✅ Fix NaN issue by using correct appliedCoupon.discount
   const finalAmount = appliedCoupon
     ? appliedCoupon.discountType === "percentage"
-      ? totalAmount - (totalAmount * appliedCoupon.discountValue) / 100
-      : totalAmount - appliedCoupon.value
+      ? totalAmount - (totalAmount * appliedCoupon.discount) / 100
+      : totalAmount - appliedCoupon.discount
     : totalAmount;
 
   const handlePlaceOrder = async (paymentMethod) => {
@@ -52,7 +54,6 @@ const PaymentPage = () => {
 
     try {
       const token = localStorage.getItem("token");
-      console.log("Placing order with token:", token);
 
       const response = await axios.post(
         "http://127.0.0.1:4500/order/create",
@@ -61,19 +62,16 @@ const PaymentPage = () => {
           totalPrice: finalAmount,
           shippingAddress: address,
           paymentMethod,
-          // image: profile,
+          // image: profile, // optional
         },
-        
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-      console.log("Order response:", response.data);
-      
 
-      // Clear localStorage
+      // Clear localStorage after success
       localStorage.removeItem("cart");
       localStorage.removeItem("deliveryAddress");
       localStorage.removeItem("appliedCoupon");
@@ -104,10 +102,7 @@ const PaymentPage = () => {
 
         <h2 className="text-2xl font-bold text-center mb-6">💳 Choose Payment Method</h2>
 
-        {/* ✅ Upload Screenshot */}
-       /?
-
-        {/* QR */}
+        {/* QR Payment */}
         <div className="border p-4 rounded mb-6">
           <h3 className="text-xl font-semibold mb-2">Scan & Pay via QR</h3>
           <img src={QRImage} alt="QR Code" className="w-64 h-64 mx-auto mb-4" />
@@ -119,7 +114,7 @@ const PaymentPage = () => {
           </button>
         </div>
 
-        {/* UPI */}
+        {/* UPI Apps */}
         <div className="border p-4 rounded mb-6">
           <h3 className="text-xl font-semibold mb-4">Pay using UPI Apps</h3>
           <div className="flex justify-around text-5xl mb-4">
@@ -155,7 +150,7 @@ const PaymentPage = () => {
           </button>
         </div>
 
-        {/* COD */}
+        {/* Cash on Delivery */}
         <div className="border p-4 rounded">
           <h3 className="text-xl font-semibold mb-2">Cash on Delivery</h3>
           <button

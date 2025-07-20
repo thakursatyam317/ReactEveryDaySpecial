@@ -12,6 +12,7 @@ const CouponsAdmin = () => {
     description: '',
     discount: '',
     validTill: '',
+    discountType: '',
   });
 
   const fetchCoupons = async () => {
@@ -25,15 +26,15 @@ const CouponsAdmin = () => {
 
   const handleAddCoupon = async () => {
     try {
-      const { name, code, description, discount, validTill } = newCoupon;
+      const { name, code, description, discount, validTill, discountType } = newCoupon;
       if (!code || !discount) return alert("Code and discount are required!");
 
       const res = await axios.post('http://localhost:4500/api/coupons/create', {
-        name, code, description, discount, validTill
+        name, code, description, discount, validTill, discountType
       });
 
       setCoupons([...coupons, res.data]);
-      setNewCoupon({ name: '', code: '', description: '', discount: '', validTill: '' });
+      setNewCoupon({ name: '', code: '', description: '', discount: '', validTill: '', discountType: '' });
     } catch (err) {
       alert(err.response?.data?.message || "Failed to add coupon");
     }
@@ -66,7 +67,7 @@ const CouponsAdmin = () => {
         <div className="bg-white shadow p-6 rounded-lg max-w-md mx-auto mb-8">
           <h2 className="text-xl font-semibold mb-4">Add New Coupon</h2>
 
-          {['name', 'code', 'description', 'discount', 'validTill'].map((field, i) => (
+          {['name', 'code', 'description', 'discount', 'validTill', 'discountType'].map((field, i) => (
             <input
               key={i}
               type={field === 'validTill' ? 'date' : 'text'}

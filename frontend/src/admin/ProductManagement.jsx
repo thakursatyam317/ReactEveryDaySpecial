@@ -10,9 +10,7 @@ const ProductManagement = () => {
   }, []);
 
   const navItemStyle = ({ isActive }) =>
-    `block py-2 px-4 rounded hover:bg-gray-700 transition ${
-      isActive ? "bg-gray-800 font-semibold" : ""
-    }`;
+    `block px-4 py-3 rounded-md hover:bg-gray-700 transition-all`;
 
   return (
     <div className="flex">

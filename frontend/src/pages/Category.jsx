@@ -5,7 +5,7 @@ import { FaShoppingCart } from "react-icons/fa";
 import { IoArrowBack } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 
-const categories = ["Indian", "Italian", "Chinese", "American"];
+const categories = ["Indian", "Italian", "Chinese", "American", "German"];
 const types = ["Fast Food", "Indian Thali"];
 const subTypes = [
   "Burger",

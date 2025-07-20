@@ -3,12 +3,12 @@ import Coupon from "../models/couponModels.js";
 // Create new coupon
 export const createCoupon = async (req, res) => {
   try {
-    const { name, code, description, discount, validTill } = req.body;
-
+    const { name, code, description, discount, validTill, discountType } = req.body;
+    console.log("Creating coupon:", req.body);
     const exists = await Coupon.findOne({ code });
     if (exists) return res.status(400).json({ message: 'Coupon code already exists' });
 
-    const newCoupon = new Coupon({ name, code, description, discount, validTill });
+    const newCoupon = new Coupon({ name, code, description, discount, validTill, discountType });
     await newCoupon.save();
     res.status(201).json(newCoupon);
   } catch (err) {

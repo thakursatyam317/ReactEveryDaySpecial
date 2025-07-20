@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Coupons from "../assets/Coupon";
 import { IoArrowBack } from "react-icons/io5";
-
+import axios from "axios";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
+  const [coupons, setCoupons] = useState([]);
   const [selectedCoupon, setSelectedCoupon] = useState(null);
   const [appliedCoupon, setAppliedCoupon] = useState(
     JSON.parse(localStorage.getItem("appliedCoupon")) || null
+  );
+  const [userProfile, setUserProfile] = useState(
+    JSON.parse(localStorage.getItem("dob")) || {}
   );
   const navigate = useNavigate();
 
@@ -19,6 +22,30 @@ const Cart = () => {
       quantity: item.quantity || 1,
     }));
     setCartItems(updatedCart);
+  }, []);
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const res = await axios.get("http://localhost:4500/api/coupons/all");
+        setCoupons(res.data);
+      } catch (err) {
+        console.error("Failed to fetch coupons:", err);
+      }
+    };
+    fetchCoupons();
+  }, []);
+
+  useEffect(() => {
+    const fetchDateOfBirth = async () => {
+      try {
+        const res = await axios.get("http://localhost:4500/user/profile");
+        setUserProfile(res.data);
+      } catch (err) {
+        console.error("Failed to fetch user profile:", err);
+      }
+    };
+    fetchDateOfBirth();
   }, []);
 
   const handleRemoveFromCart = (id) => {
@@ -56,7 +83,7 @@ const Cart = () => {
 
   const getTotalAmount = () =>
     cartItems.reduce(
-      (acc, item) => acc + item.quantity * parseFloat(item.price),
+      (acc, item) => acc + item.quantity * parseFloat(item.price || 0),
       0
     );
 
@@ -65,20 +92,46 @@ const Cart = () => {
     if (!appliedCoupon) return total;
 
     if (appliedCoupon.discountType === "percentage") {
-      return total - (total * appliedCoupon.discountValue) / 100;
+      if (appliedCoupon.name === "Birthday Special") {
+        const dob = new Date(userProfile.dob);
+        const today = new Date();
+        if (
+          dob.getDate() === today.getDate() &&
+          dob.getMonth() === today.getMonth()
+        ) {
+          return total; // Don't apply on birthday
+        }
+      }
+      return total - (total * parseFloat(appliedCoupon.discount || 0)) / 100;
     } else if (appliedCoupon.discountType === "flat") {
-      return total - appliedCoupon.value;
+      return total - parseFloat(appliedCoupon.discount || 0);
     }
+
     return total;
   };
 
   const handleApplyCoupon = () => {
     if (!selectedCoupon) return;
+
     const total = getTotalAmount();
+
+    if (selectedCoupon.name === "Birthday Special") {
+      const dob = new Date(userProfile.dob);
+      const today = new Date();
+      if (
+        dob.getDate() === today.getDate() &&
+        dob.getMonth() === today.getMonth()
+      ) {
+        alert("🎉 Birthday Special coupon cannot be applied on your birthday.");
+        return;
+      }
+    }
+
     if (selectedCoupon.minAmount && total < selectedCoupon.minAmount) {
       alert(`Minimum ₹${selectedCoupon.minAmount} required to use this coupon`);
       return;
     }
+
     setAppliedCoupon(selectedCoupon);
     localStorage.setItem("appliedCoupon", JSON.stringify(selectedCoupon));
   };
@@ -154,9 +207,9 @@ const Cart = () => {
             <div className="mt-6">
               <h3 className="text-xl font-semibold mb-2">Apply Coupon</h3>
               <div className="flex gap-4 flex-wrap">
-                {Coupons.map((coupon) => (
+                {coupons.map((coupon) => (
                   <div
-                    key={coupon.id}
+                    key={coupon._id}
                     onClick={() => setSelectedCoupon(coupon)}
                     className={`p-4 rounded-lg border cursor-pointer shadow w-[200px] ${
                       selectedCoupon?.code === coupon.code

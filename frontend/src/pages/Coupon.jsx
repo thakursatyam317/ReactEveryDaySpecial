@@ -24,8 +24,8 @@ const Coupon = () => {
   // Save selected coupon to localStorage
   const handleApply = (coupon) => {
     localStorage.setItem("appliedCoupon", JSON.stringify(coupon));
-    alert(`Coupon "${coupon.code}" applied!`);
-    navigate(-1); // go back to previous page
+
+    navigate("/category"); 
   };
 
   return (
@@ -33,13 +33,13 @@ const Coupon = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate(-1)}
-        className="fixed top-5 left-3 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
+        className="fixed top-22 left-3 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
       >
         <IoArrowBack />
       </button>
 
       {/* Coupon List */}
-      <div className="p-4 mt-16 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="p-4 mt-30 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {coupons.length === 0 ? (
           <p className="text-center col-span-full text-gray-600">No coupons available.</p>
         ) : (

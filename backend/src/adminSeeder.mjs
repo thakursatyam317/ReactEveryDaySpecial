@@ -2,9 +2,9 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt"; // use "bcryptjs" if you installed that instead
 import dotenv from "dotenv";
-import User from "./models/userModels.js"; // ✅ Make sure this path is correct
+import User from "./models/userModels.js"; //  Make sure this path is correct
 
-dotenv.config(); // ✅ Load environment variables
+dotenv.config(); //  Load environment variables
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/hrdb";
 
@@ -25,9 +25,9 @@ const createAdmin = async () => {
         email: "admin@gmail.com",
         password: hashedPassword,
         role: "admin",
-        phone: "0000000000", // 🟩 Required by schema
-        gender: "Male",       // 🟩 Required by schema
-        dob: "2000-01-01",    // 🟩 Required by schema
+        phone: "0000000000", // Required by schema
+        gender: "Male",       //  Required by schema
+        dob: "2000-01-01",    //  Required by schema
       });
 
       await adminUser.save();

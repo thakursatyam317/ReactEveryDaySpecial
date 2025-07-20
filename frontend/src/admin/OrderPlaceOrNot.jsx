@@ -55,11 +55,11 @@ const OrderPlaceOrNot = () => {
       <div className="w-64 h-screen bg-gray-900 text-white p-6 fixed top-0 left-0 shadow-lg">
         <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
         <nav className="space-y-2">
-          <NavLink to="/admin/dashboard" className="block py-2 px-4 hover:bg-gray-700 rounded">📊 Dashboard</NavLink>
-          <NavLink to="/admin/product-management" className="block py-2 px-4 hover:bg-gray-700 rounded">🛍️ Products</NavLink>
-          <NavLink to="/admin/orders" className="block py-2 px-4 hover:bg-gray-700 rounded">📦 Orders</NavLink>
-          <NavLink to="/admin/users" className="block py-2 px-4 hover:bg-gray-700 rounded">👥 Users</NavLink>
-          <NavLink to="/admin/coupons" className="block py-2 px-4 hover:bg-gray-700 rounded">💸 Coupons</NavLink>
+          <NavLink to="/admin/dashboard" className="block px-4 py-3 rounded-md hover:bg-gray-700 transition-all">📊 Dashboard</NavLink>
+          <NavLink to="/admin/product-management" className="block px-4 py-3 rounded-md hover:bg-gray-700 transition-all">🛍️ Products</NavLink>
+          <NavLink to="/admin/orders" className="block px-4 py-3 rounded-md hover:bg-gray-700 transition-all">📦 Orders</NavLink>
+          <NavLink to="/admin/users" className="block px-4 py-3 rounded-md hover:bg-gray-700 transition-all">👥 Users</NavLink>
+          <NavLink to="/admin/coupons" className="block px-4 py-3 rounded-md hover:bg-gray-700 transition-all">💸 Coupons</NavLink>
         </nav>
       </div>
 
