@@ -109,8 +109,8 @@ const growthData = [
       </div>
 
       {/* Main Content */}
-      <div className="ml-64 p-6">
-        <h1 className="text-3xl font-bold mb-4">📊 Admin Dashboard</h1>
+      <div className="ml-64 p-6 mt-22">
+        <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
 
         {/* Summary Widgets */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">

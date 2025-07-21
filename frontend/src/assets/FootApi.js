@@ -24,29 +24,29 @@ import Img23 from "./IndianWayFood/img23_Pastry.png";
 import Img24 from "./IndianWayFood/img24_Kachori.png";
 import Img25 from "./IndianWayFood/img25_Samosa.png";
 import Img26 from "./IndianWayFood/img26_PotatoBada.png";
-import Img27 from "./fastfoot/img27_pixabay.jpg";
-import Img28 from "./fastfoot/img28_nadin-sh.jpg";
-import Img29 from "./fastfoot/img29_ali-dashti.jpg";
-import Img30 from "./fastfoot/img30_eiliv-aceron.jpg";
-import Img31 from "./fastfoot/img31_rachel-claire.jpg";
-import Img32 from "./fastfoot/img32_matthew-barra.jpg";
-import Img33 from "./fastfoot/img33_brigitte-tohm.jpg";
-import Img34 from "./fastfoot/img34_abhishek-mahajan.jpg";
-import Img35 from "./fastfoot/img35_roman-odintsov.jpg";
-import Img36 from "./fastfoot/img36_n-voitkevich.jpg";
+import Img27 from "./IndianWayFood/img27_Churma.png";
+import Img28 from "./IndianWayFood/img28_LittiChoka.png";
+import Img29 from "./IndianWayFood/img29_BharatBati.png";
+import Img30 from "./IndianWayFood/img30_CheesePasta.png";
+import Img31 from "./IndianWayFood/img31_MasalaPasta.png";
+import Img32 from "./IndianWayFood/img32_MasalaPasta.png";
+import Img33 from "./IndianWayFood/img33_DalBatiChurma.png";
+import Img34 from "./IndianWayFood/img34_MatarPaneer.png";
+import Img35 from "./IndianWayFood/img35_Paneer.png";
+import Img36 from "./fastfoot/img36_FriedPaneer.jpg";
 import Img37 from "./fastfoot/img37_jeshoots.jpg";
 import Img38 from "./fastfoot/img38_pablo.jpg";
 import Img39 from "./fastfoot/img39_mali.jpg";
-import Img40 from "./fastfoot/img40_chanwalrus.jpg";
-import Img41 from "./fastfoot/img41_momo-king.jpg";
-import Img42 from "./fastfoot/img42_klaus-nielsen.jpg";
-import Img43 from "./fastfoot/img43_oksmalkova.jpg";
-import Img44 from "./fastfoot/img44_groovelanddesigns.jpg";
+import Img40 from "./IndianWayFood/img40_SimlaWithAllu.png";
+import Img41 from "./IndianWayFood/img41_Tamoto.png";
+import Img42 from "./IndianWayFood/img42_CheesePaneer.png";
+import Img43 from "./IndianWayFood/img43_SahiPaneer.png";
+import Img44 from "./IndianWayFood/img44_AlluMatter.png";
 import Img45 from "./fastfoot/img45_sebastian-coman-photography.jpg";
 import Img46 from "./fastfoot/img46_gurkan-midyat.jpg";
 import Img47 from "./fastfoot/img47_dzeninalukac.jpg";
 import Img48 from "./fastfoot/img48_iina-luoto.jpg";
-import Img49 from "./fastfoot/img49_side-view-multi-colored-meatballs-with-tomato-sauces-green-onions.jpg";
+import Img49 from "./IndianWayFood/img49_Allu.png";
 import Img50 from "./fastfoot/img50_sydney-troxell.jpg";
 
 //Thali
@@ -150,7 +150,7 @@ const FoodApi = [
     rating: 3.9,
     image: [Img4],
     type : "Fast Food",
-    subtype:"Chowmeins",
+    subtype:"Chowmein",
     nutritionalfacts: {
       weight: 100,
       protein: 7,
@@ -188,7 +188,7 @@ const FoodApi = [
     rating: 4.3,
     image: [Img6],
     type : "Fast Food",
-    subtype:"Chowmeins",
+    subtype:"Chowmein",
     nutritionalfacts: {
       weight: 100,
       protein: 5,
@@ -244,7 +244,7 @@ const FoodApi = [
     price: 199,
     rating: 3.9,
     image: [Img9],
-    subtype:"Chowmeins",
+    subtype:"Chowmein",
     nutritionalfacts: {
       weight: 100,
       protein: 7,
@@ -299,6 +299,7 @@ const FoodApi = [
     price: 249,
     rating: 3.9,
     image: [Img12],
+    subtype : "Chowmein",
     nutritionalfacts: {
       weight: 100,
       protein: 8,
@@ -540,94 +541,94 @@ const FoodApi = [
   },
   {
     id: 26,
-    name: "PotatoBada",
+    name: "Potato Bada",
     category: "Indian",
-    price: 122.5,
-    rating: 3.0,
+    price: 15,
+    rating: 3.9,
     image: [Img26],
     nutritionalfacts: {
-      weight: 210,
-      protein: 5,
-      fats: 80,
-      carbohydrate: 100,
-      calories: 550,
-      fiber: 10,
-      sugar: 35,
+      weight: 100,
+      protein: 8,
+      fats: 10,
+      carbohydrate: 75,
+      calories: 390,
+      fiber: 4,
+      sugar: 9,
     },
   },
   {
     id: 27,
-    name: "pixabay",
-    category: "Italian",
+    name: "Churma",
+    category: "Indian",
     price: 122.5,
     rating: 3.0,
     image: [Img27],
     nutritionalfacts: {
-      weight: 210,
-      protein: 5,
-      fats: 80,
-      carbohydrate: 100,
-      calories: 550,
-      fiber: 10,
-      sugar: 35,
+      weight: 100,
+      protein: 10,
+      fats: 20,
+      carbohydrate: 65,
+      calories: 450,
+      fiber: 6,
+      sugar: 28,
     },
   },
   {
     id: 28,
-    name: "nadin-sh",
-    category: "Italian",
-    price: 122.5,
-    rating: 3.0,
+    name: "Litti Choka",
+    category: "Indian",
+    price: 99,
+    rating: 3.9,
     image: [Img28],
     nutritionalfacts: {
-      weight: 210,
-      protein: 5,
-      fats: 80,
-      carbohydrate: 100,
-      calories: 550,
-      fiber: 10,
-      sugar: 35,
+      weight: 100,
+      protein: 12,
+      fats: 15,
+      carbohydrate: 65,
+      calories: 450,
+      fiber: 6,
+      sugar: 7,
     },
   },
   {
     id: 29,
-    name: "ali-dashti",
-    category: "Italian",
-    price: 122.5,
-    rating: 3.0,
+    name: "Bharat Bati",
+    category: "Indian",
+    price: 299,
+    rating: 3.9,
     image: [Img29],
     nutritionalfacts: {
-      weight: 210,
+      weight: 100,
       protein: 5,
-      fats: 80,
-      carbohydrate: 100,
-      calories: 550,
+      fats: 18,
+      carbohydrate: 65,
+      calories: 450,
       fiber: 10,
-      sugar: 35,
+      sugar: 8,
     },
   },
   {
     id: 30,
-    name: "eiliv-aceron",
-    category: "Italian",
-    price: 122.5,
-    rating: 3.0,
+    name: "Cheese Pasta",
+    category: "Indian",
+    price: 149,
+    rating: 3.9,
     image: [Img30],
     nutritionalfacts: {
-      weight: 210,
+      weight: 100,
       protein: 5,
-      fats: 80,
-      carbohydrate: 100,
-      calories: 550,
+      fats: 15,
+      carbohydrate: 40,
+      calories: 350,
       fiber: 10,
-      sugar: 35,
+      sugar: 5,
     },
   },
 
   {
     id: 31,
-    name: "Enginakyurt",
-    category: "Italian",
+    name: "Masala Pasta",
+    category: "Indian",
     price: 122.5,
     rating: 3.0,
     image: [Img31],
@@ -643,7 +644,7 @@ const FoodApi = [
   },
   {
     id: 32,
-    name: "Tioroshi",
+    name: "Masala Pasta",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
@@ -660,8 +661,8 @@ const FoodApi = [
   },
   {
     id: 33,
-    name: "Norma Mortenson",
-    category: "Italian",
+    name: "Paneer",
+    category: "Indian",
     price: 122.5,
     rating: 3.0,
     image: [Img33],
@@ -677,25 +678,25 @@ const FoodApi = [
   },
   {
     id: 34,
-    name: "Fried Panner",
-    category: "Italian",
-    price: 122.5,
-    rating: 3.0,
+    name: "Matar Paneer",
+    category: "Indian",
+    price: 199,
+    rating: 3.9,
     image: [Img34],
     nutritionalfacts: {
-      weight: 210,
-      protein: 5,
-      fats: 80,
-      carbohydrate: 100,
-      calories: 550,
+      weight: 100,
+      protein: 20,
+      fats: 10,
+      carbohydrate: 30,
+      calories: 260,
       fiber: 10,
-      sugar: 35,
+      sugar: 10,
     },
   },
   {
     id: 35,
-    name: "Caleboquendo",
-    category: "Italian",
+    name: "Paneer",
+    category: "Indian",
     price: 122.5,
     rating: 3.0,
     image: [Img35],
@@ -711,7 +712,7 @@ const FoodApi = [
   },
   {
     id: 36,
-    name: "David Geib",
+    name: "Fried Paneer",
     category: "Italian",
     price: 122.5,
     rating: 3.0,
@@ -730,6 +731,7 @@ const FoodApi = [
     id: 37,
     name: "Pasta",
     category: "German",
+    subtype:"Pasta",
     price: 149,
     rating: 3.9,
     image: [Img37],
@@ -780,8 +782,8 @@ const FoodApi = [
   },
   {
     id: 40,
-    name: "Jonathanborba",
-    category: "Italian",
+    name: "Simla With Allu",
+    category: "Indian",
     price: 122.5,
     rating: 3.0,
     image: [Img40],
@@ -797,9 +799,9 @@ const FoodApi = [
   },
   {
     id: 41,
-    name: "Enginakyurt",
-    category: "Italian",
-    price: 122.5,
+    name: "Tamoto",
+    category: "Indian",
+    price: 99,
     rating: 3.0,
     image: [Img41],
     nutritionalfacts: {
@@ -814,9 +816,9 @@ const FoodApi = [
   },
   {
     id: 42,
-    name: "Tioroshi",
-    category: "Italian",
-    price: 122.5,
+    name: "Cheese Paneer",
+    category: "Indian",
+    price: 199,
     rating: 3.0,
     image: [Img42],
     nutritionalfacts: {
@@ -831,9 +833,9 @@ const FoodApi = [
   },
   {
     id: 43,
-    name: "Norma Mortenson",
-    category: "Chinese",
-    price: 122.5,
+    name: "Sahi Paneer",
+    category: "Indian",
+    price: 199,
     rating: 3.0,
     image: [Img43],
     nutritionalfacts: {
@@ -847,10 +849,10 @@ const FoodApi = [
     },
   },
   {
-    id: 44,//remove it
-    name: "Horizon Content",
-    category: "American",
-    price: 122.5,
+    id: 44,
+    name: "Allu Mattar",
+    category: "Indian",
+    price: 99,
     rating: 3.9,
     image: [Img44],
     nutritionalfacts: {
@@ -917,7 +919,7 @@ const FoodApi = [
   {
     id: 48,
     name: "Tofu with Vegetables",
-    category: "Italian",
+    category: "Indian",
     price: 199,
     rating: 3.7,
     image: [Img48],
@@ -933,9 +935,9 @@ const FoodApi = [
   },
   {
     id: 49,
-    name: "manchurian",
-    category: "Italian",
-    price: 122.5,
+    name: "Allu",
+    category: "Indian",
+    price: 99,
     rating: 3.0,
     image: [Img49],
     nutritionalfacts: {
