@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import QRcode from "react-qr-code";
 import { useNavigate } from "react-router-dom";
 import QRImage from "../assets/QR_Code.jpg";
 import { SiPhonepe, SiPaytm, SiGooglepay } from "react-icons/si";
 import { IoArrowBack } from "react-icons/io5";
 import axios from "axios";
+import QRCode from "react-qr-code";
 
 // ✅ Utility to safely parse localStorage JSON
 const getParsedLocalStorage = (key) => {
@@ -88,7 +90,7 @@ const PaymentPage = () => {
     <>
       <button
         onClick={() => navigate(-1)}
-        className="ml-2 mt-4 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full flex items-center"
+        className="ml-2 mt-10 bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-full flex items-center"
       >
         <IoArrowBack className="mr-1" /> Back
       </button>
@@ -103,7 +105,7 @@ const PaymentPage = () => {
         <h2 className="text-2xl font-bold text-center mb-6">💳 Choose Payment Method</h2>
 
         {/* QR Payment */}
-        <div className="border p-4 rounded mb-6">
+        {/* <div className="border p-4 rounded mb-6">
           <h3 className="text-xl font-semibold mb-2">Scan & Pay via QR</h3>
           <img src={QRImage} alt="QR Code" className="w-64 h-64 mx-auto mb-4" />
           <button
@@ -112,7 +114,14 @@ const PaymentPage = () => {
           >
             Done & Place Order (₹{finalAmount.toFixed(2)})
           </button>
-        </div>
+        </div> */}
+        <QRCode
+          size ={400}
+          value="https://www.instagram.com/thakursatyam317/"
+          className="m-5"
+        />
+
+
 
         {/* UPI Apps */}
         <div className="border p-4 rounded mb-6">
