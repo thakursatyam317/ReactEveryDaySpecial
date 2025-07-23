@@ -87,6 +87,10 @@ const OrderPage = () => {
                     {order.shippingAddress?.pincode},{" "}
                     {order.shippingAddress?.state}
                   </p>
+                  {/* ✅ Show user details */}
+                  <p className="text-sm text-gray-600">
+                    👤 User: {order.user?.fullName} ({order.user?.email})
+                  </p>
                 </div>
 
                 <p className="font-semibold mb-2 text-orange-700">🛒 Items:</p>
