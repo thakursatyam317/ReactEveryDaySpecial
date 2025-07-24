@@ -115,11 +115,11 @@ const PaymentPage = () => {
             Done & Place Order (₹{finalAmount.toFixed(2)})
           </button>
         </div> */}
-        <QRCode
+        {/* <QRCode
           size ={400}
           value="https://www.instagram.com/thakursatyam317/"
           className="m-5"
-        />
+        /> */}
 
 
 
