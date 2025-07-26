@@ -1,262 +1,111 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { IoArrowBack } from "react-icons/io5";
-import axios from "axios";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
-  const [coupons, setCoupons] = useState([]);
-  const [selectedCoupon, setSelectedCoupon] = useState(null);
-  const [appliedCoupon, setAppliedCoupon] = useState(
-    JSON.parse(localStorage.getItem("appliedCoupon")) || null
-  );
-  const [userProfile, setUserProfile] = useState(
-    JSON.parse(localStorage.getItem("dob")) || {}
-  );
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const updatedCart = storedCart.map((item) => ({
-      ...item,
-      quantity: item.quantity || 1,
-    }));
-    setCartItems(updatedCart);
-  }, []);
-
-  useEffect(() => {
-    const fetchCoupons = async () => {
-      try {
-        const res = await axios.get("http://localhost:4500/api/coupons/all");
-        setCoupons(res.data);
-      } catch (err) {
-        console.error("Failed to fetch coupons:", err);
-      }
-    };
-    fetchCoupons();
-  }, []);
+  // ✅ Fetch cart from backend
+  const fetchCart = async () => {
+    try {
+      const res = await axios.get("http://localhost:4500/api/cart"); // Replace with actual user ID
+      setCartItems(res.data.cart || []);
+    } catch (err) {
+      console.error("Failed to fetch cart", err);
+      setMessage("Error fetching cart");
+    }
+  };
 
   useEffect(() => {
-    const fetchDateOfBirth = async () => {
-      try {
-        const res = await axios.get("http://localhost:4500/user/profile");
-        setUserProfile(res.data);
-      } catch (err) {
-        console.error("Failed to fetch user profile:", err);
-      }
-    };
-    fetchDateOfBirth();
+    fetchCart();
   }, []);
 
-  const handleRemoveFromCart = (id) => {
-    const updatedCart = cartItems.filter((item) => item.id !== id);
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("cartUpdated"));
-  };
-
-  const handleIncreaseQuantity = (id) => {
-    const updatedCart = cartItems.map((item) =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
-
-  const handleDecreaseQuantity = (id) => {
-    const updatedCart = cartItems.map((item) =>
-      item.id === id && item.quantity > 1
-        ? { ...item, quantity: item.quantity - 1 }
-        : item
-    );
-    setCartItems(updatedCart);
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-  };
-
-  const handleOrderNow = () => {
-    if (cartItems.length === 0) {
-      alert("Cart is empty!");
-      return;
+  // ✅ Remove item from cart
+  const removeFromCart = async (productId) => {
+    try {
+      const res = await axios.delete(`/api/cart/${productId}`);
+      setCartItems(res.data.cart || []);
+      setMessage("Item removed from cart");
+    } catch (err) {
+      console.error("Error removing item", err);
+      setMessage("Failed to remove item");
     }
-    navigate("/confirm-address");
   };
 
-  const getTotalAmount = () =>
-    cartItems.reduce(
-      (acc, item) => acc + item.quantity * parseFloat(item.price || 0),
-      0
-    );
-
-  const calculateDiscountedAmount = () => {
-    const total = getTotalAmount();
-    if (!appliedCoupon) return total;
-
-    if (appliedCoupon.discountType === "percentage") {
-      if (appliedCoupon.name === "Birthday Special") {
-        const dob = new Date(userProfile.dob);
-        const today = new Date();
-        if (
-          dob.getDate() === today.getDate() &&
-          dob.getMonth() === today.getMonth()
-        ) {
-          return total; // Don't apply on birthday
-        }
-      }
-      return total - (total * parseFloat(appliedCoupon.discount || 0)) / 100;
-    } else if (appliedCoupon.discountType === "flat") {
-      return total - parseFloat(appliedCoupon.discount || 0);
-    }
-
-    return total;
+  // ✅ Total price
+  const getTotal = () => {
+    return cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
   };
-
-  const handleApplyCoupon = () => {
-    if (!selectedCoupon) return;
-
-    const total = getTotalAmount();
-
-    if (selectedCoupon.name === "Birthday Special") {
-      const dob = new Date(userProfile.dob);
-      const today = new Date();
-      if (
-        dob.getDate() === today.getDate() &&
-        dob.getMonth() === today.getMonth()
-      ) {
-        alert("🎉 Birthday Special coupon cannot be applied on your birthday.");
-        return;
-      }
-    }
-
-    if (selectedCoupon.minAmount && total < selectedCoupon.minAmount) {
-      alert(`Minimum ₹${selectedCoupon.minAmount} required to use this coupon`);
-      return;
-    }
-
-    setAppliedCoupon(selectedCoupon);
-    localStorage.setItem("appliedCoupon", JSON.stringify(selectedCoupon));
-  };
-
-  const totalAmount = getTotalAmount();
-  const finalAmount = calculateDiscountedAmount();
-  const discountAmount = totalAmount - finalAmount;
 
   return (
-    <>
+    <div className="p-6">
+      {/* Back button */}
       <button
         onClick={() => navigate(-1)}
-        className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
+        className="mb-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded flex items-center"
       >
-        <IoArrowBack />
+        <IoArrowBack className="mr-2" />
+        Back
       </button>
-      <div className="p-6 mt-6 w-full max-w-5xl mx-auto">
-        <h2 className="text-3xl font-bold mb-6">Your Cart</h2>
 
-        {cartItems.length === 0 ? (
-          <p>No items in cart.</p>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 gap-6">
-              {cartItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-white p-4 shadow rounded-lg flex flex-col md:flex-row items-center space-x-10"
-                >
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="w-[300px] h-[300px] object-cover rounded"
-                  />
-                  <div>
-                    <h3 className="text-3xl font-bold mt-2">{item.name}</h3>
-                    <p className="text-xl font-semibold mt-2">
-                      {item.category}
-                    </p>
-                    <p className="text-xl font-semibold mt-2">₹{item.price}</p>
-                    <p className="text-xl font-semibold mt-2">
-                      ⭐ {item.rating}
-                    </p>
+      <h1 className="text-2xl font-bold mb-4">Your Cart</h1>
 
-                    <div className="flex items-center justify-start mt-6 space-x-4">
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => handleDecreaseQuantity(item.id)}
-                          className="px-3 py-1 bg-gray-300 rounded text-xl font-bold"
-                        >
-                          −
-                        </button>
-                        <span className="px-4 text-xl">{item.quantity}</span>
-                        <button
-                          onClick={() => handleIncreaseQuantity(item.id)}
-                          className="px-3 py-1 bg-gray-300 rounded text-xl font-bold"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <button
-                        onClick={() => handleRemoveFromCart(item.id)}
-                        className="bg-red-400 text-white px-6 py-2 rounded hover:bg-red-700"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
+      {/* Message */}
+      {message && (
+        <div className="mb-4 bg-green-100 text-green-700 px-4 py-2 rounded">
+          {message}
+        </div>
+      )}
+
+      {/* Cart Items */}
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        <div className="grid grid-cols-1 gap-4">
+          {cartItems.map((item) => (
+            <div
+              key={item._id}
+              className="flex justify-between items-center bg-white shadow p-4 rounded"
+            >
+              <div className="flex items-center">
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-20 h-20 object-cover rounded mr-4"
+                />
+                <div>
+                  <h2 className="text-lg font-semibold">{item.name}</h2>
+                  <p>₹{item.price} × {item.quantity}</p>
+                  <p className="text-sm text-gray-500">{item.category}</p>
                 </div>
-              ))}
-            </div>
-
-            <div className="mt-6">
-              <h3 className="text-xl font-semibold mb-2">Apply Coupon</h3>
-              <div className="flex gap-4 flex-wrap">
-                {coupons.map((coupon) => (
-                  <div
-                    key={coupon._id}
-                    onClick={() => setSelectedCoupon(coupon)}
-                    className={`p-4 rounded-lg border cursor-pointer shadow w-[200px] ${
-                      selectedCoupon?.code === coupon.code
-                        ? "border-green-500 bg-green-50"
-                        : "hover:border-gray-300"
-                    }`}
-                  >
-                    <p className="font-bold">{coupon.code}</p>
-                    <p className="text-sm">{coupon.description}</p>
-                  </div>
-                ))}
               </div>
               <button
-                onClick={handleApplyCoupon}
-                className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+                onClick={() => removeFromCart(item._id)}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
               >
-                Apply Coupon
-              </button>
-
-              {appliedCoupon && (
-                <p className="mt-2 text-green-600">
-                  Coupon <b>{appliedCoupon.code}</b> applied! You saved ₹
-                  {discountAmount.toFixed(2)}
-                </p>
-              )}
-            </div>
-
-            <div className="mt-8 flex justify-between items-center">
-              <h3 className="text-2xl font-semibold">
-                Total: ₹{finalAmount.toFixed(2)}{" "}
-                {appliedCoupon && (
-                  <span className="line-through text-gray-500 ml-2 text-lg">
-                    ₹{totalAmount.toFixed(2)}
-                  </span>
-                )}
-              </h3>
-              <button
-                onClick={handleOrderNow}
-                className="bg-yellow-400 text-white px-8 py-3 rounded hover:bg-green-600"
-              >
-                Order Now
+                Remove
               </button>
             </div>
-          </>
-        )}
-      </div>
-    </>
+          ))}
+        </div>
+      )}
+
+      {/* Total */}
+      {cartItems.length > 0 && (
+        <div className="mt-6 text-right">
+          <h2 className="text-xl font-bold">Total: ₹{getTotal()}</h2>
+          <button
+            onClick={() => navigate("/checkout")}
+            className="mt-4 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded"
+          >
+            Proceed to Checkout
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -9,6 +9,8 @@ import userRoutes from "./src/router/userRouter.js";
 import orderRoutes from "./src/router/orderRouter.js";
 import adminRoutes from "./src/router/adminRouter.js"; // Import admin routes
 import couponRoutes from "./src/router/couponRouter.js"; // Import coupon routes
+import cartRoutes from "./src/router/cartRouter.js"; // Import cart routes  
+
 
 dotenv.config();
 
@@ -32,5 +34,6 @@ app.use("/user", userRoutes);
 app.use('/order', orderRoutes);// Use order routes under /order
 app.use("/api/admin", adminRoutes); // Use admin routes under /api/admin
 app.use("/api/coupons", couponRoutes); // Use coupon routes under /api/coupons
+app.use("/api/cart", cartRoutes); // Use cart routes under /api/cart
 
 app.listen(process.env.PORT, () => console.log(`🚀 Server running on port ${process.env.PORT}`));

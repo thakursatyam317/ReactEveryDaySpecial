@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios";
 import FoodApi from "../assets/FootApi";
 import { PiHeartFill } from "react-icons/pi";
 import { FaShoppingCart } from "react-icons/fa";
@@ -8,15 +9,8 @@ import { useNavigate } from "react-router-dom";
 const categories = ["Indian", "Italian", "Chinese", "American", "German"];
 const types = ["Fast Food", "Indian Thali"];
 const subTypes = [
-  "Burger",
-  "Pizza",
-  "Pasta",
-  "French Fries",
-  "Chowmein",
-  "Special Thali",
-  "Normal Thali",
-  "Roti",
-  "Dal",
+  "Burger", "Pizza", "Pasta", "French Fries", "Chowmein",
+  "Special Thali", "Normal Thali", "Roti", "Dal"
 ];
 
 const Category = () => {
@@ -26,7 +20,7 @@ const Category = () => {
   const [foods, setFoods] = useState([]);
   const [filteredFoods, setFilteredFoods] = useState([]);
   const [successMessage, setSuccessMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false); // ✅ fix
+  const [isSuccess, setIsSuccess] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,7 +29,7 @@ const Category = () => {
   }, []);
 
   const handleCheckboxChange = (value, selected, setSelected) => {
-    if (selected.includes(value)) {// it is checked or not
+    if (selected.includes(value)) {
       setSelected(selected.filter((item) => item !== value));
     } else {
       setSelected([...selected, value]);
@@ -58,9 +52,7 @@ const Category = () => {
 
   useEffect(() => {
     if (successMessage) {
-      const timer = setTimeout(() => {
-        setSuccessMessage("");
-      }, 3000);
+      const timer = setTimeout(() => setSuccessMessage(""), 3000);
       return () => clearTimeout(timer);
     }
   }, [successMessage]);
@@ -70,22 +62,46 @@ const Category = () => {
     setSuccessMessage(message);
   };
 
-  const handleAddToCart = (food) => {
-    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const isAlreadyAdded = existingCart.find((item) => item.id === food.id);
+  const handleAddToCart = async (food) => {
+    const token = localStorage.getItem("token");
 
-    if (!isAlreadyAdded) {
-      const updatedCart = [...existingCart, food];
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
+    if (!token) {
+      showSuccessMessage("Please login to add items to cart", false);
+      navigate("/login");
+      return;
+    }
+
+    try {
+      await axios.post(
+        "http://localhost:4500/api/cart/add",
+        {
+          productId: food._id,
+          name: food.name,
+          price: food.price,
+          image: food.image,
+          quantity: 1,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
       showSuccessMessage(`${food.name} added to Cart`, true);
-    } else {
-      showSuccessMessage(` ${food.name} is already in Cart`, false);
+    } catch (error) {
+      if (error?.response?.status === 500) {
+        showSuccessMessage(`${food.name} is already in Cart`, false);
+      } else {
+        console.error(error);
+        showSuccessMessage("Something went wrong", false);
+      }
     }
   };
 
   const handleAddToWishlist = (food) => {
     const existingWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const isAlreadyAdded = existingWishlist.find((item) => item.id === food.id);
+    const isAlreadyAdded = existingWishlist.find((item) => item._id === food._id);
 
     if (!isAlreadyAdded) {
       const updatedWishlist = [...existingWishlist, food];
@@ -98,12 +114,13 @@ const Category = () => {
 
   return (
     <>
-     <button
-        onClick={() => navigate(-1)} // 👈 go back to previous page
+      <button
+        onClick={() => navigate(-1)}
         className="fixed top-21.5 left-0.5 h-10 bg-amber-500 hover:bg-amber-600 text-white font-semibold px-6 py-3 rounded-full text-lg transition duration-300 shadow-md z-50"
       >
         <IoArrowBack />
       </button>
+
       {successMessage && (
         <div
           className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded shadow-lg text-lg font-semibold text-center w-fit transition duration-300 ${
@@ -115,7 +132,7 @@ const Category = () => {
       )}
 
       <div className="flex p-6 mt-30">
-        {/* Sidebar Filters */}
+        {/* Filters */}
         <div className="w-1/4 pr-4 fixed">
           <h2 className="text-xl font-bold mb-2">Filters</h2>
 
@@ -127,7 +144,7 @@ const Category = () => {
                   type="checkbox"
                   id={`category-${item}`}
                   className="mr-2"
-                  checked={selectedCategories.includes(item)}// includes() ek JavaScript method hai jo check karta hai ki kisi array ke andar koi value hai ya nahi
+                  checked={selectedCategories.includes(item)}
                   onChange={() =>
                     handleCheckboxChange(item, selectedCategories, setSelectedCategories)
                   }
@@ -174,11 +191,11 @@ const Category = () => {
           </div>
         </div>
 
-        {/* Food Cards */}
+        {/* Food Grid */}
         <div className="ml-[25%] w-3/4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredFoods.map((food) => (
             <div
-              key={food.id}
+              key={food._id}
               className="bg-white shadow-md p-4 rounded-lg hover:scale-105 transition-transform duration-300"
             >
               <img
@@ -194,7 +211,6 @@ const Category = () => {
                 <a href="#" className="text-yellow-500 font-semibold hover:underline">
                   Nutritional Fact
                 </a>
-
                 <div className="pointer-events-none absolute left-0 top-full mt-2 w-64 bg-white rounded-xl p-4 text-sm shadow-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
                   <p><strong>Weight:</strong> {food.nutritionalfacts?.weight || "0"}g</p>
                   <p><strong>Calories:</strong> {food.nutritionalfacts?.calories || "0"} kcal</p>
@@ -203,7 +219,9 @@ const Category = () => {
                   <p><strong>Fat:</strong> {food.nutritionalfacts?.fats || "0"}g</p>
                   <p><strong>Sugar:</strong> {food.nutritionalfacts?.sugar || "0"}g</p>
                   <p><strong>Fiber:</strong> {food.nutritionalfacts?.fiber || "0"}g</p>
-                  <p className="mt-3 text-gray-500 text-xs">The Nutritional Facts is average of all foods.</p>
+                  <p className="mt-3 text-gray-500 text-xs">
+                    The Nutritional Facts is average of all foods.
+                  </p>
                 </div>
               </div>
 
