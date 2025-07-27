@@ -4,9 +4,9 @@ import Cart from "../models/cartModels.js";
 // Add or update item in cart
 export const addToCart = async (req, res) => {
   try {
-    const { userId, productId, name, price, image, quantity } = req.body;
+    const { productId, name, price, image, quantity } = req.body;
 
-    let existingItem = await Cart.findOne({ user: userId, product: productId });
+    let existingItem = await Cart.findOne({ user: req.user.id, product: productId });
 
     if (existingItem) {
       existingItem.quantity += quantity;

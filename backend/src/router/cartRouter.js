@@ -1,11 +1,11 @@
-// routes/cartRoutes.js
+
 import express from "express";
 import {
   addToCart,
   getUserCart,
   removeFromCart,
   updateQuantity,
-} from "../controllers/cartController.js";
+} from "../controllers/cartControllerr.js";
 
 const router = express.Router();
 
