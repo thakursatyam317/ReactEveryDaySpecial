@@ -73,9 +73,9 @@ const Category = () => {
 
     try {
       await axios.post(
-        "http://localhost:4500/api/cart/add",
+        "http://127.0.0.1:4500/api/cart/add",
         {
-          productId: food._id,
+          product: food._id,
           name: food.name,
           price: food.price,
           image: food.image,
