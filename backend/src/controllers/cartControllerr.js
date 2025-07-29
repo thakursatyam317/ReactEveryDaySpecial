@@ -51,16 +51,16 @@ export const removeFromCart = async (req, res) => {
 };
 
 // Update quantity
-export const updateQuantity = async (req, res) => {
-  try {
-    const { quantity } = req.body;
-    const updatedItem = await Cart.findByIdAndUpdate(
-      req.params.cartItemId,
-      { quantity },
-      { new: true }
-    );
-    res.json(updatedItem);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update quantity", error });
-  }
-};
+// export const updateQuantity = async (req, res) => {
+//   try {
+//     const { quantity } = req.body;
+//     const updatedItem = await Cart.findByIdAndUpdate(
+//       req.params.cartItemId,
+//       { quantity },
+//       { new: true }
+//     );
+//     res.json(updatedItem);
+//   } catch (error) {
+//     res.status(500).json({ message: "Failed to update quantity", error });
+//   }
+// };
